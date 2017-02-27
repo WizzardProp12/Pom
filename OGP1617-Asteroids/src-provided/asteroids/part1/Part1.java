@@ -18,9 +18,7 @@ public class Part1 {
 		IFacade facade = new asteroids.facade.Facade();		
 		AsteroidsFrame.run(facade, tryFullscreen);	    
 	  }
-	public String gitHubTest(){
-		return "Test";
-	}
+
 	
 	
 	
