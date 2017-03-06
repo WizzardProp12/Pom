@@ -1,5 +1,14 @@
 package asteroids.model;
-// Class where the asked methods should be worked out in.
+
+import be.kuleuven.cs.som.annotate.*;
+
+/**
+ * A class of ships in an unbounded twodimensional space, 
+ * involving coordinates, velocities, a radius and an 
+ * orientation. 
+ * @author Wouter Cams and Stijn Bruggeman
+ *
+ */
 public class Ship {
 	
 	private static final Exception IllegalTimeException = null;
@@ -38,7 +47,7 @@ public class Ship {
 	public double yVelocity;
 	
 	/**
-	 * A variable that represents the minimum radius of the sip.
+	 * A variable that represents the minimum radius of the ship.
 	 */
 	private final double MIN_RADIUS = 10;
 	
@@ -108,6 +117,7 @@ public class Ship {
 	 * Return the orientation of this ship.
 	 * @return An angle in radians which represents the orientation of
 	 * 		   the ship. This value must always be in between 0 and 2*PI.
+	 * 		|  result == this.orientation
 	 * 
 	 */
 	public double getOrientation() {
@@ -119,6 +129,12 @@ public class Ship {
 	 * Set the new orientation of the ship.
 	 * @param newOrientation
 	 * 		  The new orientation of the ship.
+	 * @pre   The given orientation must be between 0 and 2*PI.
+	 * 	   |  0 < newOrientation < 2*PI 
+	 * @post  The orientation of this ship is equal to the given 
+	 * 		  orientation
+	 * 	   |  new.getOrientation = orientation
+	 * 		  
 	 */
 	public void setOrientation(double newOrientation) {
 		this.orientation = newOrientation;
@@ -128,22 +144,50 @@ public class Ship {
 	 * Return the radius of this ship.
 	 * @return The radius of this ship, expressed in km. This value will 
 	 * 		   always be positive.
+	 * 		|  result == this.radius
 	 */
 	public double getRadius() {
 		return RADIUS;
 	}
 	
 	/**
+	 * Check whether the given time is a valid time for
+	 * movement of the ship
+	 * @param time
+	 * 		  The time to check.
+	 * @return True if and only if the given time is 
+	 * 		   larger or equal to zero.
+	 * 		|  result == time >= 0
+	 */
+	public static boolean isValidTime(double time) {
+		return time >= 0;
+	}
+	
+	/**
+	 * DEFENSIEF
 	 * Change the position of the ship based on the current position, 
-	 * velocity and a given time duration delta t.
-	 * 
-	 * @return
+	 * velocity and a given time duration named time.
+	 * @param   time
+	 * 			The time for which the ship must be moved.
+	 * @effect  The coordinate of the ship along the x-axis
+	 * 			is set to the old x-coordinate plus the given
+	 * 		    time multiplied by the velocity of the ship
+	 * 			along the x-axis. 
+	 * 	    |   setXcoord(getXcoord() + time*getxVelocity())
+	 * @effect  The coordinate of the ship along the y-axis
+	 * 			is set to the old y-coordinate plus the given
+	 * 		    time multiplied by the velocity of the ship 
+	 * 			along the y-axis.  		
+	 * 		|   setYcoord(getYcoord() + time*getyVelocity())
+	 * @throws IllegalArgumentException
+	 * 		   The given duration time is less than zero.
+	 * 		|  ! isValidTime(time)
 	 */
 	public void move(double time) throws IllegalArgumentException {
-		if (time < 0) 
+		if (!isValidTime(time))
 			throw new IllegalArgumentException();
-		double newxCoord = getxCoord() + time*getxVelocity();
-		double newyCoord = getyCoord() + time*getyVelocity();
+		double newxCoord = getXCoord() + time*getYVelocity();
+		double newyCoord = getYCoord() + time*getYVelocity();
 		
 		setXCoord(newxCoord);
 		setYCoord(newyCoord);
@@ -151,54 +195,116 @@ public class Ship {
 	}
 	
 	/**
+	 * TOTALLY
 	 * Change the ship's velocity based on the current velocity,
 	 * it's orientation and a given amount a.
 	 * @param  a
 	 * 		   The given amount a which determines the new velocity.
-	 * @throws IllegalArgumentException
-	 * 		   The value a is negative
-	 * 		|  a < 0
+	 * @effect The velocity of the ship along the x-axis is set to
+	 * 		   the old velocity plus a times the cosine of the 
+	 * 		   orientation of the ship.
+	 * 	    |  setXVelocity(getXVelocity + a*Math.cos(getOrientation()))
+	 * @effect The velocity of the ship along the y-axis is set to
+	 * 		   the old velocity plus a times the sine of the 
+	 * 		   orientation of the ship.
+	 * 	    |  setYVelocity(getYVelocity + a*Math.sin(getOrientation()))
 	 */
-	public void thrust(double a) throws IllegalArgumentException {
-		if (a<0)
-			throw new IllegalArgumentException();
+	public void thrust(double a)  {
+		if (a < 0)
+			a = 0;
+		setXVelocity(xVelocity + a*Math.cos(getOrientation()));
+		setYVelocity(yVelocity + a*Math.sin(getOrientation()));
 		
-		setxVelocity(xVelocity + a*Math.cos(getOrientation()));
-		setyVelocity(yVelocity + a*Math.sin(getOrientation()));
-		
 	}
 	
-	private void setXCoord(double newxCoord) {
-		xCoord = newxCoord;
+	/**
+	 * UNBOUNDED 2D SPACE => NO INVALID COORDS POSSIBLE??? DEFENSIEF
+	 * @param newxCoord
+	 * 		  The new x-coordinate of the ship.
+	 * @post  The x-coordinate of this ship is equal 
+	 * 		  to the given x-coordinate.
+	 * 	   |  new.getXCoord = newXCoord
+	 */
+	private void setXCoord(double newXCoord) {
+		xCoord = newXCoord;
 	}
 	
-	private void setYCoord(double newyCoord) {
-		yCoord = newyCoord;
+	/**
+	 * UNBOUNDED 2D SPACE => NO INVALID COORDS POSSIBLE??? DEFENSIEF
+	 * @param newyCoord
+	 * 		  The new y-coordinate of the ship.
+	 * @post  The y-coordinate of this ship is equal to
+	 * 		  the given y-coordinate.
+	 *     |  new.getYCoord = newYCoord
+	 */
+	private void setYCoord(double newYCoord) {
+		yCoord = newYCoord;
 	}
 	
-	public double getxCoord() {
+	/**
+	 * Return the x-coordinate of this ship.
+	 * @return The x-coordinate of this ship.
+	 * 		|  result == this.xCoord
+	 */
+	@Basic
+	public double getXCoord() {
 		return xCoord;
 	}
 	
-	public double getyCoord() {
+	/**
+	 * Return the y-coordinate of this ship.
+	 * @return The y-coordinate of this ship.
+	 * 		|  result == this.yCoord
+	 */
+	@Basic
+	public double getYCoord() {
 		return yCoord;
 	}
 	
 	
-	
-	private void setxVelocity(double newxVelocity) {
-		xVelocity = newxVelocity;
+	/**
+	 * TOTAL
+	 * @param newXVelocity
+	 * 		  The new velocity of this ship along the x-axis.
+	 * @post  The velocity of this ship along the x-axis
+	 * 	      is equal to the given x-coordinate.  
+	 *     |  new.getxVelocity = newXVelocity
+	 * 
+	 */
+	private void setXVelocity(double newXVelocity) {
+		xVelocity = newXVelocity;
 	}
 	
-	private void setyVelocity(double newyVelocity) {
-		yVelocity = newyVelocity;
+	/**
+	 * TOTAL
+	 * @param newYVelocity
+	 * 		  The new velocity of this ship along the y-axis.
+	 * @post  The velocity of this ship along the y-axis
+	 * 	      is equal to the given y-coordinate.  
+	 *     |  new.getYVelocity = newYVelocity
+	 * 
+	 */
+	private void setYVelocity(double newYVelocity) {
+		yVelocity = newYVelocity;
 	}
 	
-	public double getxVelocity() {
+	/**
+	 * Return the velocity of this ship along the x-axis.
+	 * @return The velocity of this ship along the x-axis.
+	 * 		|  result == this.xVelocity
+	 */
+	@Basic
+	public double getXVelocity() {
 		return xVelocity;
 	}
 	
-	public double getyVelocity() {
+	/**
+	 * Return the velocity of this ship along the y-axis.
+	 * @return The velocity of this ship along the y-axis.
+	 * 		|  result == this.yVelocity
+	 */
+	@Basic
+	public double getYVelocity() {
 		return yVelocity;
 	}
 	
@@ -219,11 +325,11 @@ public class Ship {
 	}
 	
 	public double getTimeToCollision(Ship other) {
-		double deltarX = other.getxCoord() - this.getxCoord();
-		double deltarY = other.getyCoord() - this.getyCoord();
+		double deltarX = other.getXCoord() - this.getXCoord();
+		double deltarY = other.getYCoord() - this.getYCoord();
 		double sigma = other.getRadius() + this.getRadius();
-		double deltavX = other.getxVelocity() - this.getxVelocity();
-		double deltavY = other.getyVelocity() - this.getyVelocity();
+		double deltavX = other.getXVelocity() - this.getXVelocity();
+		double deltavY = other.getYVelocity() - this.getYVelocity();
 		
 		double d = Math.pow(deltarX * deltavX + deltarY * deltavY, 2) 
 				   - ( Math.pow(deltavX, 2) + Math.pow(deltavY, 2))* 
@@ -240,11 +346,11 @@ public class Ship {
 	public double[] getCollisionPosition(Ship other) {
 		double deltaT = getTimeToCollision(other);
 		
-		double thisxCoord = getxCoord() + deltaT*getxVelocity();
-		double thisyCoord = getyCoord() + deltaT*getyVelocity();
+		double thisxCoord = getXCoord() + deltaT*getXVelocity();
+		double thisyCoord = getYCoord() + deltaT*getYVelocity();
 		
-		double otherxCoord = other.getxCoord() + deltaT*other.getxVelocity();
-		double otheryCoord = other.getyCoord() + deltaT*other.getyVelocity();
+		double otherxCoord = other.getXCoord() + deltaT*other.getXVelocity();
+		double otheryCoord = other.getYCoord() + deltaT*other.getYVelocity();
 		
 		double deltaX = otherxCoord - thisxCoord;
 		double deltaY = otheryCoord - thisyCoord;
