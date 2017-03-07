@@ -310,21 +310,68 @@ public class Ship {
 	
 	
 	/**
-	 * ook defensief he jongens
+	 * DEFENSIVE
 	 * @param other
-	 * @return The distance between this ship and the other ship.
+	 * 		  The other ship which is needed to calculate the
+	 * 		  the distance between this ship and the other ship.
+	 * 		  
+	 * @return The distance between this ship and the other ship.		
+	 * 		|  result == Math.sqrt(Math.pow(this.xCoord - other.xCoord, 2) + Math.pow(this.yCoord - other.yCoord, 2))
+	 *		|  - (this.RADIUS + other.RADIUS)
+	 * @throws IllegalArgumentException
+	 * 		   The other ship is not effective.
+	 * 		|  other == null
+	 * 			  
 	 * 		   
 	 */
-	public double getDistanceBetween(Ship other) {
+	public double getDistanceBetween(Ship other) throws IllegalArgumentException {
+		if (other == null)
+			throw new IllegalArgumentException("The other ship is not effective!");
 		return Math.sqrt(Math.pow(this.xCoord - other.xCoord, 2) + Math.pow(this.yCoord - other.yCoord, 2))
 			- (this.RADIUS + other.RADIUS);
 	}
 	
-	public boolean overlap(Ship other) {
+	/**
+	 * 
+	 * @param other
+	 * 		  The other ship which is used to check if
+	 * 		  this ship overlaps with it.
+	 * @return True if and only if the distance between the
+	 * 		   ships is less or equal to 0.
+	 * 		|  result ==  (getDistanceBetween(other) <= 0)
+	 * @throws IllegalArgumentException
+	 * 		  The other ship is not effective.
+	 * 		|  other == null;
+	 */
+	public boolean overlap(Ship other) throws IllegalArgumentException{
+		if (other == null)
+			throw new IllegalArgumentException("The other ship is not effective!");
 		return getDistanceBetween(other) <= 0;
 	}
 	
-	public double getTimeToCollision(Ship other) {
+	/**
+	 * 
+	 * @param other
+	 * 		  The other ship which is used to calculate the time it will
+	 * 		  take to collide with this ship.
+	 * @return The time it will take for this ship to collide with the 
+	 * 		   other ship.
+	 * 		|  result == -(deltaV*deltaR + Math.sqrt(d))/Math.pow(deltaV,2)
+	 * 
+	 * @throws IllegalStateException
+	 * 		   This ship overlaps with the other ship.
+	 * 		|  overlap(other) 
+	 * @throws IllegalArgumentException
+	 * 		  The other ship is not effective.
+	 * 		|  other == null
+	 * 
+	 */
+	public double getTimeToCollision(Ship other) throws IllegalStateException, IllegalArgumentException{
+		if (this.overlap(other) == true)
+			throw new IllegalStateException("The ships overlap!");
+		if (other == null)
+			throw new IllegalArgumentException("The other ship is not effective!");
+		
 		double deltarX = other.getXCoord() - this.getXCoord();
 		double deltarY = other.getYCoord() - this.getYCoord();
 		double sigma = other.getRadius() + this.getRadius();
