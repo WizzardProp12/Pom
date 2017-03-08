@@ -26,7 +26,7 @@ public class Ship {
 	 * A variable that keeps track of the position of the ship on the x-axis,
 	 * expressed in km.
 	 */
-	public double xCoord;
+	private double xCoord;
 	
 	/**
 	* A variable that keeps track of the position of the ship on the y-axis,
@@ -75,16 +75,30 @@ public class Ship {
 	 * @return An array which consists of the position of the ship along the x-axis
 	 * 		   as its first elements, and the position along the y-axis as the second
 	 * 		   element.
-	 * 		|  result == [x,y]
+	 * 		|  result == [xCoord,yCoord]
 	 */
-	public double[] getPosition () { //unbounded 2D space, has to return an array.
-		double position[] = new double[2];
-		position[0] = this.xCoord;
-		position[1] = this.yCoord;
-		return position;
+	public double[] getPositions () { //unbounded 2D space, has to return an array.
+		double positions[] = new double[2];
+		positions[0] = this.xCoord;
+		positions[1] = this.yCoord;
+		return positions;
 	}
 	
-	
+	/**
+	 * Return the velocities of this ship.
+	 * 
+	 * @return An array which consists of the velocity of the ship along the x-axis
+	 * 		   as its first element, and the velocity along the y-axis as the second
+	 * 		   element.
+	 * 		|  result == [this.xVelocity,this.yVelocity]
+	 */
+	public double[] getVelocities () { 
+		double velocities[] = new double[2];
+		velocities[0] = this.getXVelocity();
+		velocities[1] = this.getYVelocity();
+		return velocities;
+	}
+		
 	
 	
 	/**
@@ -225,7 +239,7 @@ public class Ship {
 	 * 		  to the given x-coordinate.
 	 * 	   |  new.getXCoord = newXCoord
 	 */
-	private void setXCoord(double newXCoord) {
+	public void setXCoord(double newXCoord) {
 		xCoord = newXCoord;
 	}
 	
@@ -237,7 +251,7 @@ public class Ship {
 	 * 		  the given y-coordinate.
 	 *     |  new.getYCoord = newYCoord
 	 */
-	private void setYCoord(double newYCoord) {
+	public void setYCoord(double newYCoord) {
 		yCoord = newYCoord;
 	}
 	
@@ -390,8 +404,44 @@ public class Ship {
 		return time;
 	}
 	
-	public double[] getCollisionPosition(Ship other) {
+	/**
+	 * 
+	 * @param other
+	 * 		 The other ship which is used to calculate the position where
+	 * 		 it will collide with this ship.
+	 * @return The position where this ship and the other ship will collide,
+	 * 		   if and only if the time to collision is less than infinity.
+	 * 		   Else, null is returned.
+	 * 	    |  If (this.getTimeToCollision(other) < Double.POSITIVE_INFINITY)
+	 * 		|	 result == null
+	 * 		|  else
+	 * 		|     result == [collisionX,collisionY] where
+	 * 		|
+	 * 		|     collisionX = other.getXCoord() + this.getTimeToCollision(other)
+	 * 		|	  other.getXvelocity() + (other.getXCoord() - this.getXCoord())
+	 * 		|	  * other.getRadius() / (other.getRadius() + this.getRadius())
+	 * 		|
+	 * 		|     collisionY = other.getYCoord() + this.getTimeToCollision(other)
+	 * 		|	  other.getYvelocity() + (other.getYCoord() - this.getYCoord())
+	 * 		|     * other.getRadius() / (other.getRadius() + this.getRadius())
+	 * 
+	 * @throws IllegalStateException
+	 * 		   This ship overlaps with the other ship.
+	 * 		|  overlap(other) 
+	 * @throws IllegalArgumentException
+	 * 		   The other ship is not effective.
+	 * 		|  other == null
+	 */
+	public double[] getCollisionPosition(Ship other) throws IllegalStateException, IllegalArgumentException{
+		if (this.overlap(other) == true)
+			throw new IllegalStateException("The ships overlap!");
+		if (other == null)
+			throw new IllegalArgumentException("The other ship is not effective!");
+		
 		double deltaT = getTimeToCollision(other);
+		
+		if (deltaT == Double.POSITIVE_INFINITY)
+			return null;
 		
 		double thisxCoord = getXCoord() + deltaT*getXVelocity();
 		double thisyCoord = getYCoord() + deltaT*getYVelocity();
