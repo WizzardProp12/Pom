@@ -1,24 +1,39 @@
 package asteroids.model;
 
+import asteroids.util.ModelException;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class of ships in an unbounded twodimensional space, 
  * involving coordinates, velocities, a radius and an 
  * orientation. 
+ * 
+ * @invar  The orientation of each ship must be a valid orientation for a
+ *         ship.
+ *         | isValidOrientation(getOrientation())
+ *         
+ * 
  * @author Wouter Cams and Stijn Bruggeman
+ * @version  0.1
  *
  */
 public class Ship {
 	
-	private static final Exception IllegalTimeException = null;
-
+	public Ship (){
+		this.setXCoord(0);
+		this.setYCoord(0);
+		this.setXVelocity(0);
+		this.setYVelocity(0);
+		this.setOrientation(0);
+		this.setRadius(MIN_RADIUS);
+	}	
+		
 	public static void main(String[] args) {
 		Ship boat = new Ship();
-		boat.xCoord = 1;
+		boat.xCoord = 1; 
 		boat.yCoord = 2;
-		double[] position = boat.getPosition();
-		System.out.println(position);
+		double[] position = boat.getPositions();
+		System.out.println(position[0]);
 		
 	}
 
@@ -49,12 +64,13 @@ public class Ship {
 	/**
 	 * A variable that represents the minimum radius of the ship.
 	 */
-	private final double MIN_RADIUS = 10;
+	public static final double MIN_RADIUS = 10;
 	
 	/**
 	 * A variable that represents the radius of the ship, expressed in km.
+	 * This radius must be equal or larger than the minimum radius.
 	 */
-	public double RADIUS; // never changes during program execution.
+	public double RADIUS; 
 	
 	/**
 	 * A variable that keeps track of the orientation of the ship, in radians. This 
@@ -66,7 +82,7 @@ public class Ship {
 	 * A variable that represents the speed limit which the speed of the ship
 	 * shall not exceed.
 	 */
-	private final double SPEED_LIMIT = 300000; // speed limit can vary from ship to ship.
+	private final double SPEED_LIMIT = 300000; 
 	
 	
 	/**
@@ -79,8 +95,8 @@ public class Ship {
 	 */
 	public double[] getPositions () { //unbounded 2D space, has to return an array.
 		double positions[] = new double[2];
-		positions[0] = this.xCoord;
-		positions[1] = this.yCoord;
+		positions[0] = getXCoord();
+		positions[1] = getYCoord();
 		return positions;
 	}
 	
@@ -90,12 +106,12 @@ public class Ship {
 	 * @return An array which consists of the velocity of the ship along the x-axis
 	 * 		   as its first element, and the velocity along the y-axis as the second
 	 * 		   element.
-	 * 		|  result == [this.xVelocity,this.yVelocity]
+	 * 		|  result == [xVelocity,yVelocity]
 	 */
 	public double[] getVelocities () { 
 		double velocities[] = new double[2];
-		velocities[0] = this.getXVelocity();
-		velocities[1] = this.getYVelocity();
+		velocities[0] = getXVelocity();
+		velocities[1] = getYVelocity();
 		return velocities;
 	}
 		
@@ -113,14 +129,14 @@ public class Ship {
 	 * 		|	  return (Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(xVelocity, 2))
 	 * 		|	else
 	 * 		|	  return speedLimit
-	 * 				
+	 * TODO: EVENTUEEL NEN INVAR				
 	 */
 	public double getSpeed() {
 		
-		double speed = Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(xVelocity, 2));
+		double speed = Math.sqrt(Math.pow(getXVelocity(), 2) + Math.pow(getYVelocity(), 2));
+		
 		//The if class might be unnecessary because the thrust  can never cause
-		// a velocity higher than the SPEED_LIMIT.
-		 
+		// a velocity higher than the SPEED_LIMIT. 
 		if (speed < SPEED_LIMIT)
 			return speed;
 		else
@@ -132,14 +148,26 @@ public class Ship {
 	 * @return An angle in radians which represents the orientation of
 	 * 		   the ship. This value must always be in between 0 and 2*PI.
 	 * 		|  result == this.orientation
-	 * 
+	 * TODO: invar overwegen
 	 */
+	@Basic
 	public double getOrientation() {
 		return orientation;
 	}
 	
 	/**
-	 *nominally
+	 * Check if the given orientation is a valid orientation.
+	 * @return True if and only if the given orientation is
+	 * 		   larger than 0 and less than 2*PI.
+	 * 		|  result == (0 <= orientation) 
+	 *		|          && (orientation <= 2*Math.PI)
+	 */
+	public boolean isValidOrientation(double orientation){
+		return (0 <= orientation) && (orientation <= 2*Math.PI);
+	}
+	
+	/**
+	 * 
 	 * Set the new orientation of the ship.
 	 * @param newOrientation
 	 * 		  The new orientation of the ship.
@@ -147,33 +175,58 @@ public class Ship {
 	 * 	   |  0 < newOrientation < 2*PI 
 	 * @post  The orientation of this ship is equal to the given 
 	 * 		  orientation
-	 * 	   |  new.getOrientation = orientation
+	 * 	   |  new.getOrientation() = orientation
 	 * 		  
 	 */
 	public void setOrientation(double newOrientation) {
+		assert isValidOrientation(newOrientation);
 		this.orientation = newOrientation;
 	}
 	
 	/**
 	 * Turn the ship in the direction of the given orientation.
 	 * @param turnOrientation
-	 */
+	 * 		  The orientation to turn in.
+	 * 
+	 * @post   The new orientation is equal to the old orientation 
+	 * 		   plus the given turnorientation.
+	 *		|  new.getOrientation() == getOrientation() + turnOrientation
+	 */	  
 	public void turn(double turnOrientation) {
-		setOrientation(getOrientation() + turnOrientation);
+		double newOrientation = getOrientation() + turnOrientation;
+		assert isValidOrientation(newOrientation);
+		setOrientation(newOrientation);
 	}
 	
 	/**
-	 * Set the new radius of the ship
+	 * Return whether or not the given radius is a valid value.
+	 * @return True if and only if the given radius is larger or equal 
+	 * 		   than the minimum radius.
+	 * 		|  result == (radius >= MIN_RADIUS)
 	 */
-	public void setRadius(double newRadius){
+	public boolean isValidRadius(double radius){
+		return radius >= MIN_RADIUS;
+	}
+	
+	/**
+	 * Set the new radius of the ship.
+	 * @throws IllegalArgumentException
+	 * 		   The given newRadius is not a valid value for the radius.
+	 * 		|  isValidRadius(newRadius)
+	 */
+	public void setRadius(double newRadius) throws IllegalArgumentException{
+		if (! isValidRadius(newRadius))
+			throw new IllegalArgumentException();
 		this.RADIUS = newRadius;
 	}
+	
 	/**
 	 * Return the radius of this ship.
 	 * @return The radius of this ship, expressed in km. This value will 
 	 * 		   always be positive.
 	 * 		|  result == this.radius
 	 */
+	@Basic
 	public double getRadius() {
 		return RADIUS;
 	}
@@ -185,14 +238,13 @@ public class Ship {
 	 * 		  The time to check.
 	 * @return True if and only if the given time is 
 	 * 		   larger or equal to zero.
-	 * 		|  result == time >= 0
+	 * 		|  result == (time >= 0)
 	 */
 	public static boolean isValidTime(double time) {
 		return time >= 0;
 	}
 	
 	/**
-	 * DEFENSIEF
 	 * Change the position of the ship based on the current position, 
 	 * velocity and a given time duration named time.
 	 * @param   time
@@ -214,7 +266,7 @@ public class Ship {
 	public void move(double time) throws IllegalArgumentException {
 		if (!isValidTime(time))
 			throw new IllegalArgumentException();
-		double newxCoord = getXCoord() + time*getYVelocity();
+		double newxCoord = getXCoord() + time*getXVelocity();
 		double newyCoord = getYCoord() + time*getYVelocity();
 		
 		setXCoord(newxCoord);
@@ -223,9 +275,11 @@ public class Ship {
 	}
 	
 	/**
-	 * TOTALLY
 	 * Change the ship's velocity based on the current velocity,
-	 * it's orientation and a given amount a.
+	 * it's orientation and a given amount a. The speed after the
+	 * thrust will never be greater than the speed limit.
+	 * 
+	 * 
 	 * @param  a
 	 * 		   The given amount a which determines the new velocity.
 	 * @effect The velocity of the ship along the x-axis is set to
@@ -236,36 +290,54 @@ public class Ship {
 	 * 		   the old velocity plus a times the sine of the 
 	 * 		   orientation of the ship.
 	 * 	    |  setYVelocity(getYVelocity + a*Math.sin(getOrientation()))
+	 * @post   The speed of the ship will not exceed the speed limit
+	 * 		|  getSpeed() <= SPEED_LIMIT
 	 */
 	public void thrust(double a)  {
 		if (a < 0)
 			a = 0;
+		
 		setXVelocity(xVelocity + a*Math.cos(getOrientation()));
 		setYVelocity(yVelocity + a*Math.sin(getOrientation()));
 		
+		if (this.getSpeed() > SPEED_LIMIT) {
+			double absSpeed = getSpeed();
+			setXVelocity((xVelocity/absSpeed)*SPEED_LIMIT);
+			setYVelocity((yVelocity/absSpeed)*SPEED_LIMIT);
+		}
 	}
 	
 	/**
-	 * UNBOUNDED 2D SPACE => NO INVALID COORDS POSSIBLE??? DEFENSIEF
+	 * Set the x-coordinate of the ship to the given value.
 	 * @param newxCoord
 	 * 		  The new x-coordinate of the ship.
 	 * @post  The x-coordinate of this ship is equal 
 	 * 		  to the given x-coordinate.
-	 * 	   |  new.getXCoord = newXCoord
+	 * 	   |  new.getXCoord() = newXCoord
+	 * @throws IllegalArgumentException
+	 * 		   The given x-coordinate is NaN.
+	 * 	   |   newXCoord == Double.NaN
 	 */
-	public void setXCoord(double newXCoord) {
+	public void setXCoord(double newXCoord) throws IllegalArgumentException{
+		if (Double.isNaN(newXCoord))
+			throw new IllegalArgumentException("NaN is not a valid coordinate!");
 		xCoord = newXCoord;
 	}
 	
 	/**
-	 * UNBOUNDED 2D SPACE => NO INVALID COORDS POSSIBLE??? DEFENSIEF
+	 * Set the y-coordinate of the ship to the given value.
 	 * @param newyCoord
 	 * 		  The new y-coordinate of the ship.
 	 * @post  The y-coordinate of this ship is equal to
 	 * 		  the given y-coordinate.
-	 *     |  new.getYCoord = newYCoord
+	 *     |  new.getYCoord() = newYCoord
+	 * @throws IllegalArgumentException
+	 * 		   The given y-coordinate is NaN.
+	 * 	   |   newYCoord == Double.NaN
 	 */
 	public void setYCoord(double newYCoord) {
+		if (Double.isNaN(newYCoord))
+			throw new IllegalArgumentException("NaN is not a valid coordinate!");
 		yCoord = newYCoord;
 	}
 	
@@ -291,7 +363,8 @@ public class Ship {
 	
 	
 	/**
-	 * TOTAL
+	 * Set the velocity along the x-axis of the ship to the
+	 * given velocity.
 	 * @param newXVelocity
 	 * 		  The new velocity of this ship along the x-axis.
 	 * @post  The velocity of this ship along the x-axis
@@ -304,7 +377,8 @@ public class Ship {
 	}
 	
 	/**
-	 * TOTAL
+	 * Set the velocity along the y-axis of the ship to the
+	 * given velocity.
 	 * @param newYVelocity
 	 * 		  The new velocity of this ship along the y-axis.
 	 * @post  The velocity of this ship along the y-axis
@@ -338,19 +412,16 @@ public class Ship {
 	
 	
 	/**
-	 * DEFENSIVE
+	 * Return the distance between this ship and the other ship.
 	 * @param other
 	 * 		  The other ship which is needed to calculate the
 	 * 		  the distance between this ship and the other ship.
-	 * 		  
 	 * @return The distance between this ship and the other ship.		
 	 * 		|  result == Math.sqrt(Math.pow(this.xCoord - other.xCoord, 2) + Math.pow(this.yCoord - other.yCoord, 2))
 	 *		|  - (this.RADIUS + other.RADIUS)
 	 * @throws IllegalArgumentException
 	 * 		   The other ship is not effective.
 	 * 		|  other == null
-	 * 			  
-	 * 		   
 	 */
 	public double getDistanceBetween(Ship other) throws IllegalArgumentException {
 		if (other == null)
@@ -360,7 +431,7 @@ public class Ship {
 	}
 	
 	/**
-	 * 
+	 * Return whether this ship overlaps with the other ship.
 	 * @param other
 	 * 		  The other ship which is used to check if
 	 * 		  this ship overlaps with it.
@@ -378,21 +449,19 @@ public class Ship {
 	}
 	
 	/**
-	 * 
+	 * Return the time it will take for this ship to collide with the other ship.
 	 * @param other
 	 * 		  The other ship which is used to calculate the time it will
 	 * 		  take to collide with this ship.
 	 * @return The time it will take for this ship to collide with the 
-	 * 		   other ship.
+	 * 		   other ship, if they collide.
 	 * 		|  result == -(deltaV*deltaR + Math.sqrt(d))/Math.pow(deltaV,2)
-	 * 
 	 * @throws IllegalStateException
 	 * 		   This ship overlaps with the other ship.
 	 * 		|  overlap(other) 
 	 * @throws IllegalArgumentException
 	 * 		  The other ship is not effective.
 	 * 		|  other == null
-	 * 
 	 */
 	public double getTimeToCollision(Ship other) throws IllegalStateException, IllegalArgumentException{
 		if (this.overlap(other) == true)
@@ -419,14 +488,14 @@ public class Ship {
 	}
 	
 	/**
-	 * 
+	 * Return the position where this ship and the other ship will collide.
 	 * @param other
 	 * 		 The other ship which is used to calculate the position where
 	 * 		 it will collide with this ship.
 	 * @return The position where this ship and the other ship will collide,
 	 * 		   if and only if the time to collision is less than infinity.
 	 * 		   Else, null is returned.
-	 * 	    |  If (this.getTimeToCollision(other) < Double.POSITIVE_INFINITY)
+	 * 	    |  If (this.getTimeToCollision(other) == Double.POSITIVE_INFINITY)
 	 * 		|	 result == null
 	 * 		|  else
 	 * 		|     result == [collisionX,collisionY] where
@@ -438,7 +507,6 @@ public class Ship {
 	 * 		|     collisionY = other.getYCoord() + this.getTimeToCollision(other)
 	 * 		|	  other.getYvelocity() + (other.getYCoord() - this.getYCoord())
 	 * 		|     * other.getRadius() / (other.getRadius() + this.getRadius())
-	 * 
 	 * @throws IllegalStateException
 	 * 		   This ship overlaps with the other ship.
 	 * 		|  overlap(other) 

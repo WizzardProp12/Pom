@@ -32,7 +32,22 @@ public class Part1TestPartial {
 		assertEquals(200, position[1], EPSILON);
 		assertEquals(20, facade.getShipRadius(ship), EPSILON);
 	}
+	
+	@Test
+	public void testPosition() throws ModelException {
+		Ship ship = facade.createShip();
+		ship.setXCoord(20);
+		ship.setYCoord(30);
+		
+		double positions[] = ship.getPositions();
+		System.out.println(positions[0]);
+		System.out.println(positions[1]);
 
+		assertEquals(20, positions[0], EPSILON);
+		assertEquals(30, positions[1], EPSILON);
+		
+	}
+	
 	@Test(expected = ModelException.class)
 	public void testCreateShipXIsNan() throws ModelException {
 		facade.createShip(Double.NaN, 200, 10, -10, 20, -Math.PI);
@@ -52,4 +67,6 @@ public class Part1TestPartial {
 		assertEquals(130, position[0], EPSILON);
 		assertEquals(85, position[1], EPSILON);
 	}
+	
+	
 }
