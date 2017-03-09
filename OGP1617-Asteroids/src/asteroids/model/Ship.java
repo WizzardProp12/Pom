@@ -54,7 +54,7 @@ public class Ship {
 	/**
 	 * A variable that represents the radius of the ship, expressed in km.
 	 */
-	public final double RADIUS; // never changes during program execution.
+	public double RADIUS; // never changes during program execution.
 	
 	/**
 	 * A variable that keeps track of the orientation of the ship, in radians. This 
@@ -154,6 +154,20 @@ public class Ship {
 		this.orientation = newOrientation;
 	}
 	
+	/**
+	 * Turn the ship in the direction of the given orientation.
+	 * @param turnOrientation
+	 */
+	public void turn(double turnOrientation) {
+		setOrientation(getOrientation() + turnOrientation);
+	}
+	
+	/**
+	 * Set the new radius of the ship
+	 */
+	public void setRadius(double newRadius){
+		this.RADIUS = newRadius;
+	}
 	/**
 	 * Return the radius of this ship.
 	 * @return The radius of this ship, expressed in km. This value will 
@@ -285,7 +299,7 @@ public class Ship {
 	 *     |  new.getxVelocity = newXVelocity
 	 * 
 	 */
-	private void setXVelocity(double newXVelocity) {
+	public void setXVelocity(double newXVelocity) {
 		xVelocity = newXVelocity;
 	}
 	
@@ -298,7 +312,7 @@ public class Ship {
 	 *     |  new.getYVelocity = newYVelocity
 	 * 
 	 */
-	private void setYVelocity(double newYVelocity) {
+	public void setYVelocity(double newYVelocity) {
 		yVelocity = newYVelocity;
 	}
 	
