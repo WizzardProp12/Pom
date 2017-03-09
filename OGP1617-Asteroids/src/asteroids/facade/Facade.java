@@ -8,7 +8,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public Ship createShip() throws ModelException {
-		return createShip(0,0,0,0,1,Math.PI/2);
+		return createShip(0,0,0,0,Ship.MIN_RADIUS,Math.PI/2);
 		
 	}
 
@@ -23,16 +23,11 @@ public class Facade implements IFacade {
 		ship.setRadius(radius);
 		ship.setOrientation(orientation);
 		return ship;
-		
-		 
-		
 	}
 
 	@Override
 	public double[] getShipPosition(Ship ship) throws ModelException {
 		return ship.getPositions();
-		
-		
 	}
 
 	@Override
@@ -53,42 +48,35 @@ public class Facade implements IFacade {
 	@Override
 	public void move(Ship ship, double dt) throws ModelException {
 		ship.move(dt);
-		
 	}
 
 	@Override
 	public void thrust(Ship ship, double amount) throws ModelException {
 		ship.thrust(amount);
-		
 	}
 
 	@Override
 	public void turn(Ship ship, double angle) throws ModelException {
 		ship.turn(angle);
-		
 	}
 
 	@Override
 	public double getDistanceBetween(Ship ship1, Ship ship2) throws ModelException {
-		// TODO Auto-generated method stub
 		return ship1.getDistanceBetween(ship2);
 	}
 
 	@Override
 	public boolean overlap(Ship ship1, Ship ship2) throws ModelException {
-		// TODO Auto-generated method stub
 		return ship1.overlap(ship2);
 	}
 
 	@Override
 	public double getTimeToCollision(Ship ship1, Ship ship2) throws ModelException {
-		// TODO Auto-generated method stub
 		return ship1.getTimeToCollision(ship2);
 	}
 
 	@Override
 	public double[] getCollisionPosition(Ship ship1, Ship ship2) throws ModelException {
-		// TODO Auto-generated method stub
 		return ship1.getCollisionPosition(ship2);
 	}
 
