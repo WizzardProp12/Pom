@@ -26,7 +26,17 @@ public class Ship {
 		this.setYVelocity(0);
 		this.setOrientation(0);
 		this.setRadius(MIN_RADIUS);
-	}	
+	}
+	
+	public Ship(double xCoord, double yCoord, double xVelocity,
+			double yVelocity, double radius, double orientation) {
+		this.setXCoord(xCoord);
+		this.setYCoord(yCoord);
+		this.setXVelocity(xVelocity);
+		this.setYVelocity(yVelocity);
+		this.setRadius(radius);
+		this.setOrientation(orientation);
+	}
 		
 	public static void main(String[] args) {
 		Ship boat = new Ship();
@@ -41,25 +51,25 @@ public class Ship {
 	 * A variable that keeps track of the position of the ship on the x-axis,
 	 * expressed in km.
 	 */
-	private double xCoord;
+	private double xCoord = 0;
 	
 	/**
 	* A variable that keeps track of the position of the ship on the y-axis,
 	* expressed in km.
 	*/
-	public double yCoord;
+	public double yCoord = 0;
 	
 	/**
 	 * A variable that keeps track of the velocity of the ship along the x-axis,
 	 * expressed in km/s.
 	 */
-	public double xVelocity;
+	public double xVelocity = 0;
 	
 	/**
 	 * A variable that keeps track of the velocity of the ship along the y-axis,
 	 * expressed in km/s.
 	 */
-	public double yVelocity;
+	public double yVelocity = 0;
 	
 	/**
 	 * A variable that represents the minimum radius of the ship.
@@ -70,19 +80,19 @@ public class Ship {
 	 * A variable that represents the radius of the ship, expressed in km.
 	 * This radius must be equal or larger than the minimum radius.
 	 */
-	public double RADIUS; 
+	public double radius = MIN_RADIUS; 
 	
 	/**
 	 * A variable that keeps track of the orientation of the ship, in radians. This 
 	 * variable must always be a value between 0 and 2*PI.
 	 */
-	public double orientation;
+	public double orientation = 0;
 	
 	/**
 	 * A variable that represents the speed limit which the speed of the ship
 	 * shall not exceed.
 	 */
-	private final double SPEED_LIMIT = 300000; 
+	public static final double SPEED_LIMIT = 300000; 
 	
 	
 	/**
@@ -135,12 +145,7 @@ public class Ship {
 		
 		double speed = Math.sqrt(Math.pow(getXVelocity(), 2) + Math.pow(getYVelocity(), 2));
 		
-		//The if class might be unnecessary because the thrust  can never cause
-		// a velocity higher than the SPEED_LIMIT. 
-		if (speed < SPEED_LIMIT)
-			return speed;
-		else
-			return SPEED_LIMIT;
+		return speed;
 	}
 	
 	/**
@@ -204,7 +209,7 @@ public class Ship {
 	 * 		   than the minimum radius.
 	 * 		|  result == (radius >= MIN_RADIUS)
 	 */
-	public boolean isValidRadius(double radius){
+	public static boolean isValidRadius(double radius){
 		return radius >= MIN_RADIUS;
 	}
 	
@@ -217,7 +222,7 @@ public class Ship {
 	public void setRadius(double newRadius) throws IllegalArgumentException{
 		if (! isValidRadius(newRadius))
 			throw new IllegalArgumentException();
-		this.RADIUS = newRadius;
+		this.radius = newRadius;
 	}
 	
 	/**
@@ -228,7 +233,7 @@ public class Ship {
 	 */
 	@Basic
 	public double getRadius() {
-		return RADIUS;
+		return radius;
 	}
 	
 	/**
@@ -299,7 +304,7 @@ public class Ship {
 		
 		setXVelocity(xVelocity + a*Math.cos(getOrientation()));
 		setYVelocity(yVelocity + a*Math.sin(getOrientation()));
-		
+
 		if (this.getSpeed() > SPEED_LIMIT) {
 			double absSpeed = getSpeed();
 			setXVelocity((xVelocity/absSpeed)*SPEED_LIMIT);
@@ -427,7 +432,7 @@ public class Ship {
 		if (other == null)
 			throw new IllegalArgumentException("The other ship is not effective!");
 		return Math.sqrt(Math.pow(this.xCoord - other.xCoord, 2) + Math.pow(this.yCoord - other.yCoord, 2))
-			- (this.RADIUS + other.RADIUS);
+			- (this.radius + other.radius);
 	}
 	
 	/**
