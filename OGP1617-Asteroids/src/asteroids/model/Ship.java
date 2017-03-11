@@ -19,6 +19,23 @@ import be.kuleuven.cs.som.annotate.*;
  */
 public class Ship {
 	
+	/**
+	 * Initialize this new ship with default values for the coordinates, 
+	 * velocities, orientation and radius.
+	 * 
+	 * @post The x-coordinate of this new ship is equal to 0.
+	 * 	  |  new.getXCoord() == 0
+	 * @post The y-coordinate of this new ship is equal to 0.
+	 * 	  |  new.getYCoord() == 0
+	 * @post The velocity along the x-axis of this new ship is equal to 0.
+	 * 	  |  new.getXVelocity() == 0
+	 * @post The velocity along the y-axis of this new ship is equal to 0.
+	 * 	  |  new.getYVelocity() == 0
+	 * @post The orientation of this new ship is equal to 0.
+	 * 	  |  new.getOrientation() == 0
+	 * @post The radius of this new ship is equal to the minimum radius.
+	 * 	  |  new.getRadius() == MIN_RADIUS
+	 */
 	public Ship (){
 		this.setXCoord(0);
 		this.setYCoord(0);
@@ -28,14 +45,42 @@ public class Ship {
 		this.setRadius(MIN_RADIUS);
 	}
 	
+	/**
+	 * Initialize this new ship with given coordinates, velocities,
+	 * orientation and radius.
+	 * @param xCoord
+	 * 		  The x-coordinate of this new ship.
+	 * @param yCoord
+	 * 	      The x-coordinate of this new ship.
+	 * @param xVelocity
+	 *        The velocity along the x-axis of this new ship.
+	 * @param yVelocity
+	 * 	      The velocity along the x-axis of this new ship.
+	 * @param radius
+	 * 		  The radius of this new ship.
+	 * @param orientation
+	 * 		  The orientation of this new ship.
+	 * @post The x-coordinate of this new ship is equal to 0.
+	 * 	  |  new.getXCoord() == 0
+	 * @post The y-coordinate of this new ship is equal to 0.
+	 * 	  |  new.getYCoord() == 0
+	 * @post The velocity along the x-axis of this new ship is equal to 0.
+	 * 	  |  new.getXVelocity() == 0
+	 * @post The velocity along the y-axis of this new ship is equal to 0.
+	 * 	  |  new.getYVelocity() == 0
+	 * @post The orientation of this new ship is equal to 0.
+	 * 	  |  new.getOrientation() == 0
+	 * @post The radius of this new ship is equal to the minimum radius.
+	 * 	  |  new.getRadius() == MIN_RADIUS
+	 */
 	public Ship(double xCoord, double yCoord, double xVelocity,
 			double yVelocity, double radius, double orientation) {
 		this.setXCoord(xCoord);
 		this.setYCoord(yCoord);
 		this.setXVelocity(xVelocity);
 		this.setYVelocity(yVelocity);
-		this.setRadius(radius);
 		this.setOrientation(orientation);
+		this.setRadius(radius);
 	}
 		
 	public static void main(String[] args) {
@@ -183,6 +228,7 @@ public class Ship {
 	 * 	   |  new.getOrientation() = orientation
 	 * 		  
 	 */
+	@Model
 	public void setOrientation(double newOrientation) {
 		assert isValidOrientation(newOrientation);
 		this.orientation = newOrientation;
@@ -219,6 +265,7 @@ public class Ship {
 	 * 		   The given newRadius is not a valid value for the radius.
 	 * 		|  isValidRadius(newRadius)
 	 */
+	@Model
 	public void setRadius(double newRadius) throws IllegalArgumentException{
 		if (! isValidRadius(newRadius))
 			throw new IllegalArgumentException();
@@ -323,6 +370,7 @@ public class Ship {
 	 * 		   The given x-coordinate is NaN.
 	 * 	   |   newXCoord == Double.NaN
 	 */
+	@Model
 	public void setXCoord(double newXCoord) throws IllegalArgumentException{
 		if (Double.isNaN(newXCoord))
 			throw new IllegalArgumentException("NaN is not a valid coordinate!");
@@ -340,6 +388,7 @@ public class Ship {
 	 * 		   The given y-coordinate is NaN.
 	 * 	   |   newYCoord == Double.NaN
 	 */
+	@Model
 	public void setYCoord(double newYCoord) {
 		if (Double.isNaN(newYCoord))
 			throw new IllegalArgumentException("NaN is not a valid coordinate!");
@@ -377,6 +426,7 @@ public class Ship {
 	 *     |  new.getxVelocity = newXVelocity
 	 * 
 	 */
+	@Model
 	public void setXVelocity(double newXVelocity) {
 		xVelocity = newXVelocity;
 	}
@@ -391,6 +441,7 @@ public class Ship {
 	 *     |  new.getYVelocity = newYVelocity
 	 * 
 	 */
+	@Model
 	public void setYVelocity(double newYVelocity) {
 		yVelocity = newYVelocity;
 	}
