@@ -15,6 +15,8 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author Wouter Cams and Stijn Bruggeman
  * @version  0.1
+ * A link to the GitHub code depository:
+ * https://github.com/WizzardProp12/Pom
  *
  */
 public class Ship {
