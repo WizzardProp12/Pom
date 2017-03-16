@@ -2,7 +2,7 @@ package asteroids.model;
 
 import asteroids.util.ModelException;
 import be.kuleuven.cs.som.annotate.*;
-
+// TEST 6
 /**
  * A class of ships in an unbounded twodimensional space, 
  * involving coordinates, velocities, a radius and an 

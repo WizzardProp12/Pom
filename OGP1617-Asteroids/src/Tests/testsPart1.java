@@ -17,6 +17,8 @@ public class testsPart1 {
 	
 	// TEST 1
 	// TEST 2 - "Commit"
+	// TEST 3 - "Commit and push"
+	// TEST 4 - "push"................
 	
 	@Before
 	public void setUp() {
