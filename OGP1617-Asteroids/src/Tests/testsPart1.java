@@ -14,9 +14,14 @@ public class testsPart1 {
 	
 	private static final double EPSILON = 0.0001;
 	
+	
+	// TEST 1
+	// TEST 2 - "Commit"
+	
 	@Before
 	public void setUp() {
 		Ship ship = new Ship();
+	}
 		
 	public void testPosition() throws IllegalArgumentException {
 		Ship ship = new Ship();
