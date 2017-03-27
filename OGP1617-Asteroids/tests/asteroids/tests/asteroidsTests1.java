@@ -5,8 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import asteroids.model.Ship;
-import asteroids.model.Ship;
+import asteroids.model.entities.Ship;
 
 public class asteroidsTests1 {
 	private static final double EPSILON = 0.0001;

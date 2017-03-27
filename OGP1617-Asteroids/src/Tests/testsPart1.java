@@ -1,24 +1,14 @@
 package Tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
-import org.junit.Test;
 
-import asteroids.facade.Facade;
-import asteroids.model.Ship;
-import asteroids.util.ModelException;
+import asteroids.model.entities.Ship;
 
 public class testsPart1 {
 	
 	private static final double EPSILON = 0.0001;
-	
-	
-	// TEST 1
-	// TEST 2 - "Commit"
-	// TEST 3 - "Commit and push"
-	// TEST 4 - "push"................
 	
 	@Before
 	public void setUp() {
