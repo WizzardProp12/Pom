@@ -790,7 +790,7 @@ public abstract class Entity {
 	 * 		   The given argument references a null pointer.
 	 *         | other == null
 	 */
-	public double[] getEntitieCollisionPosition(Entity other) 
+	public double[] getEntityCollisionPosition(Entity other) 
 			throws IllegalStateException, NullPointerException {
 		if (this.overlaps(other) == true)
 			throw new IllegalStateException("The entities overlap.");

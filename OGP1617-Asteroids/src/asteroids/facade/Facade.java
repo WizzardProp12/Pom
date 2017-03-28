@@ -27,7 +27,7 @@ public class Facade implements IFacade, asteroids.part2.facade.IFacade {
 
 	@Override
 	public double[] getShipPosition(Ship ship) throws ModelException {
-		return ship.getPositions();
+		return ship.getPositionArray();
 	}
 
 	@Override
@@ -67,17 +67,17 @@ public class Facade implements IFacade, asteroids.part2.facade.IFacade {
 
 	@Override
 	public boolean overlap(Ship ship1, Ship ship2) throws ModelException {
-		return ship1.overlap(ship2);
+		return ship1.overlaps(ship2);
 	}
 
 	@Override
 	public double getTimeToCollision(Ship ship1, Ship ship2) throws ModelException {
-		return ship1.getTimeToCollision(ship2);
+		return ship1.getTimeToEntityCollision(ship2);
 	}
 
 	@Override
 	public double[] getCollisionPosition(Ship ship1, Ship ship2) throws ModelException {
-		return ship1.getCollisionPosition(ship2);
+		return ship1.getEntityCollisionPosition(ship2);
 	}
 
 }

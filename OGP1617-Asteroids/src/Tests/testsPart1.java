@@ -20,7 +20,7 @@ public class testsPart1 {
 		ship.setXCoord(20);
 		ship.setYCoord(30);
 			
-		double positions[] = ship.getPositions();
+		double positions[] = ship.getPositionArray();
 		System.out.println(positions[0]);
 		System.out.println(positions[1]);
 
