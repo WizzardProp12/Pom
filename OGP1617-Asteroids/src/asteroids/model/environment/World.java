@@ -193,7 +193,7 @@ public class World {
 		
 		/**
 		 * 
-		 * Return an HashSet of the Entities contained by the prime object.
+		 * Return an HashSet of the ships contained by the prime object.
 		 */
 		public HashSet<Entity> getAllShips(){
 		HashSet<Entity> Entities = new HashSet<Entity>(getEntityMap().values());
@@ -207,7 +207,7 @@ public class World {
 	
 		/**
 		 * 
-		 * Return an HashSet of the Entities contained by the prime object.
+		 * Return an HashSet of the bullets contained by the prime object.
 		 */
 	public HashSet<Entity> getAllBullets(){
 		HashSet<Entity> Entities = new HashSet<Entity>(getEntityMap().values());
