@@ -185,10 +185,34 @@ public class World {
 	}
 	
 	/**
-	 * Return an HashSet of the Entities contained by the prime object.
+	 * Return a HashSet of the Entities contained by the prime object.
 	 */
 	public HashSet<Entity> getEntities() {
 		return new HashSet<Entity>(getEntityMap().values());
+	}
+	
+	/**
+	 * Return a HashSet of the Ships contained by the prime object.
+	 */
+	public HashSet<Ship> getShips() {
+		HashSet<Ship> shipSet = new HashSet<Ship>();
+		for (Entity entity : getEntities()){
+			if (entity instanceof Ship)
+				shipSet.add((Ship) entity);
+		}
+		return shipSet;
+	}
+	
+	/**
+	 * Return a HashSet of the Bullets contained by the prime object.
+	 */
+	public HashSet<Bullet> getBullets() {
+		HashSet<Bullet> bulletSet = new HashSet<Bullet>();
+		for (Entity entity : getEntities()){
+			if (entity instanceof Bullet)
+				bulletSet.add((Bullet) entity);
+		}
+		return bulletSet;
 	}
 	
 	/**
@@ -374,22 +398,40 @@ public class World {
 		return collisionEntities;
 	}
 
-	public void advanceTime() {
+	public void advanceTime(double time) {
 		
 		// 1. Predict the first collision
-		Entity[] entityCollision = getFirstEntityCollision();
-		double timeToEntityCollision 
-					= entityCollision[0].getTimeToEntityCollision(entityCollision[1]);
+		HashSet<Entity> entities = getEntities();
 		
-		Entity wallCollision = getFirstWallCollision();
-		double timeToWallCollision = wallCollision.getTimeToWallCollision();
+		Collision firstCollision = null;
 		
-		if (timeToEntityCollision < World.DELTA_T || timeToWallCollision < World.DELTA_T) {
-			// 2.
-			// 3.
-			// 4.
+		// compare every possible combination once ( a,b == b,a )
+		for (Iterator<Entity> i = entities.iterator(); i.hasNext();) {
+			Entity entity = i.next();
+		    i.remove();
+		    
+		    Collision collision = entity.getFirstCollision(entities);
+		    
+		    if (collision.getTime() < firstCollision.getTime())
+		    	firstCollision = collision;
 		}
-		// 5.
 		
+		if (firstCollision != null && firstCollision.getTime() <= time) {
+			// 2. Advance all entities
+			for(Entity entity : getEntities())
+				entity.move(firstCollision.getTime());
+			
+			for(Ship ship : getShips())
+				ship.thrust(firstCollision.getTime());
+			
+			// 3. Resolve the collision
+			firstCollision.resolve();
+			
+			// 4.
+			
+			// 5.
+		} else {
+		// 5.
+		}
 	}
 }

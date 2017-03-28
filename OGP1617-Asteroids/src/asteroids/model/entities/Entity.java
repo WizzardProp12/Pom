@@ -1,5 +1,8 @@
 package asteroids.model.entities;
 
+import java.util.HashSet;
+import java.util.Iterator;
+
 import asteroids.model.environment.*;
 import be.kuleuven.cs.som.annotate.*;
 
@@ -645,7 +648,7 @@ public abstract class Entity {
 		return time >= 0;
 	}
 	
-	
+	// distance and overlap
 	
 	/**
 	 * Return the distance between the centres of two entities.
@@ -697,8 +700,90 @@ public abstract class Entity {
 		return getDistanceBetweenCentres(other) <= 0.99*totalRadii;
 	}
 	
+	// wallcollisions (total)
+
+	/**
+	 * Return the first collision of the entity with a wall
+	 * that will occur.
+	 * @return the type of wall collision. (String)
+	 * 		   "horizontal", "vertical" or "none"
+	 */
+	public Collision getWallCollision() {
+		if (getWorld() == null || (getXVelocity() == 0 && getYVelocity() == 0))
+			return null;
+		
+		CollisionType type;
+		double time;
+		
+		double timeToRightCollision = (getXVelocity() > 0) 
+									? (getWorld().getWidth() - getXCoord() - getRadius()) / getXVelocity()
+									: Double.POSITIVE_INFINITY;
+		time = timeToRightCollision;
+		type = CollisionType.rightWall;
+		
+		double timeToLeftCollision = (getXVelocity() < 0)
+									? (getXCoord() - getRadius()) / -getXVelocity()
+									: Double.POSITIVE_INFINITY;
+		if (time > timeToLeftCollision) {
+			time = timeToLeftCollision;
+			type = CollisionType.leftWall;
+		}
+		double timeToTopCollision = (getYVelocity() > 0)
+									? (getWorld().getHeight() - getYCoord() - getRadius()) / getYVelocity()
+									: Double.POSITIVE_INFINITY;
+		if (time > timeToTopCollision) {
+			time = timeToTopCollision;
+			type = CollisionType.topWall;
+		}
+		double timeToBottomCollision = (getYVelocity() < 0)
+									? (getYCoord() - getRadius()) / -getYVelocity()
+									: Double.POSITIVE_INFINITY;
+		if (time > timeToBottomCollision) {
+			time = timeToBottomCollision;
+			type = CollisionType.bottomWall;
+		}
+		
+		return new Collision(type, time, this);
+	}
 	
+	/**
+	 * Return the duration before the prime object will collide with a world border.
+	 * @throws NullPointerException
+	 * 		   If the prime object has no reference to a world.
+	 */
+	public double getTimeToWallCollision() {
+		Collision collision = getWallCollision();
+		if (collision == null)
+			return Double.POSITIVE_INFINITY;
+		else
+			return collision.getTime();
+	}
+
+	/**
+	 * Bounce the entity of a horizontal or vertical wall.
+	 * @effect If the entity bounces with a vertical wall, negate the x velocity
+	 * 		 | new getXVelocity() == -getXVelocity()
+	 * @effect If the entity bounces with a horizontal wall, negate the y velocity
+	 * 		 | new getYVelocity() == -getYVelocity()
+	 */
+	public void wallBounce(CollisionType type) {
+		if (type == CollisionType.bottomWall || type == CollisionType.topWall)
+			setYVelocity(-getYVelocity());
+		else if (type == CollisionType.leftWall || type == CollisionType.rightWall)
+			setXVelocity(-getXVelocity());
+	}
 	
+	// entitycollisions (total)
+	
+	/**
+	 * Return the collision of the entity with another entity
+	 * @param other
+	 * 		| A reference to the other entity.
+	 */
+	public Collision getEntityCollision(Entity other) {
+		double time = getTimeToEntityCollision(other);
+		return new Collision(CollisionType.entity, time, this, other);
+	}
 	
 	/**
 	 * Return the time it will take for this entity to collide with the other entity.
@@ -740,30 +825,6 @@ public abstract class Entity {
 		return time;
 	}
 	
-	/**
-	 * Return the duration before the prime object will collide with a world border.
-	 * @throws NullPointerException
-	 * 		   If the prime object has no reference to a world.
-	 */
-	public double getTimeToWallCollision() throws NullPointerException {
-		if (getWorld() == null)
-			throw new NullPointerException("the Entity is not assigned to a world.");
-		
-		if (getXVelocity() == 0 && getYVelocity() == 0)
-			return Double.POSITIVE_INFINITY;
-		
-		// variable x = (expression) ? value if true : value if false
-		double timeToVerticalCollision = (getXVelocity() > 0)
-						? (getWorld().getWidth() - getXCoord() - getRadius())/getXVelocity()
-						: (getXCoord() - getRadius())/getXVelocity();
-		double timeToHorizontalCollision = (getYVelocity() > 0)
-						? (getWorld().getHeight() - getYCoord() - getRadius())/getYVelocity()
-						: (getYCoord() - getRadius())/getYVelocity();
-		return (timeToVerticalCollision < timeToHorizontalCollision)
-						? timeToVerticalCollision
-						: timeToHorizontalCollision;
-	}
-
 	/**
 	 * Return the position where the entities will collide.
 	 * @param other
@@ -821,5 +882,55 @@ public abstract class Entity {
 		collisionPosition[1] = collisionY;
 		return collisionPosition;
 	}
-
+	
+	// both
+	
+	/**
+	 * Return the first collision that will occur for the prime entity
+	 * for the given entities and the walls of the world.
+	 * @param entities
+	 * 		| The entities to check.
+	 * @return The first collision that will occur (with a wall or another entity).
+	 */
+	public Collision getFirstCollision(HashSet<Entity> entities) {
+		// wall
+		Collision collision = getWallCollision();
+		
+		// entities
+		for (Iterator<Entity> i = entities.iterator(); i.hasNext();) {
+			Entity other = i.next();
+			if (other != null && getWorld() == other.getWorld()) {
+				Collision currentCollision = getEntityCollision(other);
+				if (currentCollision == null || collision.getTime() > currentCollision.getTime())
+					collision = currentCollision;
+			}
+		}
+		return collision;
+	}
+	
+	/**
+	 * Return the first collision that will occur for the prime entity
+	 * in that entities world.
+	 * @return The first collision that will occur (with a wall or another entity).
+	 */
+	public Collision getFirstCollision() {
+		if (getWorld() == null)
+			return null;
+		else {
+			HashSet<Entity> entities = getWorld().getEntities();
+			return getFirstCollision(entities);
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * Destroy the entity
+	 */
+	public void destroy() {
+		if (getWorld() != null) {
+			getWorld().remove(this);
+		}
+	}
 }

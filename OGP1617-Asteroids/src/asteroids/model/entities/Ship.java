@@ -311,16 +311,23 @@ public class Ship extends Entity{
 	 * @param bullet
 	 * @return
 	 */
-	public boolean canHaveAsBullet(Bullet bullet) throws IllegalArgumentException{
-		return false;
+	public boolean canHaveAsBullet(Bullet bullet) {
+		if (bullet == null)
+			return true;
+		else
+			return bullet.getRadius() < 0.1*getRadius();
 	}
 	
 	/**
 	 * Set the bullet type of the ship.
 	 * @see implementation...
 	 */
-	public void setBullet(Bullet bullet) {
-		this.bullet = bullet;
+	public void setBullet(Bullet bullet) throws IllegalArgumentException {
+		if (! canHaveAsBullet(bullet))
+				throw new IllegalArgumentException(
+						"prime object cannot have the given argument as bullet");
+		else
+			this.bullet = bullet;
 	}
 	
 	
@@ -401,4 +408,61 @@ public class Ship extends Entity{
 		removeBullet();
 	}
 		
+	// COLLISIONS
+	
+	/**
+	 * Collide the ship with another entity.
+	 */
+	public void collide(Entity entity) {
+		if (entity instanceof Ship)
+			collide((Ship) entity);
+		else if (entity instanceof Bullet)
+			collide((Bullet) entity);
+	}
+	
+	/**
+	 * Collide the ship with another. The ships bounce of
+	 * eachother and the new velocities are calculated
+	 * based on the mass and velocities of the ships.
+	 */
+	public void collide(Ship other) {
+		double deltaX = getXCoord() - other.getXCoord();
+		double deltaY = getYCoord() - other.getYCoord();
+		
+		double deltaVX = getXVelocity() - other.getXVelocity();
+		double deltaVY = getYVelocity() - other.getYVelocity();
+		
+		double totalRadii = getRadius() + other.getRadius();
+		
+		double J = (2 * getTotalMass() * other.getTotalMass() *
+									Math.sqrt(deltaX * deltaVX + deltaY * deltaVY))
+					/ (totalRadii * (getTotalMass() + other.getTotalMass()));
+		double Jx = J*deltaX/totalRadii;
+		double Jy = J*deltaY/totalRadii;
+		
+		double[] velocities1 = limitSpeed(getXVelocity() + Jx/getTotalMass(), 
+											getYVelocity() + Jy/getTotalMass());
+		double[] velocities2 = limitSpeed(other.getXVelocity() - Jx/other.getTotalMass(),
+											other.getYVelocity() - Jy/other.getTotalMass());
+		
+		setXVelocity(velocities1[0]);
+		setYVelocity(velocities1[1]);
+		other.setXVelocity(velocities2[0]);
+		other.setYVelocity(velocities2[1]);
+	}
+	
+	/**
+	 * Collide the ship with a bullet.
+	 */
+	public void collide(Bullet bullet) {
+		if (bullet.getShip() == this) {
+			addBullet();
+		} else {
+			destroy();
+		}
+		bullet.destroy();
+	}
+	
+	
+	
 }

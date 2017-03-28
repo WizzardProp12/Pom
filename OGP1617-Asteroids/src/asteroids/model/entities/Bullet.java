@@ -1,6 +1,5 @@
 package asteroids.model.entities;
 
-import asteroids.model.environment.World;
 import be.kuleuven.cs.som.annotate.*;
 
 public class Bullet extends Entity{
@@ -12,7 +11,6 @@ public class Bullet extends Entity{
 		super(xCoord, yCoord, xVelocity, yVelocity, radius);
 		if (canHaveAsShip(ship))
 			setShip(ship);
-		setNbBounces(0);
 	}
 	
 	public Bullet(double xCoord, double yCoord, double xVelocity, double yVelocity, 
@@ -126,28 +124,64 @@ public class Bullet extends Entity{
 		this.ship = ship;
 	}
 	
+	// COLLISION
+	
+	/**
+	 * Collide the bullet with another entity.
+	 */
+	public void collide(Entity entity) throws IllegalArgumentException {
+		if (entity instanceof Ship) {
+			((Ship) entity).collide(this);
+		} else if (entity instanceof Bullet) {
+			destroy();
+			entity.destroy();
+		} else
+			throw new IllegalArgumentException("given argument must be a Bullet or Ship");
+	}
+	
 	// BOUNCES ()
+	
+	/**
+	 * The amount of times a bullet can bounce of a wall.
+	 */
+	private final int MAX_BOUNCES = 2;
+	
+	/**
+	 * Return the maximum amount of bounces a bullet can make.
+	 */
+	public int getMaxNbBounces() {
+		return MAX_BOUNCES;
+	}
 	
 	/**
 	 * The amount of times the bullet has bounced of a wall.
 	 */
-	private double nbBounces = 0;
+	private int nbBounces = 0;
 	
 	/**
 	 * Get how much times the bullet has bounced of a wall.
 	 * @see implementation...
 	 */
-	public double getNbBounces() {
+	public int getNbBounces() {
 		return this.nbBounces;
 	}
 	
 	/**
-	 * Set how much times the bullet has bounced of a wall
-	 * @see implementation...
+	 * Count a bounce of the bullet.
 	 */
-	private void setNbBounces(double bounces) {
-		this.nbBounces = bounces;
+	public void countBounce() {
+		nbBounces++;
 	}
 	
-	private void bounce() {}
+	/**
+	 * Bounce the bullet of a wall.
+	 */
+	public void wallBounce(Collision collision) {
+		if (getNbBounces() == getMaxNbBounces()) {
+			destroy();
+		} else {
+			super.wallBounce(collision.getCollisionType());
+			countBounce();
+		}
+	}
 }
