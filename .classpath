@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="OGP1617-Asteroids/src"/>
+	<classpathentry kind="src" path="OGP1617-Asteroids/src-provided"/>
+	<classpathentry kind="src" path="OGP1617-Asteroids/tests"/>
+	<classpathentry kind="lib" path="OGP1617-Asteroids/lib/AnnotationsDoclets.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="OGP1617-Asteroids/bin"/>
+</classpath>
