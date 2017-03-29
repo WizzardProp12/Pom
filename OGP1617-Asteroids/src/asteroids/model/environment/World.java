@@ -191,22 +191,22 @@ public class World {
 		return new HashSet<Entity>(getEntityMap().values());
 	}
 		
-		/**
-		 * 
-		 * Return an HashSet of the ships contained by the prime object.
-		 */
-		public HashSet<Entity> getAllShips(){
+	/**
+	* 
+	* Return an HashSet of the ships contained by the prime object.
+	*/
+	public HashSet<Entity> getAllShips(){
 		HashSet<Entity> Entities = new HashSet<Entity>(getEntityMap().values());
 		HashSet<Entity> allShips = new HashSet<Entity>();
 		for (Entity entity : Entities){
 			if (entity instanceof Ship)
 				allShips.add(entity);
 		}
-		return allShips;
+	return allShips;
 	}
 	
-		/**
-		 * 
+	/**
+		* 
 		 * Return an HashSet of the bullets contained by the prime object.
 		 */
 	public HashSet<Entity> getAllBullets(){
