@@ -11,6 +11,8 @@ import asteroids.model.entities.Ship;
 public class asteroidsTests1 {
 	private static final double EPSILON = 0.0001;
 	
+//------------SHIP TESTS-----------------
+	
 	@Before
 	public void setUp() {
 		Ship ship = new Ship();
@@ -21,11 +23,9 @@ public class asteroidsTests1 {
 		Ship ship = new Ship();
 		ship.setXCoord(-20);
 		ship.setYCoord(30);
-			
-		Position positions = ship.getPosition();
 
-		assertEquals(-20, positions[0], EPSILON);
-		assertEquals(30, positions[1], EPSILON);
+		assertEquals(-20, ship.getXCoord(), EPSILON);
+		assertEquals(30, ship.getYCoord(), EPSILON);
 	
 	}
 	
@@ -35,10 +35,9 @@ public class asteroidsTests1 {
 		ship.setXVelocity(-10);
 		ship.setYVelocity(30);
 		
-		double velocities[] = ship.getVelocities();
 		
-		assertEquals(-10, velocities[0], EPSILON);
-		assertEquals(30, velocities[1], EPSILON);
+		assertEquals(-10, ship.getXVelocity(), EPSILON);
+		assertEquals(30, ship.getYVelocity(), EPSILON);
 		
 	}
 	
@@ -48,10 +47,9 @@ public class asteroidsTests1 {
 		ship.setXVelocity(Ship.SPEED_LIMIT);
 		ship.setYVelocity(0);
 		ship.thrust(10);
-		double velocities[] = ship.getVelocities();
 		
-		assertEquals(Ship.SPEED_LIMIT, velocities[0], EPSILON);
-		assertEquals(0, velocities[1], EPSILON);
+		assertEquals(Ship.SPEED_LIMIT, ship.getXVelocity(), EPSILON);
+		assertEquals(0, ship.getYVelocity(), EPSILON);
 		
 	}
 	
@@ -133,11 +131,11 @@ public class asteroidsTests1 {
 		Ship ship2 = new Ship(0,30,0,0,10,0);
 		Ship ship3 = new Ship(10,0,0,0,50,0);
 									
-		assertFalse(ship1.overlap(ship2));
-		assertTrue(ship2.overlap(ship3));
-		assertTrue(ship1.overlap(ship3));
+		assertFalse(ship1.overlaps(ship2));
+		assertTrue(ship2.overlaps(ship3));
+		assertTrue(ship1.overlaps(ship3));
 		
-		ship3.overlap(null); // throws an IllegalArgumentException
+		ship3.overlaps(null); // throws an IllegalArgumentException
 	
 	}
 	
@@ -150,15 +148,15 @@ public class asteroidsTests1 {
 
 		
 		
-		assertEquals(ship1.getTimeToCollision(ship2), 10, EPSILON);
-		assertEquals(ship2.getTimeToCollision(ship3), 18, EPSILON);
-		assertEquals(ship3.getTimeToCollision(ship1), 10, EPSILON);
-		assertEquals(ship3.getTimeToCollision(ship4), Double.POSITIVE_INFINITY
+		assertEquals(ship1.getTimeToEntityCollision(ship2), 10, EPSILON);
+		assertEquals(ship2.getTimeToEntityCollision(ship3), 18, EPSILON);
+		assertEquals(ship3.getTimeToEntityCollision(ship1), 10, EPSILON);
+		assertEquals(ship3.getTimeToEntityCollision(ship4), Double.POSITIVE_INFINITY
 		, EPSILON);
 				
 		
 		
-		ship3.getTimeToCollision(null); // throws an IllegalArgumentException
+		ship3.getTimeToEntityCollision(null); // throws an IllegalArgumentException
 	
 	}
 	
@@ -169,16 +167,16 @@ public class asteroidsTests1 {
 		Ship ship3 = new Ship(0,25,0,-0.5,10,0);
 		
 		
-		assertEquals(ship1.getCollisionPosition(ship2)[0], 30, EPSILON);
-		assertEquals(ship1.getCollisionPosition(ship2)[1], 0, EPSILON);
-		assertEquals(ship2.getCollisionPosition(ship3)[0], -6, EPSILON);
-		assertEquals(ship2.getCollisionPosition(ship3)[1], 24, EPSILON);
-		assertEquals(ship3.getCollisionPosition(ship1)[0], 0, EPSILON);
-		assertEquals(ship3.getCollisionPosition(ship1)[1], -10, EPSILON);
+		assertEquals(ship1.getEntityCollisionPosition(ship2)[0], 30, EPSILON);
+		assertEquals(ship1.getEntityCollisionPosition(ship2)[1], 0, EPSILON);
+		assertEquals(ship2.getEntityCollisionPosition(ship3)[0], -6, EPSILON);
+		assertEquals(ship2.getEntityCollisionPosition(ship3)[1], 24, EPSILON);
+		assertEquals(ship3.getEntityCollisionPosition(ship1)[0], 0, EPSILON);
+		assertEquals(ship3.getEntityCollisionPosition(ship1)[1], -10, EPSILON);
 
 
 		
-		ship1.getCollisionPosition(null); // throws an IllegalArgumentException
+		ship1.getEntityCollisionPosition(null); // throws an IllegalArgumentException
 	}
 	
 	@Test(expected = IllegalStateException.class)
@@ -186,8 +184,10 @@ public class asteroidsTests1 {
 		Ship ship1 = new Ship(0,0,0,0,10,0);
 		Ship ship2 = new Ship(0,0,0,0,20,0);
 		System.out.println("pass");
-		ship1.getCollisionPosition(ship2); // throws an IllegalStateException
+		ship1.getEntityCollisionPosition(ship2); // throws an IllegalStateException
 	}
+	
+	
 
 	
 }
