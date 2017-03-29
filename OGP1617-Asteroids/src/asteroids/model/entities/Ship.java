@@ -96,7 +96,7 @@ public class Ship extends Entity{
 	 * @see implementation...
 	 */
 	public Ship(double xCoord, double yCoord, double xVelocity, double yVelocity) {
-		this(xCoord, yCoord, xVelocity, yVelocity, Entity.MIN_RADIUS, 0, null);
+		this(xCoord, yCoord, xVelocity, yVelocity, Entity.getMinRadius(), 0, null);
 	}
 	
 	/**
@@ -105,7 +105,7 @@ public class Ship extends Entity{
 	 * @see implementation...
 	 */
 	public Ship(double xCoord, double yCoord) {
-		this(xCoord, yCoord, 0, 0, Entity.MIN_RADIUS, 0, null);
+		this(xCoord, yCoord, 0, 0, Entity.getMinRadius(), 0, null);
 	}
 	
 	/**
@@ -114,7 +114,7 @@ public class Ship extends Entity{
 	 * @see implementation...
 	 */
 	public Ship() {
-		this(0, 0, 0, 0, Entity.MIN_RADIUS, 0, null);
+		this(0, 0, 0, 0, Entity.getMinRadius(), 0, null);
 	}
 	
 	// EQUALS
@@ -387,7 +387,7 @@ public class Ship extends Entity{
 		
 		double bulletRadius;
 		if (getBullet() == null)
-			bulletRadius = Bullet.MIN_RADIUS;
+			bulletRadius = Bullet.getMinRadius();
 		else
 			bulletRadius = getBullet().getRadius();
 		
@@ -411,14 +411,7 @@ public class Ship extends Entity{
 	// COLLISIONS
 	
 	/**
-	 * Collide the ship with another entity.
-	 */
-	public void collide(Entity entity) {
-		if (entity instanceof Ship)
-			collide((Ship) entity);
-		else if (entity instanceof Bullet)
-			collide((Bullet) entity);
-	}
+	
 	
 	/**
 	 * Collide the ship with another. The ships bounce of

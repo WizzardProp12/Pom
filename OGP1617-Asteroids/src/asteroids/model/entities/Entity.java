@@ -102,7 +102,7 @@ public abstract class Entity {
 	 * @see implementation...
 	 */
 	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity) {
-		this(xCoord, yCoord, xVelocity, yVelocity, MIN_RADIUS, null);
+		this(xCoord, yCoord, xVelocity, yVelocity, Entity.getMinRadius(), null);
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public abstract class Entity {
 	 * @see implementation...
 	 */
 	public Entity(double xCoord, double yCoord) {
-		this(xCoord, yCoord, 0, 0, MIN_RADIUS, null);
+		this(xCoord, yCoord, 0, 0, Entity.getMinRadius(), null);
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public abstract class Entity {
 	 * @see implementation...
 	 */
 	public Entity() {
-		this(0, 0, 0, 0, MIN_RADIUS, null);
+		this(0, 0, 0, 0, Entity.getMinRadius(), null);
 	}
 	
 	
@@ -324,11 +324,19 @@ public abstract class Entity {
 	
 	// VELOCITIES (total)
 	
+	// TODO: moet speed limit static zijn?
 	/**
 	 * A static final variable that represents the speed limit.
 	 */
-	public static final double SPEED_LIMIT = 300000;
+	private final double SPEED_LIMIT = 300000;
 	
+	/**
+	 * Return the speed limit of the entity.
+	 */
+	@Basic @Immutable
+	public static double getSpeedLimit() {
+		return this.SPEED_LIMIT;
+	}
 	
 	/**
 	 * The velocity of the entity along the x-axis.
@@ -437,9 +445,9 @@ public abstract class Entity {
 	public static double[] limitSpeed(double xVelocity, double yVelocity) {
 		double newVelocities[] = new double[2];
 		double absVelocity = getAbsVelocity(xVelocity, yVelocity);
-		if (absVelocity > SPEED_LIMIT) {
-			newVelocities[0] = xVelocity*(absVelocity/SPEED_LIMIT);
-			newVelocities[1] = yVelocity*(absVelocity/SPEED_LIMIT);
+		if (absVelocity > getSpeedLimit()) {
+			newVelocities[0] = xVelocity*(absVelocity/getSpeedLimit());
+			newVelocities[1] = yVelocity*(absVelocity/getSpeedLimit());
 			return newVelocities;
 		}
 		newVelocities[0] = xVelocity;
@@ -453,7 +461,15 @@ public abstract class Entity {
 	/**
 	 * The minimum radius of the entity.
 	 */
-	public static final double MIN_RADIUS = 10;
+	private final double MIN_RADIUS = 10;
+	
+	/**
+	 * Return the minimum radius of every entity.
+	 */
+	@Basic @Immutable
+	public static double getMinRadius() {
+		return MIN_RADIUS;
+	}
 	
 	
 	/**
@@ -467,6 +483,7 @@ public abstract class Entity {
 	 * @invar The radius has a minimum value.
 	 * 		| getRadius() >= MIN_RADIUS
 	 */
+	@Basic @Immutable
 	public double getRadius() {
 		return this.radius;
 	}
@@ -487,7 +504,6 @@ public abstract class Entity {
 	 * 		   The given radius is too small.
 	 * 		 | radius < MIN_RADIUS
 	 */
-	@Basic @Raw
 	protected void setRadius(double radius) throws IllegalArgumentException {
 		if (! canHaveAsRadius(radius)) {
 			throw new IllegalArgumentException("Radius is too small.");
@@ -507,6 +523,7 @@ public abstract class Entity {
 	 * Return the container in which the entity is located.
 	 * @see implementation...
 	 */
+	@Basic
 	public World getWorld() {
 		return this.world;
 	}
@@ -546,7 +563,7 @@ public abstract class Entity {
 	 * entity and 32 numbers long.
 	 * @return An int between 0 and 
 	 */
-	@Override
+	@Override @Basic
     public int hashCode() {
 		Position position = getPosition();
         return position.hashCode();
@@ -558,6 +575,7 @@ public abstract class Entity {
 	 * 		  The other entity.
 	 * @return see implementation...
 	 */
+	@Basic
 	public boolean equals(Object other){
 		if (! (other instanceof Entity))
 			return false;
@@ -577,6 +595,7 @@ public abstract class Entity {
 	 * @Return ...
 	 * 		 | result == name + hashCode
 	 */
+	@Basic
 	public String toString() {
 		String hashCode = String.valueOf(hashCode());
 		return name + " (hc:" + hashCode + ")";
@@ -622,6 +641,7 @@ public abstract class Entity {
 	 * Return the density of the entity
 	 * @see implementation...
 	 */
+	@Basic @Immutable
 	public double getDensity() {
 		return this.DENSITY;
 	}
@@ -631,6 +651,7 @@ public abstract class Entity {
 	 * Return the mass of the entity.
 	 * @return (4/3)*PI*(radius^3)*DENSITY
 	 */
+	@Basic @Immutable
 	public double getMass() {
 		double mass = (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
 		return mass;
@@ -640,6 +661,23 @@ public abstract class Entity {
 	// COLLISIONS (defensive)
 	
 	/**
+	 * Collide the entity with another entity.
+	 * @throws IllegalArgumentException
+	 * 		   If the given argument is not a ship or bullet.
+	 * 		 | !(entity instanceof Ship) && !(entity instanceof Bullet)
+	 */
+	public void collide(Entity entity) throws IllegalArgumentException {
+		if (entity instanceof Ship) {
+			collide((Ship) entity);
+		} else if (entity instanceof Bullet) {
+			collide((Bullet) entity);
+		} else
+			throw new IllegalArgumentException("given argument must be a Bullet or Ship");
+	}
+	
+	// distance and overlap
+
+	/**
 	 * Check whether the given time is valid.
 	 * @see implementation...
 	 */
@@ -647,8 +685,6 @@ public abstract class Entity {
 	public static boolean isValidTime(double time) {
 		return time >= 0;
 	}
-	
-	// distance and overlap
 	
 	/**
 	 * Return the distance between the centres of two entities.
@@ -886,8 +922,8 @@ public abstract class Entity {
 	// both
 	
 	/**
-	 * Return the first collision that will occur for the prime entity
-	 * for the given entities and the walls of the world.
+	 * Return the first collision with a wall or one of the given 
+	 * entities that will occur for the prime entity.
 	 * @param entities
 	 * 		| The entities to check.
 	 * @return The first collision that will occur (with a wall or another entity).
@@ -909,8 +945,8 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Return the first collision that will occur for the prime entity
-	 * in that entities world.
+	 * Return the first collision with a wall or one of the worlds
+	 * entities that will occur for the prime entity.
 	 * @return The first collision that will occur (with a wall or another entity).
 	 */
 	public Collision getFirstCollision() {
@@ -923,11 +959,10 @@ public abstract class Entity {
 	}
 	
 	
-	
-	
 	/**
-	 * Destroy the entity
+	 * Destroy the entity by removing it from its current world.
 	 */
+	@Basic
 	public void destroy() {
 		if (getWorld() != null) {
 			getWorld().remove(this);

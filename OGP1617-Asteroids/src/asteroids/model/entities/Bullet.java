@@ -19,15 +19,15 @@ public class Bullet extends Entity{
 	}
 	
 	public Bullet(double xCoord, double yCoord, double xVelocity, double yVelocity) {
-		this(xCoord, yCoord, xVelocity, yVelocity, Entity.MIN_RADIUS, null);
+		this(xCoord, yCoord, xVelocity, yVelocity, Entity.getMinRadius(), null);
 	}
 	
 	public Bullet(double xCoord, double yCoord) {
-		this(xCoord, yCoord, 0, 0, Entity.MIN_RADIUS, null);
+		this(xCoord, yCoord, 0, 0, Entity.getMinRadius(), null);
 	}
 	
 	public Bullet() {
-		this(0, 0, 0, 0, Entity.MIN_RADIUS, null);
+		this(0, 0, 0, 0, Entity.getMinRadius(), null);
 	}
 	
 	
@@ -64,9 +64,9 @@ public class Bullet extends Entity{
 	public boolean canHaveAsRadius(double radius) {
 		if (hasShip()) {
 			double shipRadius = getShip().getRadius();
-			return (radius >= MIN_RADIUS && radius >= 0.1*shipRadius);
+			return (radius >= getMinRadius() && radius >= 0.1*shipRadius);
 		} else
-			return radius >= MIN_RADIUS;
+			return radius >= getMinRadius();
 	}
 	
 	// MASS (total)
@@ -124,19 +124,23 @@ public class Bullet extends Entity{
 		this.ship = ship;
 	}
 	
-	// COLLISION
+	// COLLISIONS
+	
+	
 	
 	/**
-	 * Collide the bullet with another entity.
+	 * Collide the bullet with a ship.
 	 */
-	public void collide(Entity entity) throws IllegalArgumentException {
-		if (entity instanceof Ship) {
-			((Ship) entity).collide(this);
-		} else if (entity instanceof Bullet) {
-			destroy();
-			entity.destroy();
-		} else
-			throw new IllegalArgumentException("given argument must be a Bullet or Ship");
+	public void collide (Ship ship) {
+		ship.collide(this);
+	}
+	
+	/**
+	 * Collide the bullet with another bullet.
+	 */
+	public void collide(Bullet other) {
+		destroy();
+		other.destroy();
 	}
 	
 	// BOUNCES ()

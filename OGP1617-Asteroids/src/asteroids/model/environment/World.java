@@ -326,6 +326,7 @@ public class World {
 	 * @Return ...
 	 * 		 | result == name + hashCode
 	 */
+	@Basic
 	public String toString() {
 		String size = "width:"+String.valueOf(getWidth()) 
 						+ " height:"+String.valueOf(getHeight());
