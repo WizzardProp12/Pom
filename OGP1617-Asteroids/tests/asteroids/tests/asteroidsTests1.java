@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import asteroids.model.entities.Position;
 import asteroids.model.entities.Ship;
 
 public class asteroidsTests1 {
@@ -21,7 +22,7 @@ public class asteroidsTests1 {
 		ship.setXCoord(-20);
 		ship.setYCoord(30);
 			
-		double positions[] = ship.getPositions();
+		Position positions = ship.getPosition();
 
 		assertEquals(-20, positions[0], EPSILON);
 		assertEquals(30, positions[1], EPSILON);
