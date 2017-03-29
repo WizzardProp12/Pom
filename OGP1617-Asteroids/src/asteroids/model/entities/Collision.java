@@ -173,7 +173,6 @@ public class Collision {
 	// RESOLVE COLLISION
 	
 	public void resolve() {
-		
 		// Entity - Entity collision
 		if (getCollisionType() == CollisionType.entity) {
 			if (getEntity() instanceof Ship)
@@ -184,7 +183,6 @@ public class Collision {
 		} else {
 			getEntity().wallBounce(getCollisionType());
 		}
-		
 	}
 
 	

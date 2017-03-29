@@ -338,11 +338,17 @@ public class World {
 	/**
 	 * Time interval of world evolutions.
 	 */
-	public static final double DELTA_T = 3;
+	private final double DELTA_T = 3;
+	
+	/**
+	 * Return the time interval of world evolutions.
+	 */
+	public double getDeltaT() {
+		return DELTA_T;
+	}
 	
 	/**
 	 * Return the Entity that is going to collide with a wall first.
-	 * @return
 	 */
 	public Entity getFirstWallCollision() {
 		
@@ -397,41 +403,59 @@ public class World {
 		}
 		return collisionEntities;
 	}
-
+	
+	
+	/**
+	 * Advance the time of the prime object.
+	 */
 	public void advanceTime(double time) {
 		
-		// 1. Predict the first collision
+		// predict the first collision
 		HashSet<Entity> entities = getEntities();
 		
 		Collision firstCollision = null;
 		
-		// compare every possible combination once ( a,b == b,a )
 		for (Iterator<Entity> i = entities.iterator(); i.hasNext();) {
 			Entity entity = i.next();
 		    i.remove();
 		    
 		    Collision collision = entity.getFirstCollision(entities);
 		    
-		    if (collision.getTime() < firstCollision.getTime())
+		    if (firstCollision == null || collision.getTime() < firstCollision.getTime())
 		    	firstCollision = collision;
 		}
 		
 		if (firstCollision != null && firstCollision.getTime() <= time) {
-			// 2. Advance all entities
+			// Advance all entities
 			for(Entity entity : getEntities())
 				entity.move(firstCollision.getTime());
 			
+			// Update velocities
 			for(Ship ship : getShips())
 				ship.thrust(firstCollision.getTime());
 			
-			// 3. Resolve the collision
+			// Resolve the collision
 			firstCollision.resolve();
 			
-			// 4.
+			// Advance time for the remaining time
+			advanceTime(getDeltaT() - firstCollision.getTime());
 			
-			// 5.
 		} else {
-		// 5.
+		// Advance all entities
+		for(Entity entity : getEntities())
+			entity.move(getDeltaT());
+		
+		// Update velocities
+		for(Ship ship : getShips())
+			ship.thrust(getDeltaT());
 		}
 	}
+	
+	/**
+	 * Advance the time of the prime object.
+	 */
+	public void advanceTime() {
+		advanceTime(getDeltaT());
+	}
+	
 }
