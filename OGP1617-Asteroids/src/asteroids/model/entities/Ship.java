@@ -220,6 +220,11 @@ public class Ship extends Entity{
 		return totalMass;
 	}
 	
+	public void main(String args[]){
+		Ship ship = new Ship();
+		System.out.println(ship.getNbBullets());
+	}
+	
 	
 	// ACCELERATION (total)
 
