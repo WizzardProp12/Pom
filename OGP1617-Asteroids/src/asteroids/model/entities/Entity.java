@@ -485,7 +485,7 @@ public abstract class Entity {
 	 * 		 | radius < MIN_RADIUS
 	 */
 	@Basic @Raw
-	protected void setRadius(double radius) throws IllegalArgumentException {
+	public void setRadius(double radius) throws IllegalArgumentException {
 		if (! canHaveAsRadius(radius)) {
 			throw new IllegalArgumentException("Radius is too small.");
 		}
