@@ -67,7 +67,7 @@ public class Ship extends Entity{
 			double radius, double orientation, World world) {
 		super(xCoord, yCoord, xVelocity, yVelocity, radius, world);
 		setOrientation(orientation);
-		setNbBullets(15);
+		setNbBullets(0);
 	}
 	
 	/**
@@ -232,9 +232,18 @@ public class Ship extends Entity{
 	/**
 	 * Return the state of the thruster.
 	 * @return The state of the thruster.
+	 * 		 | result == true if the thruster is on
+	 * 		 | result == false if the thruster is off
 	 */
-	public boolean getThrusterState(){
-		return this.thrusterState;
+	public boolean getThrusterState() {
+		return thrusterState;
+	}
+	
+	/**
+	 * Set the state of the thruster
+	 */
+	public void setThrusterState(boolean state) {
+		thrusterState = state;
 	}
 	
 	/**
@@ -334,13 +343,13 @@ public class Ship extends Entity{
 	/**
 	 * The amount of bullets the ship carries.
 	 */
-	private double nbBullets;
+	private int nbBullets;
 	
 	/**
 	 * Returns the amount of bullets the ship carries.
 	 * @see implementation...
 	 */
-	public double getNbBullets() {
+	public int getNbBullets() {
 		return this.nbBullets;
 	}
 	
@@ -352,7 +361,7 @@ public class Ship extends Entity{
 	 * 		| if (nb < 0)
 	 * 		|	then throw IllegalArgumentException
 	 */
-	private void setNbBullets(double nb) throws IllegalArgumentException {
+	private void setNbBullets(int nb) throws IllegalArgumentException {
 		if (nb < 0) {
 			throw new IllegalArgumentException("nbBullets cannot be negative.");
 		}
@@ -451,9 +460,9 @@ public class Ship extends Entity{
 		if (bullet.getShip() == this) {
 			addBullet();
 		} else {
-			destroy();
+			terminate();
 		}
-		bullet.destroy();
+		bullet.terminate();
 	}
 	
 	

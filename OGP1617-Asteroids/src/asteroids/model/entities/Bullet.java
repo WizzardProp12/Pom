@@ -124,9 +124,8 @@ public class Bullet extends Entity{
 		this.ship = ship;
 	}
 	
+	
 	// COLLISIONS
-	
-	
 	
 	/**
 	 * Collide the bullet with a ship.
@@ -139,9 +138,10 @@ public class Bullet extends Entity{
 	 * Collide the bullet with another bullet.
 	 */
 	public void collide(Bullet other) {
-		destroy();
-		other.destroy();
+		terminate();
+		other.terminate();
 	}
+	
 	
 	// BOUNCES ()
 	
@@ -182,7 +182,7 @@ public class Bullet extends Entity{
 	 */
 	public void wallBounce(Collision collision) {
 		if (getNbBounces() == getMaxNbBounces()) {
-			destroy();
+			terminate();
 		} else {
 			super.wallBounce(collision.getCollisionType());
 			countBounce();

@@ -1,5 +1,6 @@
 package asteroids.model.entities;
 
+
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -102,7 +103,7 @@ public abstract class Entity {
 	 * @see implementation...
 	 */
 	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity) {
-		this(xCoord, yCoord, xVelocity, yVelocity, Entity.getMinRadius(), null);
+		this(xCoord, yCoord, xVelocity, yVelocity, MIN_RADIUS);
 	}
 	
 	/**
@@ -111,7 +112,7 @@ public abstract class Entity {
 	 * @see implementation...
 	 */
 	public Entity(double xCoord, double yCoord) {
-		this(xCoord, yCoord, 0, 0, Entity.getMinRadius(), null);
+		this(xCoord, yCoord, 0, 0);
 	}
 	
 	/**
@@ -120,7 +121,7 @@ public abstract class Entity {
 	 * @see implementation...
 	 */
 	public Entity() {
-		this(0, 0, 0, 0, Entity.getMinRadius(), null);
+		this(0, 0);
 	}
 	
 	
@@ -328,15 +329,16 @@ public abstract class Entity {
 	/**
 	 * A static final variable that represents the speed limit.
 	 */
-	private final double SPEED_LIMIT = 300000;
+	private final static double SPEED_LIMIT = 300000;
 	
 	/**
 	 * Return the speed limit of the entity.
 	 */
 	@Basic @Immutable
 	public static double getSpeedLimit() {
-		return this.SPEED_LIMIT;
+		return SPEED_LIMIT;
 	}
+	
 	
 	/**
 	 * The velocity of the entity along the x-axis.
@@ -401,6 +403,17 @@ public abstract class Entity {
 	
 	
 	/**
+	 * Return an array of the x and y velocities of the entity.
+	 * @return An array of the x and y velocity
+	 * 		 | result[0] == getXVelocity()
+	 * 		 | result[1] == getYVelocity()
+	 */
+	public double[] getVelocities() {
+		return new double[] {getXVelocity(), getYVelocity()};
+	}
+	
+	
+	/**
 	 * Returns the absolute velocity using the formula of the vector length
 	 * on the (xVelocity, yVelocity) vector.
 	 * @param xVelocity
@@ -456,12 +469,31 @@ public abstract class Entity {
 	}
 	
 	
+	/**
+	 * Return the position the entity will be at in a given amount of seconds
+	 */
+	public Position getFuturePosition(double time) {
+		double xCoord = getXCoord() + time*getXVelocity();
+		double yCoord = getYCoord() + time*getYVelocity();
+		return new Position(xCoord, yCoord);
+	}
+	
+	/**
+	 * Return the coordinates the entity will be at in a given amount of seconds
+	 */
+	public double[] getFutureCoordinates(double time) {
+		double xCoord = getXCoord() + time*getXVelocity();
+		double yCoord = getYCoord() + time*getYVelocity();
+		return new double[] {xCoord, yCoord};
+	}
+	
+	
 	// RADIUS (defensive)
 	
 	/**
 	 * The minimum radius of the entity.
 	 */
-	private final double MIN_RADIUS = 10;
+	private final static double MIN_RADIUS = 10;
 	
 	/**
 	 * Return the minimum radius of every entity.
@@ -794,7 +826,17 @@ public abstract class Entity {
 		else
 			return collision.getTime();
 	}
-
+	
+	/**
+	 * Return the position the entity will be in when it first hits a wall.
+	 */
+	public double[] getWallCollisionPosition() {
+		double time = getTimeToWallCollision();
+		double xCoord = getXCoord() + time*getXVelocity();
+		double yCoord = getYCoord() + time*getYVelocity();
+		return new double[] {xCoord, yCoord};
+	}
+	
 	/**
 	 * Bounce the entity of a horizontal or vertical wall.
 	 * @effect If the entity bounces with a vertical wall, negate the x velocity
@@ -861,6 +903,8 @@ public abstract class Entity {
 		return time;
 	}
 	
+	// TODO: zou dit niet de coordinaten van de entity moeten teruggeven
+	//		 ipv de coordinaten van het punt waar de entities elkaar raken.
 	/**
 	 * Return the position where the entities will collide.
 	 * @param other
@@ -959,13 +1003,28 @@ public abstract class Entity {
 	}
 	
 	
+	// TERMINATION
+	
+	/** 
+	 * A private variable storing whether the entity is terminated.
+	 */
+	private boolean isTerminated = false;
+	
 	/**
-	 * Destroy the entity by removing it from its current world.
+	 * Returns whether the entity is terminated.
+	 */
+	public boolean isTerminated() {
+		return isTerminated;
+	}
+	
+	
+	/**
+	 * Terminate the entity by removing it from its current world.
 	 */
 	@Basic
-	public void destroy() {
-		if (getWorld() != null) {
+	public void terminate() {
+		if (getWorld() != null)
 			getWorld().remove(this);
-		}
+		isTerminated = true;
 	}
 }

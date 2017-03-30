@@ -121,6 +121,10 @@ public class World {
 	}
 	
 	
+	public double[] getSize() {
+		return new double[] {getWidth(), getHeight()}; 
+	}
+	
 	// COORDINATE CHECKERS
 	
 	/**
@@ -407,11 +411,10 @@ public class World {
 	
 	
 	/**
-	 * Advance the time of the prime object.
+	 * Return the first collision that will occur in the world.
+	 * @return The first collision that will occur, null if none occurs.
 	 */
-	public void advanceTime(double time) {
-		
-		// predict the first collision
+	public Collision getFirstCollision() {
 		HashSet<Entity> entities = getEntities();
 		
 		Collision firstCollision = null;
@@ -425,6 +428,17 @@ public class World {
 		    if (firstCollision == null || collision.getTime() < firstCollision.getTime())
 		    	firstCollision = collision;
 		}
+		
+		return firstCollision;
+	}
+	
+	
+	/**
+	 * Advance the time of the prime object.
+	 */
+	public void advanceTime(double time) {
+		
+		Collision firstCollision = getFirstCollision();
 		
 		if (firstCollision != null && firstCollision.getTime() <= time) {
 			// Advance all entities
@@ -459,4 +473,30 @@ public class World {
 		advanceTime(getDeltaT());
 	}
 	
+	
+	// TERMINATION
+	
+	/** 
+	 * A private variable storing whether the world is terminated.
+	 */
+	private boolean isTerminated = false;
+	
+	/**
+	 * Returns whether the world is terminated.
+	 */
+	public boolean isTerminated() {
+		return isTerminated;
+	}
+	
+	/**
+	 * Terminate the world by removing all it's entities.
+	 */
+	@Basic
+	public void terminate() {
+		HashSet<Entity> entities = getEntities();
+		for (Entity entity : entities)
+			remove(entity);
+		isTerminated = true;
+	}
+
 }
