@@ -67,7 +67,8 @@ public class Ship extends Entity{
 			double radius, double orientation, World world) {
 		super(xCoord, yCoord, xVelocity, yVelocity, radius, world);
 		setOrientation(orientation);
-		setNbBullets(15);
+		setNbBullets(0);
+		this.bullet = bullet;
 	}
 	
 	/**
@@ -96,7 +97,7 @@ public class Ship extends Entity{
 	 * @see implementation...
 	 */
 	public Ship(double xCoord, double yCoord, double xVelocity, double yVelocity) {
-		this(xCoord, yCoord, xVelocity, yVelocity, Entity.MIN_RADIUS, 0, null);
+		this(xCoord, yCoord, xVelocity, yVelocity, Entity.getMinRadius(), 0, null);
 	}
 	
 	/**
@@ -105,7 +106,7 @@ public class Ship extends Entity{
 	 * @see implementation...
 	 */
 	public Ship(double xCoord, double yCoord) {
-		this(xCoord, yCoord, 0, 0, Entity.MIN_RADIUS, 0, null);
+		this(xCoord, yCoord, 0, 0, Entity.getMinRadius(), 0, null);
 	}
 	
 	/**
@@ -114,7 +115,7 @@ public class Ship extends Entity{
 	 * @see implementation...
 	 */
 	public Ship() {
-		this(0, 0, 0, 0, Entity.MIN_RADIUS, 0, null);
+		this(0, 0, 0, 0, Entity.getMinRadius(), 0, null);
 	}
 	
 	// EQUALS
@@ -220,10 +221,6 @@ public class Ship extends Entity{
 		return totalMass;
 	}
 	
-	public void main(String args[]){
-		Ship ship = new Ship();
-		System.out.println(ship.getNbBullets());
-	}
 	
 	
 	// ACCELERATION (total)
@@ -237,9 +234,18 @@ public class Ship extends Entity{
 	/**
 	 * Return the state of the thruster.
 	 * @return The state of the thruster.
+	 * 		 | result == true if the thruster is on
+	 * 		 | result == false if the thruster is off
 	 */
-	public boolean getThrusterState(){
-		return this.thrusterState;
+	public boolean getThrusterState() {
+		return thrusterState;
+	}
+	
+	/**
+	 * Set the state of the thruster
+	 */
+	public void setThrusterState(boolean state) {
+		thrusterState = state;
 	}
 	
 	/**
@@ -316,29 +322,36 @@ public class Ship extends Entity{
 	 * @param bullet
 	 * @return
 	 */
-	public boolean canHaveAsBullet(Bullet bullet) throws IllegalArgumentException{
-		return false;
+	public boolean canHaveAsBullet(Bullet bullet) {
+		if (bullet == null)
+			return true;
+		else
+			return bullet.getRadius() > 0.1*getRadius();
 	}
 	
 	/**
 	 * Set the bullet type of the ship.
 	 * @see implementation...
 	 */
-	public void setBullet(Bullet bullet) {
-		this.bullet = bullet;
+	public void setBullet(Bullet bullet) throws IllegalArgumentException {
+		if (! canHaveAsBullet(bullet))
+				throw new IllegalArgumentException(
+						"prime object cannot have the given argument as bullet");
+		else
+			this.bullet = bullet;
 	}
 	
 	
 	/**
 	 * The amount of bullets the ship carries.
 	 */
-	private double nbBullets;
+	private int nbBullets;
 	
 	/**
 	 * Returns the amount of bullets the ship carries.
 	 * @see implementation...
 	 */
-	public double getNbBullets() {
+	public int getNbBullets() {
 		return this.nbBullets;
 	}
 	
@@ -350,7 +363,7 @@ public class Ship extends Entity{
 	 * 		| if (nb < 0)
 	 * 		|	then throw IllegalArgumentException
 	 */
-	private void setNbBullets(double nb) throws IllegalArgumentException {
+	private void setNbBullets(int nb) throws IllegalArgumentException {
 		if (nb < 0) {
 			throw new IllegalArgumentException("nbBullets cannot be negative.");
 		}
@@ -385,7 +398,7 @@ public class Ship extends Entity{
 		
 		double bulletRadius;
 		if (getBullet() == null)
-			bulletRadius = Bullet.MIN_RADIUS;
+			bulletRadius = Bullet.getMinRadius();
 		else
 			bulletRadius = getBullet().getRadius();
 		
@@ -406,4 +419,54 @@ public class Ship extends Entity{
 		removeBullet();
 	}
 		
+	// COLLISIONS
+	
+	/**
+	
+	
+	/**
+	 * Collide the ship with another. The ships bounce of
+	 * eachother and the new velocities are calculated
+	 * based on the mass and velocities of the ships.
+	 */
+	public void collide(Ship other) {
+		double deltaX = getXCoord() - other.getXCoord();
+		double deltaY = getYCoord() - other.getYCoord();
+		
+		double deltaVX = getXVelocity() - other.getXVelocity();
+		double deltaVY = getYVelocity() - other.getYVelocity();
+		
+		double totalRadii = getRadius() + other.getRadius();
+		
+		double J = (2 * getTotalMass() * other.getTotalMass() *
+									Math.sqrt(deltaX * deltaVX + deltaY * deltaVY))
+					/ (totalRadii * (getTotalMass() + other.getTotalMass()));
+		double Jx = J*deltaX/totalRadii;
+		double Jy = J*deltaY/totalRadii;
+		
+		double[] velocities1 = limitSpeed(getXVelocity() + Jx/getTotalMass(), 
+											getYVelocity() + Jy/getTotalMass());
+		double[] velocities2 = limitSpeed(other.getXVelocity() - Jx/other.getTotalMass(),
+											other.getYVelocity() - Jy/other.getTotalMass());
+		
+		setXVelocity(velocities1[0]);
+		setYVelocity(velocities1[1]);
+		other.setXVelocity(velocities2[0]);
+		other.setYVelocity(velocities2[1]);
+	}
+	
+	/**
+	 * Collide the ship with a bullet.
+	 */
+	public void collide(Bullet bullet) {
+		if (bullet.getShip() == this) {
+			addBullet();
+		} else {
+			terminate();
+		}
+		bullet.terminate();
+	}
+	
+	
+	
 }

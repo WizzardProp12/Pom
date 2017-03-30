@@ -1,5 +1,9 @@
 package asteroids.model.entities;
 
+
+import java.util.HashSet;
+import java.util.Iterator;
+
 import asteroids.model.environment.*;
 import be.kuleuven.cs.som.annotate.*;
 
@@ -99,7 +103,7 @@ public abstract class Entity {
 	 * @see implementation...
 	 */
 	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity) {
-		this(xCoord, yCoord, xVelocity, yVelocity, MIN_RADIUS, null);
+		this(xCoord, yCoord, xVelocity, yVelocity, MIN_RADIUS);
 	}
 	
 	/**
@@ -108,7 +112,7 @@ public abstract class Entity {
 	 * @see implementation...
 	 */
 	public Entity(double xCoord, double yCoord) {
-		this(xCoord, yCoord, 0, 0, MIN_RADIUS, null);
+		this(xCoord, yCoord, 0, 0);
 	}
 	
 	/**
@@ -117,7 +121,7 @@ public abstract class Entity {
 	 * @see implementation...
 	 */
 	public Entity() {
-		this(0, 0, 0, 0, MIN_RADIUS, null);
+		this(0, 0);
 	}
 	
 	
@@ -321,10 +325,19 @@ public abstract class Entity {
 	
 	// VELOCITIES (total)
 	
+	// TODO: moet speed limit static zijn?
 	/**
 	 * A static final variable that represents the speed limit.
 	 */
-	public static final double SPEED_LIMIT = 300000;
+	private final static double SPEED_LIMIT = 300000;
+	
+	/**
+	 * Return the speed limit of the entity.
+	 */
+	@Basic @Immutable
+	public static double getSpeedLimit() {
+		return SPEED_LIMIT;
+	}
 	
 	
 	/**
@@ -390,6 +403,17 @@ public abstract class Entity {
 	
 	
 	/**
+	 * Return an array of the x and y velocities of the entity.
+	 * @return An array of the x and y velocity
+	 * 		 | result[0] == getXVelocity()
+	 * 		 | result[1] == getYVelocity()
+	 */
+	public double[] getVelocities() {
+		return new double[] {getXVelocity(), getYVelocity()};
+	}
+	
+	
+	/**
 	 * Returns the absolute velocity using the formula of the vector length
 	 * on the (xVelocity, yVelocity) vector.
 	 * @param xVelocity
@@ -434,9 +458,9 @@ public abstract class Entity {
 	public static double[] limitSpeed(double xVelocity, double yVelocity) {
 		double newVelocities[] = new double[2];
 		double absVelocity = getAbsVelocity(xVelocity, yVelocity);
-		if (absVelocity > SPEED_LIMIT) {
-			newVelocities[0] = xVelocity*(absVelocity/SPEED_LIMIT);
-			newVelocities[1] = yVelocity*(absVelocity/SPEED_LIMIT);
+		if (absVelocity > getSpeedLimit()) {
+			newVelocities[0] = xVelocity*(absVelocity/getSpeedLimit());
+			newVelocities[1] = yVelocity*(absVelocity/getSpeedLimit());
 			return newVelocities;
 		}
 		newVelocities[0] = xVelocity;
@@ -445,12 +469,39 @@ public abstract class Entity {
 	}
 	
 	
+	/**
+	 * Return the position the entity will be at in a given amount of seconds
+	 */
+	public Position getFuturePosition(double time) {
+		double xCoord = getXCoord() + time*getXVelocity();
+		double yCoord = getYCoord() + time*getYVelocity();
+		return new Position(xCoord, yCoord);
+	}
+	
+	/**
+	 * Return the coordinates the entity will be at in a given amount of seconds
+	 */
+	public double[] getFutureCoordinates(double time) {
+		double xCoord = getXCoord() + time*getXVelocity();
+		double yCoord = getYCoord() + time*getYVelocity();
+		return new double[] {xCoord, yCoord};
+	}
+	
+	
 	// RADIUS (defensive)
 	
 	/**
 	 * The minimum radius of the entity.
 	 */
-	public static final double MIN_RADIUS = 10;
+	private final static double MIN_RADIUS = 10;
+	
+	/**
+	 * Return the minimum radius of every entity.
+	 */
+	@Basic @Immutable
+	public static double getMinRadius() {
+		return MIN_RADIUS;
+	}
 	
 	
 	/**
@@ -464,6 +515,7 @@ public abstract class Entity {
 	 * @invar The radius has a minimum value.
 	 * 		| getRadius() >= MIN_RADIUS
 	 */
+	@Basic @Immutable
 	public double getRadius() {
 		return this.radius;
 	}
@@ -484,8 +536,8 @@ public abstract class Entity {
 	 * 		   The given radius is too small.
 	 * 		 | radius < MIN_RADIUS
 	 */
-	@Basic @Raw
-	public void setRadius(double radius) throws IllegalArgumentException {
+
+	protected void setRadius(double radius) throws IllegalArgumentException {
 		if (! canHaveAsRadius(radius)) {
 			throw new IllegalArgumentException("Radius is too small.");
 		}
@@ -504,6 +556,7 @@ public abstract class Entity {
 	 * Return the container in which the entity is located.
 	 * @see implementation...
 	 */
+	@Basic
 	public World getWorld() {
 		return this.world;
 	}
@@ -543,7 +596,7 @@ public abstract class Entity {
 	 * entity and 32 numbers long.
 	 * @return An int between 0 and 
 	 */
-	@Override
+	@Override @Basic
     public int hashCode() {
 		Position position = getPosition();
         return position.hashCode();
@@ -555,6 +608,7 @@ public abstract class Entity {
 	 * 		  The other entity.
 	 * @return see implementation...
 	 */
+	@Basic
 	public boolean equals(Object other){
 		if (! (other instanceof Entity))
 			return false;
@@ -574,6 +628,7 @@ public abstract class Entity {
 	 * @Return ...
 	 * 		 | result == name + hashCode
 	 */
+	@Basic
 	public String toString() {
 		String hashCode = String.valueOf(hashCode());
 		return name + " (hc:" + hashCode + ")";
@@ -619,6 +674,7 @@ public abstract class Entity {
 	 * Return the density of the entity
 	 * @see implementation...
 	 */
+	@Basic @Immutable
 	public double getDensity() {
 		return this.DENSITY;
 	}
@@ -628,6 +684,7 @@ public abstract class Entity {
 	 * Return the mass of the entity.
 	 * @return (4/3)*PI*(radius^3)*DENSITY
 	 */
+	@Basic @Immutable
 	public double getMass() {
 		double mass = (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
 		return mass;
@@ -637,6 +694,23 @@ public abstract class Entity {
 	// COLLISIONS (defensive)
 	
 	/**
+	 * Collide the entity with another entity.
+	 * @throws IllegalArgumentException
+	 * 		   If the given argument is not a ship or bullet.
+	 * 		 | !(entity instanceof Ship) && !(entity instanceof Bullet)
+	 */
+	public void collide(Entity entity) throws IllegalArgumentException {
+		if (entity instanceof Ship) {
+			collide((Ship) entity);
+		} else if (entity instanceof Bullet) {
+			collide((Bullet) entity);
+		} else
+			throw new IllegalArgumentException("given argument must be a Bullet or Ship");
+	}
+	
+	// distance and overlap
+
+	/**
 	 * Check whether the given time is valid.
 	 * @see implementation...
 	 */
@@ -644,8 +718,6 @@ public abstract class Entity {
 	public static boolean isValidTime(double time) {
 		return time >= 0;
 	}
-	
-	
 	
 	/**
 	 * Return the distance between the centres of two entities.
@@ -697,8 +769,100 @@ public abstract class Entity {
 		return getDistanceBetweenCentres(other) <= 0.99*totalRadii;
 	}
 	
+	// wallcollisions (total)
+
+	/**
+	 * Return the first collision of the entity with a wall
+	 * that will occur.
+	 * @return the type of wall collision. (String)
+	 * 		   "horizontal", "vertical" or "none"
+	 */
+	public Collision getWallCollision() {
+		if (getWorld() == null || (getXVelocity() == 0 && getYVelocity() == 0))
+			return null;
+		
+		CollisionType type;
+		double time;
+		
+		double timeToRightCollision = (getXVelocity() > 0) 
+									? (getWorld().getWidth() - getXCoord() - getRadius()) / getXVelocity()
+									: Double.POSITIVE_INFINITY;
+		time = timeToRightCollision;
+		type = CollisionType.rightWall;
+		
+		double timeToLeftCollision = (getXVelocity() < 0)
+									? (getXCoord() - getRadius()) / -getXVelocity()
+									: Double.POSITIVE_INFINITY;
+		if (time > timeToLeftCollision) {
+			time = timeToLeftCollision;
+			type = CollisionType.leftWall;
+		}
+		double timeToTopCollision = (getYVelocity() > 0)
+									? (getWorld().getHeight() - getYCoord() - getRadius()) / getYVelocity()
+									: Double.POSITIVE_INFINITY;
+		if (time > timeToTopCollision) {
+			time = timeToTopCollision;
+			type = CollisionType.topWall;
+		}
+		double timeToBottomCollision = (getYVelocity() < 0)
+									? (getYCoord() - getRadius()) / -getYVelocity()
+									: Double.POSITIVE_INFINITY;
+		if (time > timeToBottomCollision) {
+			time = timeToBottomCollision;
+			type = CollisionType.bottomWall;
+		}
+		
+		return new Collision(type, time, this);
+	}
 	
+	/**
+	 * Return the duration before the prime object will collide with a world border.
+	 * @throws NullPointerException
+	 * 		   If the prime object has no reference to a world.
+	 */
+	public double getTimeToWallCollision() {
+		Collision collision = getWallCollision();
+		if (collision == null)
+			return Double.POSITIVE_INFINITY;
+		else
+			return collision.getTime();
+	}
 	
+	/**
+	 * Return the position the entity will be in when it first hits a wall.
+	 */
+	public double[] getWallCollisionPosition() {
+		double time = getTimeToWallCollision();
+		double xCoord = getXCoord() + time*getXVelocity();
+		double yCoord = getYCoord() + time*getYVelocity();
+		return new double[] {xCoord, yCoord};
+	}
+	
+	/**
+	 * Bounce the entity of a horizontal or vertical wall.
+	 * @effect If the entity bounces with a vertical wall, negate the x velocity
+	 * 		 | new getXVelocity() == -getXVelocity()
+	 * @effect If the entity bounces with a horizontal wall, negate the y velocity
+	 * 		 | new getYVelocity() == -getYVelocity()
+	 */
+	public void wallBounce(CollisionType type) {
+		if (type == CollisionType.bottomWall || type == CollisionType.topWall)
+			setYVelocity(-getYVelocity());
+		else if (type == CollisionType.leftWall || type == CollisionType.rightWall)
+			setXVelocity(-getXVelocity());
+	}
+	
+	// entitycollisions (total)
+	
+	/**
+	 * Return the collision of the entity with another entity
+	 * @param other
+	 * 		| A reference to the other entity.
+	 */
+	public Collision getEntityCollision(Entity other) {
+		double time = getTimeToEntityCollision(other);
+		return new Collision(CollisionType.entity, time, this, other);
+	}
 	
 	/**
 	 * Return the time it will take for this entity to collide with the other entity.
@@ -740,30 +904,8 @@ public abstract class Entity {
 		return time;
 	}
 	
-	/**
-	 * Return the duration before the prime object will collide with a world border.
-	 * @throws NullPointerException
-	 * 		   If the prime object has no reference to a world.
-	 */
-	public double getTimeToWallCollision() throws NullPointerException {
-		if (getWorld() == null)
-			throw new NullPointerException("the Entity is not assigned to a world.");
-		
-		if (getXVelocity() == 0 && getYVelocity() == 0)
-			return Double.POSITIVE_INFINITY;
-		
-		// variable x = (expression) ? value if true : value if false
-		double timeToVerticalCollision = (getXVelocity() > 0)
-						? (getWorld().getWidth() - getXCoord() - getRadius())/getXVelocity()
-						: (getXCoord() - getRadius())/getXVelocity();
-		double timeToHorizontalCollision = (getYVelocity() > 0)
-						? (getWorld().getHeight() - getYCoord() - getRadius())/getYVelocity()
-						: (getYCoord() - getRadius())/getYVelocity();
-		return (timeToVerticalCollision < timeToHorizontalCollision)
-						? timeToVerticalCollision
-						: timeToHorizontalCollision;
-	}
-
+	// TODO: zou dit niet de coordinaten van de entity moeten teruggeven
+	//		 ipv de coordinaten van het punt waar de entities elkaar raken.
 	/**
 	 * Return the position where the entities will collide.
 	 * @param other
@@ -821,5 +963,69 @@ public abstract class Entity {
 		collisionPosition[1] = collisionY;
 		return collisionPosition;
 	}
-
+	
+	// both
+	
+	/**
+	 * Return the first collision with a wall or one of the given 
+	 * entities that will occur for the prime entity.
+	 * @param entities
+	 * 		| The entities to check.
+	 * @return The first collision that will occur (with a wall or another entity).
+	 */
+	public Collision getFirstCollision(HashSet<Entity> entities) {
+		// wall
+		Collision collision = getWallCollision();
+		
+		// entities
+		for (Iterator<Entity> i = entities.iterator(); i.hasNext();) {
+			Entity other = i.next();
+			if (other != null && getWorld() == other.getWorld()) {
+				Collision currentCollision = getEntityCollision(other);
+				if (currentCollision == null || collision.getTime() > currentCollision.getTime())
+					collision = currentCollision;
+			}
+		}
+		return collision;
+	}
+	
+	/**
+	 * Return the first collision with a wall or one of the worlds
+	 * entities that will occur for the prime entity.
+	 * @return The first collision that will occur (with a wall or another entity).
+	 */
+	public Collision getFirstCollision() {
+		if (getWorld() == null)
+			return null;
+		else {
+			HashSet<Entity> entities = getWorld().getEntities();
+			return getFirstCollision(entities);
+		}
+	}
+	
+	
+	// TERMINATION
+	
+	/** 
+	 * A private variable storing whether the entity is terminated.
+	 */
+	private boolean isTerminated = false;
+	
+	/**
+	 * Returns whether the entity is terminated.
+	 */
+	public boolean isTerminated() {
+		return isTerminated;
+	}
+	
+	
+	/**
+	 * Terminate the entity by removing it from its current world.
+	 */
+	@Basic
+	public void terminate() {
+		if (getWorld() != null)
+			getWorld().remove(this);
+		isTerminated = true;
+	}
 }

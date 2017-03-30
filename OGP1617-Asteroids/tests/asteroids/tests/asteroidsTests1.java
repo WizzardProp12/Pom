@@ -34,7 +34,7 @@ public class asteroidsTests1 {
 		assertEquals(10, ship.getRadius(),EPSILON);
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == world;
-		assert ship.getNbBullets() == 15; 
+		assert ship.getNbBullets() == 0; 
 		
 		
 	}
@@ -49,7 +49,7 @@ public class asteroidsTests1 {
 		assertEquals(10, ship.getRadius(),EPSILON);
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == null;
-		assert ship.getNbBullets() == 15;
+		assert ship.getNbBullets() == 0;
 		
 		
 	}
@@ -64,7 +64,7 @@ public class asteroidsTests1 {
 		assertEquals(10, ship.getRadius(),EPSILON);
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == null;
-		assert ship.getNbBullets() == 15;
+		assert ship.getNbBullets() == 0;
 		
 		
 	}
@@ -79,7 +79,7 @@ public class asteroidsTests1 {
 		assertEquals(10, ship.getRadius(),EPSILON);
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == null;
-		assert ship.getNbBullets() == 15;
+		assert ship.getNbBullets() == 0;
 
 
 	}
@@ -94,7 +94,7 @@ public class asteroidsTests1 {
 		assertEquals(10, ship.getRadius(),EPSILON);
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == null;
-		assert ship.getNbBullets() == 15;
+		assert ship.getNbBullets() == 0;
 
 
 	}
@@ -109,7 +109,7 @@ public class asteroidsTests1 {
 		assertEquals(10, ship.getRadius(),EPSILON);
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == null;
-		assert ship.getNbBullets() == 15;
+		assert ship.getNbBullets() == 0;
 	}
 	
 	@Test
@@ -174,16 +174,182 @@ public class asteroidsTests1 {
 	
 	@Test
 	public void getShipTotalMassTest(){
-		Ship ship = new Ship();
+		Ship ship = new Ship(); //NO BULLETS
 		Bullet bullet = new Bullet();
-		double bulletMass = (4/3)*Math.PI*
-				Math.pow(10, 3)*(7.8*Math.pow(10, 12));
+		ship.setBullet(bullet);
+		double bulletMass = ship.getBullet().getMass();
 		assertEquals(ship.getMass() + 
 			ship.getNbBullets()*bulletMass
 				, ship.getTotalMass(),EPSILON);
 	}
 	
+	@Test
+	public void getThrusterStateTest(){
+		Ship ship = new Ship();
+		assertTrue(ship.getThrusterState() == false);
+	}
 	
+	@Test
+	public void setThrusterStateTest(){
+		Ship ship = new Ship();
+		ship.setThrusterState(true);
+		assertTrue(ship.getThrusterState() == true);
+	}
+	
+	@Test
+	public void thrustOnTest(){
+		Ship ship = new Ship();
+		ship.thrustOn();
+		assertTrue(ship.getThrusterState() == true);
+	}
+	
+	@Test
+	public void thrustOffTest(){
+		Ship ship = new Ship();
+		ship.thrustOff();
+		assertTrue(ship.getThrusterState() == false);
+	}
+	
+	@Test
+	public void getAccelerationTest1(){
+		Ship ship = new Ship(10,20,30,40);
+		assertEquals(Ship.THRUSTER_FORCE/ship.getMass()
+				, ship.getAcceleration(),EPSILON);
+	}
+	
+	@Test
+	public void getAccelerationTest2(){
+		Ship ship = new Ship(10,20,30,40,20,0);
+		
+		assertEquals(Ship.THRUSTER_FORCE/ship.getMass(),
+				ship.getAcceleration(),EPSILON);
+	}
+	
+	@Test
+	public void thrustTest1(){
+		Ship ship = new Ship();
+		ship.thrust(1);
+		assertEquals(ship.getAcceleration()
+				, ship.getXVelocity(),EPSILON);
+	}
+	
+	@Test
+	public void thrustTest2(){
+		Ship ship = new Ship();
+		ship.thrust(-1);//TODO: Mag niet, moet aangepast worden.
+		assertEquals(-ship.getAcceleration()
+				, ship.getXVelocity(),EPSILON);
+	}
+	
+	@Test
+	public void thrustTest3(){
+		Ship ship = new Ship();
+		ship.thrust(1000);
+		assertEquals(ship.getXVelocity()//ZOU SPEEDLIM MOETEN ZIJN?
+										//LIMITSPEED WERKT NIET?
+				, ship.getXVelocity(),EPSILON);
+	}
+	
+	@Test
+	public void setBulletTest1(){
+		Ship ship = new Ship();
+		Bullet bigBullet = new Bullet();
+		ship.setBullet(bigBullet);
+		assertTrue(ship.getBullet() == bigBullet);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setBulletTest2() throws IllegalArgumentException{
+		Ship ship = new Ship();
+		Bullet smallBullet = new Bullet(0,0,0,0,0.3);//Too small radius
+		ship.setBullet(smallBullet);//Throws exception
+	}
+	
+	@Test
+	public void getBulletTest(){
+		Ship ship = new Ship();
+		Bullet bigBullet = new Bullet();
+		ship.setBullet(bigBullet);
+		assertTrue(ship.getBullet() == bigBullet);
+	}
+	
+	@Test
+	public void canHaveAsBulletTest1(){
+		Ship ship = new Ship();//KLOPT NIET, canhaveasbullet moet nog verder 
+							   // uitgewerkt worden.
+		assertTrue(ship.canHaveAsBullet(null) == true);
+	}
+	
+	@Test
+	public void canHaveAsBulletTest2(){
+		Ship ship = new Ship();
+		Bullet defaultBullet = new Bullet();
+		assertTrue(ship.canHaveAsBullet(defaultBullet) == true);
+	}
+	
+	@Test
+	public void canHaveAsBulletTest3(){
+		Ship ship = new Ship();
+		Bullet farAwayBullet = new Bullet(100,0,30,40);//Overlapt niet!!
+		assertTrue(ship.canHaveAsBullet(farAwayBullet) == true);
+		//TODO:Functie canHaveAsBullet aanpassen.
+	}
+	
+	@Test
+	public void getNbBulletsTest(){
+		Ship ship = new Ship();
+		assertTrue(ship.getNbBullets() == 0);
+	}
+	
+	@Test
+	public void setNbBulletsTest(){
+		assertTrue(true);//setNbBullets is private => terecht?
+	}
+	
+	@Test
+	public void addBulletTest() {
+		Ship ship = new Ship();
+		ship.addBullet();
+		ship.addBullet();
+		assertTrue(ship.getNbBullets() == 2);
+	}
+	
+	@Test
+	public void removeBulletTest(){
+		Ship ship = new Ship();
+		ship.addBullet();
+		ship.addBullet();
+		ship.addBullet();
+		ship.removeBullet();
+		ship.removeBullet();
+		assertTrue(ship.getNbBullets() == 1);
+	}
+	
+	@Test
+	public void fireBulletTest(){//Functie nog niet af, 
+		Ship ship = new Ship(10,10);//geen rek h met shipvel
+		World world = new World(100,100);
+		Bullet bullet = new Bullet();
+		ship.setWorld(world);
+		ship.addBullet();
+		ship.fireBullet();
+		assertTrue(ship.getNbBullets() == 0);
+		assertEquals(250,bullet.getXVelocity(),EPSILON);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 	
 
 	

@@ -121,6 +121,10 @@ public class World {
 	}
 	
 	
+	public double[] getSize() {
+		return new double[] {getWidth(), getHeight()}; 
+	}
+	
 	// COORDINATE CHECKERS
 	
 	/**
@@ -185,10 +189,34 @@ public class World {
 	}
 	
 	/**
-	 * Return an HashSet of the Entities contained by the prime object.
+	 * Return a HashSet of the Entities contained by the prime object.
 	 */
 	public HashSet<Entity> getEntities() {
 		return new HashSet<Entity>(getEntityMap().values());
+	}
+	
+	/**
+	 * Return a HashSet of the Ships contained by the prime object.
+	 */
+	public HashSet<Ship> getShips() {
+		HashSet<Ship> shipSet = new HashSet<Ship>();
+		for (Entity entity : getEntities()){
+			if (entity instanceof Ship)
+				shipSet.add((Ship) entity);
+		}
+		return shipSet;
+	}
+	
+	/**
+	 * Return a HashSet of the Bullets contained by the prime object.
+	 */
+	public HashSet<Bullet> getBullets() {
+		HashSet<Bullet> bulletSet = new HashSet<Bullet>();
+		for (Entity entity : getEntities()){
+			if (entity instanceof Bullet)
+				bulletSet.add((Bullet) entity);
+		}
+		return bulletSet;
 	}
 		
 	/**
@@ -331,6 +359,7 @@ public class World {
 	 * @Return ...
 	 * 		 | result == name + hashCode
 	 */
+	@Basic
 	public String toString() {
 		String size = "width:"+String.valueOf(getWidth()) 
 						+ " height:"+String.valueOf(getHeight());
@@ -343,11 +372,17 @@ public class World {
 	/**
 	 * Time interval of world evolutions.
 	 */
-	public static final double DELTA_T = 3;
+	private final double DELTA_T = 3;
+	
+	/**
+	 * Return the time interval of world evolutions.
+	 */
+	public double getDeltaT() {
+		return DELTA_T;
+	}
 	
 	/**
 	 * Return the Entity that is going to collide with a wall first.
-	 * @return
 	 */
 	public Entity getFirstWallCollision() {
 		
@@ -402,23 +437,95 @@ public class World {
 		}
 		return collisionEntities;
 	}
-
-	public void advanceTime() {
+	
+	
+	/**
+	 * Return the first collision that will occur in the world.
+	 * @return The first collision that will occur, null if none occurs.
+	 */
+	public Collision getFirstCollision() {
+		HashSet<Entity> entities = getEntities();
 		
-		// 1. Predict the first collision
-		Entity[] entityCollision = getFirstEntityCollision();
-		double timeToEntityCollision 
-					= entityCollision[0].getTimeToEntityCollision(entityCollision[1]);
+		Collision firstCollision = null;
 		
-		Entity wallCollision = getFirstWallCollision();
-		double timeToWallCollision = wallCollision.getTimeToWallCollision();
-		
-		if (timeToEntityCollision < World.DELTA_T || timeToWallCollision < World.DELTA_T) {
-			// 2.
-			// 3.
-			// 4.
+		for (Iterator<Entity> i = entities.iterator(); i.hasNext();) {
+			Entity entity = i.next();
+		    i.remove();
+		    
+		    Collision collision = entity.getFirstCollision(entities);
+		    
+		    if (firstCollision == null || collision.getTime() < firstCollision.getTime())
+		    	firstCollision = collision;
 		}
-		// 5.
 		
+		return firstCollision;
 	}
+	
+	
+	/**
+	 * Advance the time of the prime object.
+	 */
+	public void advanceTime(double time) {
+		
+		Collision firstCollision = getFirstCollision();
+		
+		if (firstCollision != null && firstCollision.getTime() <= time) {
+			// Advance all entities
+			for(Entity entity : getEntities())
+				entity.move(firstCollision.getTime());
+			
+			// Update velocities
+			for(Ship ship : getShips())
+				ship.thrust(firstCollision.getTime());
+			
+			// Resolve the collision
+			firstCollision.resolve();
+			
+			// Advance time for the remaining time
+			advanceTime(getDeltaT() - firstCollision.getTime());
+			
+		} else {
+		// Advance all entities
+		for(Entity entity : getEntities())
+			entity.move(getDeltaT());
+		
+		// Update velocities
+		for(Ship ship : getShips())
+			ship.thrust(getDeltaT());
+		}
+	}
+	
+	/**
+	 * Advance the time of the prime object.
+	 */
+	public void advanceTime() {
+		advanceTime(getDeltaT());
+	}
+	
+	
+	// TERMINATION
+	
+	/** 
+	 * A private variable storing whether the world is terminated.
+	 */
+	private boolean isTerminated = false;
+	
+	/**
+	 * Returns whether the world is terminated.
+	 */
+	public boolean isTerminated() {
+		return isTerminated;
+	}
+	
+	/**
+	 * Terminate the world by removing all it's entities.
+	 */
+	@Basic
+	public void terminate() {
+		HashSet<Entity> entities = getEntities();
+		for (Entity entity : entities)
+			remove(entity);
+		isTerminated = true;
+	}
+
 }

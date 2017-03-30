@@ -1,6 +1,5 @@
 package asteroids.model.entities;
 
-import asteroids.model.environment.World;
 import be.kuleuven.cs.som.annotate.*;
 
 public class Bullet extends Entity{
@@ -12,7 +11,6 @@ public class Bullet extends Entity{
 		super(xCoord, yCoord, xVelocity, yVelocity, radius);
 		if (canHaveAsShip(ship))
 			setShip(ship);
-		setNbBounces(0);
 	}
 	
 	public Bullet(double xCoord, double yCoord, double xVelocity, double yVelocity, 
@@ -21,15 +19,15 @@ public class Bullet extends Entity{
 	}
 	
 	public Bullet(double xCoord, double yCoord, double xVelocity, double yVelocity) {
-		this(xCoord, yCoord, xVelocity, yVelocity, Entity.MIN_RADIUS, null);
+		this(xCoord, yCoord, xVelocity, yVelocity, Entity.getMinRadius(), null);
 	}
 	
 	public Bullet(double xCoord, double yCoord) {
-		this(xCoord, yCoord, 0, 0, Entity.MIN_RADIUS, null);
+		this(xCoord, yCoord, 0, 0, Entity.getMinRadius(), null);
 	}
 	
 	public Bullet() {
-		this(0, 0, 0, 0, Entity.MIN_RADIUS, null);
+		this(0, 0, 0, 0, Entity.getMinRadius(), null);
 	}
 	
 	
@@ -66,9 +64,9 @@ public class Bullet extends Entity{
 	public boolean canHaveAsRadius(double radius) {
 		if (hasShip()) {
 			double shipRadius = getShip().getRadius();
-			return (radius >= MIN_RADIUS && radius >= 0.1*shipRadius);
+			return (radius >= getMinRadius() && radius >= 0.1*shipRadius);
 		} else
-			return radius >= MIN_RADIUS;
+			return radius >= getMinRadius();
 	}
 	
 	// MASS (total)
@@ -126,28 +124,68 @@ public class Bullet extends Entity{
 		this.ship = ship;
 	}
 	
+	
+	// COLLISIONS
+	
+	/**
+	 * Collide the bullet with a ship.
+	 */
+	public void collide (Ship ship) {
+		ship.collide(this);
+	}
+	
+	/**
+	 * Collide the bullet with another bullet.
+	 */
+	public void collide(Bullet other) {
+		terminate();
+		other.terminate();
+	}
+	
+	
 	// BOUNCES ()
+	
+	/**
+	 * The amount of times a bullet can bounce of a wall.
+	 */
+	private final int MAX_BOUNCES = 2;
+	
+	/**
+	 * Return the maximum amount of bounces a bullet can make.
+	 */
+	public int getMaxNbBounces() {
+		return MAX_BOUNCES;
+	}
 	
 	/**
 	 * The amount of times the bullet has bounced of a wall.
 	 */
-	private double nbBounces = 0;
+	private int nbBounces = 0;
 	
 	/**
 	 * Get how much times the bullet has bounced of a wall.
 	 * @see implementation...
 	 */
-	public double getNbBounces() {
+	public int getNbBounces() {
 		return this.nbBounces;
 	}
 	
 	/**
-	 * Set how much times the bullet has bounced of a wall
-	 * @see implementation...
+	 * Count a bounce of the bullet.
 	 */
-	private void setNbBounces(double bounces) {
-		this.nbBounces = bounces;
+	public void countBounce() {
+		nbBounces++;
 	}
 	
-	private void bounce() {}
+	/**
+	 * Bounce the bullet of a wall.
+	 */
+	public void wallBounce(Collision collision) {
+		if (getNbBounces() == getMaxNbBounces()) {
+			terminate();
+		} else {
+			super.wallBounce(collision.getCollisionType());
+			countBounce();
+		}
+	}
 }
