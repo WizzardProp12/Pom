@@ -215,7 +215,10 @@ public class Ship extends Entity{
 	 * @see implementation...
 	 */
 	public double getTotalMass() {
-		double bulletMass = getBullet().getMass();
+		double bulletMass = 0;
+		if (getNbBullets() > 0)
+			bulletMass = getBullet().getMass();
+			
 		double shipMass = getMass();
 		double totalMass = shipMass + getNbBullets()*bulletMass;
 		return totalMass;

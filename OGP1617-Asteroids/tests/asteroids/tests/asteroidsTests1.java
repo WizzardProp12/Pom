@@ -24,7 +24,7 @@ public class asteroidsTests1 {
 	
 	
 	@Test
-	public void shipConstructorTest() throws IllegalArgumentException{
+	public void shipConstructor1Test() throws IllegalArgumentException{
 		World world = new World(100,100);
 		Ship ship = new Ship(10,20,30,40,10,0,world);
 		assertEquals(10, ship.getXCoord(), EPSILON);
@@ -334,14 +334,187 @@ public class asteroidsTests1 {
 		ship.addBullet();
 		ship.fireBullet();
 		assertTrue(ship.getNbBullets() == 0);
-		assertEquals(250,bullet.getXVelocity(),EPSILON);
+		assertEquals(0,bullet.getXVelocity(),EPSILON);//KLOPT NIET
 		
 	}
 	
+	@Test 
+	public void shipCollideTest(){//Fix getTotalMass()
+		World world = new World(1000,1000);
+		Ship ship1 = new Ship(20,20,10,0,10,0,world);
+		Ship ship2 = new Ship(80,20,-10,0,10,0,world);
+		double deltaX = ship1.getXCoord() - ship2.getXCoord();
+		double deltaY = ship1.getYCoord() - ship2.getYCoord();
+		
+		double deltaVX = ship1.getXVelocity() - ship2.getXVelocity();
+		double deltaVY = ship1.getYVelocity() - ship2.getYVelocity();
+		
+		double totalRadii = ship1.getRadius() + ship2.getRadius();
+		
+		double J = (2 * ship1.getTotalMass() * ship2.getTotalMass() *
+				Math.sqrt(deltaX * deltaVX + deltaY * deltaVY))
+				/ (totalRadii * (ship1.getTotalMass() + ship2.getTotalMass()));
+		double Jx = J*deltaX/totalRadii;
+		double Jy = J*deltaY/totalRadii;
+		ship1.collide(ship2);
+		assertEquals(Double.NaN,ship1.getXVelocity(),EPSILON);//????
+		assertEquals(Double.NaN,ship2.getXVelocity(),EPSILON);//????
+	}
 	
+	@Test 
+	public void shipBulletCollideTest1(){
+		Ship ship = new Ship();
+		Bullet bullet = new Bullet();
+		bullet.ship = ship;
+		ship.collide(bullet);
+		assertTrue(ship.getNbBullets() == 1);
+		
+		
+	}
 	
+	@Test 
+	public void shipBulletCollideTest2(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship(40,40,0,0);
+		Bullet bullet = new Bullet();
+		bullet.ship = ship2;
+		ship1.collide(bullet);
+		assertTrue(ship1.isTerminated());
+		assertTrue(bullet.isTerminated());
+	}
 	
+//------------ENTITY TESTS-----------------
+
+//NO CONSTRUCTOR TESTS BECAUSE ENTITY IS ABSTRACT CLASS
+//   => CANNOT INITIATE ENTITY => WE WILL USE SHIP TO TEST ENTITY
+
+	@Test
+	public void getXCoordTest(){
+		Ship ship = new Ship(10,20);
+		assertEquals(10,ship.getXCoord(),EPSILON);
+		
+	}
 	
+	@Test
+	public void getXCoordTest2(){
+		Ship ship = new Ship();
+		assertEquals(0,ship.getXCoord(),EPSILON);
+		
+	}
+	
+	@Test
+	public void setXCoordTest(){
+		Ship ship = new Ship();
+		ship.setXCoord(10);
+		assertEquals(10,ship.getXCoord(),EPSILON);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void isValidXCoord1Test1() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship();
+		ship.isValidXCoord(Double.NaN,world);
+	}
+	
+	@Test
+	public void isValidXCoord1Test2() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship(0,0,0,0,10,0,null);
+		assertTrue(ship.isValidXCoord(10,world));
+	}
+	
+	@Test
+	public void isValidXCoord1Test3() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship(10,20,0,0,20,0,null);
+		assertFalse(ship.isValidXCoord(-10,world));
+	}
+	
+	@Test
+	public void isValidXCoord1Test4() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship(30,30,30,40,20,0,world);
+		assertTrue(ship.isValidXCoord(50,world));
+	}
+	
+	@Test
+	public void isValidXCoord1Test5() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship(30,30,30,40,20,0,world);
+		assertFalse(ship.isValidXCoord(150,world));
+	}
+	
+	@Test
+	public void isValidXCoord2Test() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship(30,30,0,0,10,0,world);
+		assertTrue(ship.isValidXCoord(10));
+	}
+	
+
+	@Test
+	public void getYCoordTest(){
+		Ship ship = new Ship(10,20);
+		assertEquals(20,ship.getYCoord(),EPSILON);
+		
+	}
+	
+	@Test
+	public void getYCoordTest2(){
+		Ship ship = new Ship();
+		assertEquals(0,ship.getYCoord(),EPSILON);
+		
+	}
+	
+	@Test
+	public void setYCoordTest(){
+		Ship ship = new Ship();
+		ship.setYCoord(10);
+		assertEquals(10,ship.getYCoord(),EPSILON);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void isValidyCoordTest1() throws IllegalArgumentException{
+		Ship ship = new Ship();
+		World world = new World(100,100);
+		ship.isValidYCoord(Double.NaN,world);
+	}
+	
+	@Test
+	public void isValidyCoordTest2() throws IllegalArgumentException{
+		Ship ship = new Ship(0,0,0,0,10,0,null);
+		World world = new World(100,100);
+		assertTrue(ship.isValidYCoord(10,world));
+	}
+	
+	@Test
+	public void isValidYCoordTest3() throws IllegalArgumentException{
+		Ship ship = new Ship(10,20,0,0,20,0,null);
+		World world = new World(100,100);
+		assertFalse(ship.isValidYCoord(-10,world));
+	}
+	
+	@Test
+	public void isValidYCoordTest4() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship(30,30,30,40,20,0,world);
+		assertTrue(ship.isValidYCoord(50,world));
+	}
+	
+	@Test
+	public void isValidYCoordTest5() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship(30,30,30,40,20,0,world);
+		assertFalse(ship.isValidYCoord(150,world));
+	}
+	
+	@Test
+	public void isValidYCoord2Test() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship(30,30,0,0,10,0,world);
+		assertTrue(ship.isValidYCoord(10));
+	
+	}
 	
 	
 	

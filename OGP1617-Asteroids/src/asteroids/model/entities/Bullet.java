@@ -90,7 +90,7 @@ public class Bullet extends Entity{
 	/**
 	 * The ship that holds or fired the bullet.
 	 */
-	private Ship ship;
+	public Ship ship;
 	
 	/**
 	 * Return the ship that holds or fired the bullet.
