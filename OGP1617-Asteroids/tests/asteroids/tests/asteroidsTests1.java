@@ -10,6 +10,8 @@ import asteroids.model.entities.Entity;
 import asteroids.model.entities.Position;
 import asteroids.model.entities.Ship;
 import asteroids.model.environment.World;
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 
 public class asteroidsTests1 {
 	private static final double EPSILON = 0.0001;
@@ -516,13 +518,118 @@ public class asteroidsTests1 {
 	
 	}
 	
-	
-	
-	
-	
-	
-	
+	@Test
+	public void getEntityPositionTest() throws IllegalArgumentException{
+		Ship ship = new Ship(30,30,0,0,10,0);
+		Position pos = new Position();
+		pos.setXCoord(30);
+		pos.setYCoord(30);
+		assertEquals(ship.getPosition().getXCoord(), pos.getXCoord(),EPSILON);
+		assertEquals(ship.getPosition().getYCoord(), pos.getYCoord(),EPSILON);
 
+	
+	}
+	
+	@Test
+	public void getEntityPositionArrayTest() throws IllegalArgumentException{
+		Ship ship = new Ship(20,10,0,0,10,0);
+		Position pos = new Position();
+		pos.setXCoord(20);
+		pos.setYCoord(10);
+		assertEquals(pos.getXCoord(), ship.getPositionArray()[0],EPSILON);
+		assertEquals(pos.getYCoord(), ship.getPositionArray()[1],EPSILON);
+	}
+	
+	@Test
+	public void withinBoundariesOfTest() throws IllegalArgumentException{
+		Ship ship1 = new Ship(20,20,0,0,10,0);
+		Ship ship2 = new Ship(40,40,0,0,30,0);
+		Ship ship3 = new Ship(140,40,0,0,10,0);
+		Ship ship4 = new Ship(40,0,0,0,10,0);
+		Ship ship5 = new Ship(-20,20,0,0,10,0);
+		World world = new World(100,100);
+		assertTrue(ship1.withinBoundariesOf(world));
+		assertTrue(ship2.withinBoundariesOf(world));
+		assertFalse(ship3.withinBoundariesOf(world));
+		assertFalse(ship4.withinBoundariesOf(world));
+		assertFalse(ship5.withinBoundariesOf(world));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void moveTest() throws IllegalArgumentException{
+		Ship ship1 = new Ship(20,20,20,0,10,0);
+		Ship ship2 = new Ship(40,40,0,10,30,Math.PI);
+		ship1.move(10);
+		ship2.move(20);
+		assertEquals(220,ship1.getXCoord(),EPSILON);
+		assertEquals(20,ship1.getYCoord(),EPSILON);
+		assertEquals(40,ship2.getXCoord(),EPSILON);
+		assertEquals(240,ship2.getYCoord(),EPSILON);
+		ship1.move(-1);//Throws IllegalArgumentException
+	}
+	
+	@Test
+	public void getEntitySpeedLimitTest(){
+		Ship ship = new Ship();
+		assertEquals(300000,Ship.getSpeedLimit(),EPSILON);
+	}
+	
+	@Test
+	public void getXVelocityTest(){
+		Ship ship = new Ship(10,20,10,20);
+		assertEquals(10,ship.getXVelocity(),EPSILON);
+		
+	}
+	
+	@Test
+	public void getXVelocityTest2(){
+		Ship ship = new Ship();
+		assertEquals(0,ship.getXVelocity(),EPSILON);
+		
+	}
+	
+	@Test
+	public void setXVelocityTest(){
+		Ship ship = new Ship();
+		ship.setXVelocity(10);
+		assertEquals(10,ship.getXVelocity(),EPSILON);
+	}
+	
+	@Test
+	public void setXVelocityTest2(){
+		Ship ship = new Ship();
+		ship.setXVelocity(400000);
+		assertEquals(533333.333333,ship.getXVelocity(),EPSILON);//Moet 300k zijn
+	}
+	
+	@Test
+	public void getYVelocityTest(){
+		Ship ship = new Ship(10,20,20,10);
+		assertEquals(10,ship.getYVelocity(),EPSILON);
+		
+	}
+	
+	@Test
+	public void getYVelocityTest2(){
+		Ship ship = new Ship();
+		assertEquals(0,ship.getYVelocity(),EPSILON);
+		
+	}
+	
+	@Test
+	public void setYVelocityTest(){
+		Ship ship = new Ship();
+		ship.setYVelocity(10);
+		assertEquals(10,ship.getYVelocity(),EPSILON);
+	}
+	
+	@Test
+	public void setYVelocityTest2(){
+		Ship ship = new Ship();
+		ship.setYVelocity(350000);
+		assertEquals(408333.333333,ship.getYVelocity(),EPSILON);//Moet 300k zijn
+	}
+	
 	
 
 	
