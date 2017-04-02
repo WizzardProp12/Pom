@@ -630,10 +630,214 @@ public class asteroidsTests1 {
 		assertEquals(408333.333333,ship.getYVelocity(),EPSILON);//Moet 300k zijn
 	}
 	
-	
+	@Test
+	public void getVelocitiesTest1(){
+		Ship ship = new Ship(10,20,30,40);
+		assertEquals(30,ship.getVelocities()[0],EPSILON);
+		assertEquals(40,ship.getVelocities()[1],EPSILON);
 
+	}
+	
+	@Test
+	public void getVelocitiesTest2(){
+		Ship ship = new Ship();
+		ship.setXVelocity(60);
+		ship.setYVelocity(70);
+		assertEquals(60,ship.getVelocities()[0],EPSILON);
+		assertEquals(70,ship.getVelocities()[1],EPSILON);
+	}
+	
+	@Test
+	public void getAbsVelocityTest1(){
+		Ship ship = new Ship();
+		ship.setXVelocity(3);
+		ship.setYVelocity(4);
+		double actualX = ship.getXVelocity();
+		double actualY = ship.getYVelocity();
+		assertEquals(5,Entity.getAbsVelocity(actualX,actualY),EPSILON);
+	}
+	
+	@Test
+	public void getAbsVelocityTest2(){
+		Ship ship = new Ship(10,20,30,0);
+		double actualX = ship.getXVelocity();
+		double actualY = ship.getYVelocity();
+		assertEquals(30,Entity.getAbsVelocity(actualX,actualY),EPSILON);
+	}
+	
+	@Test
+	public void getSpeedTest(){
+		Ship ship = new Ship(10,20,30,40);
+		assertEquals(50,ship.getSpeed(),EPSILON);
+	}
+	
+	@Test
+	public void getSpeedTest2(){
+		Ship ship = new Ship();
+		ship.setXVelocity(300000);
+		ship.setYVelocity(100);
+		assertEquals(300000,ship.getSpeed(),EPSILON);
+	}
+	
+	@Test
+	public void limitSpeedTest(){
+		double[] expectedVelocities = new double[2];
+		expectedVelocities[0] = 300;
+		expectedVelocities[1] = 400;
+		assertEquals(expectedVelocities[0],Entity.limitSpeed(300,400)[0],EPSILON);
+		assertEquals(expectedVelocities[1],Entity.limitSpeed(300,400)[1],EPSILON);
+
+	}
+	
+	@Test
+	public void limitSpeedTest2(){
+		double[] expectedVelocities = new double[2];
+		expectedVelocities[0] = 500000;
+		expectedVelocities[1] = 666666.666666;
+		assertEquals(expectedVelocities[0],
+				Entity.limitSpeed(300000,400000)[0],EPSILON);
+		assertEquals(expectedVelocities[1],
+				Entity.limitSpeed(300000,400000)[1],EPSILON);
+		//KLOPT NIET => FUNCTIE LIMITSPEED IS FOUT
+	}
+	
+	@Test
+	public void getFuturePositionTest1(){
+		Ship ship = new Ship(10,10,20,10);
+		assertEquals(210,ship.getFuturePosition(10).getXCoord(),EPSILON);
+		assertEquals(110,ship.getFuturePosition(10).getYCoord(),EPSILON);
+
+	}
+	
+	@Test
+	public void getFuturePositionTest2(){
+		Ship ship = new Ship(10,10,-20,-10);
+		assertEquals(-190,ship.getFuturePosition(10).getXCoord(),EPSILON);
+		assertEquals(-90,ship.getFuturePosition(10).getYCoord(),EPSILON);
+
+	}
+	
+	@Test
+	public void getFutureCoordinatesTest(){
+		Ship ship = new Ship(10,10,20,10);
+		assertEquals(210,ship.getFutureCoordinates(10)[0],EPSILON);
+		assertEquals(110,ship.getFutureCoordinates(10)[1],EPSILON);
+
+	}
+	
+	@Test
+	public void getFutureCoordinatesTest2(){
+		Ship ship = new Ship(10,10,-20,-10);
+		assertEquals(-190,ship.getFutureCoordinates(10)[0],EPSILON);
+		assertEquals(-90,ship.getFutureCoordinates(10)[1],EPSILON);
+	}
+	
+	@Test
+	public void getMinRadiusTest(){
+		assertEquals(10,Entity.getMinRadius(),EPSILON);
+	}
+	
+	@Test
+	public void getRadiusTest(){
+		Ship ship = new Ship(0,10,10,10,100,0);
+		assertEquals(100,ship.getRadius(),EPSILON);
+	}
+	
+	@Test
+	public void canHaveAsRadiusTest(){
+		Ship ship = new Ship();
+		assertTrue(ship.canHaveAsRadius(Entity.getMinRadius()+10));
+		assertFalse(ship.canHaveAsRadius(Entity.getMinRadius()-5));
+	}
+	
+	@Test
+	public void setWorldTest1(){
+		Ship ship = new Ship(10,20,30,40,10,0,null);
+		World world = new World(100,100);
+		ship.setWorld(world);
+		assertTrue(ship.getWorld() == world);
+		assertTrue(ship.getPosition().getWorld() == world);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setWorldTest2(){
+		World world = new World(100,100);
+		Ship ship = new Ship(10,20,30,40,10,0,world);
+		ship.setWorld(world);// Throws IllegalArgumentException	
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setWorldTest3(){
+		World world1 = new World(100,100);
+		World world2 = new World(100,100);
+		Ship ship = new Ship(10,20,30,40,10,0,world1);
+		ship.setWorld(world2);// Throws IllegalArgumentException
+	}
+	
+	@Test
+	public void HashCodeTest(){
+		Ship ship = new Ship();
+		assertEquals(ship.getPosition().hashCode(),ship.hashCode() ,EPSILON);
+	}
+	
+	@Test
+	public void equalsTest(){
+		Ship ship = new Ship();
+		int integer = 3;
+		World world =  new World(100,100);
+		Ship ship1 = new Ship(10,10,0,0);
+		Ship ship2 = new Ship(10,10,0,0);
+		Ship ship3 = new Ship(10,10,0,5);
+		Ship ship4 = new Ship(10,10,0,0,10,0,world);
+		assertTrue(ship1.equals(ship1));
+		assertTrue(ship1.equals(ship2));
+		assertFalse(ship1.equals(integer));
+		assertFalse(ship1.equals(ship3));
+		assertFalse(ship2.equals(ship3));
+		assertFalse(ship1.equals(ship4));
+	}
+	
+	@Test
+	public void getDensityTest(){
+		Ship ship = new Ship();
+		Bullet bullet = new Bullet();
+		assertEquals(1.42*Math.pow(10, 12),ship.getDensity(),EPSILON);
+		assertEquals(7.8*Math.pow(10, 12),bullet.getDensity(),EPSILON);
+	}
+	
+	@Test
+	public void getMassTest(){
+		Ship ship = new Ship();
+		assertEquals((4/3)*Math.PI*Math.pow(ship.getRadius(), 3)*ship.getDensity()
+				,ship.getMass(),EPSILON);
+	}
+	
+	@Test
+	public void collideTest(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+		Bullet bullet1 = new Bullet();
+		Bullet bullet2 = new Bullet();
+		int integer = 5;
+		ship1.collide(ship2); //Valid collision
+		bullet1.collide(bullet2); //Valid collision
+		ship1.collide(bullet2); //Valid collision
+	}
+	
+	@Test
+	public void isValidTimeTest(){
+		Ship ship1 = new Ship();
+		assertTrue(Entity.isValidTime(5));
+		assertTrue(Entity.isValidTime(0));
+		assertFalse(Entity.isValidTime(-2));
+	}
+	
+	
+	
+	
 	
 	
 }	
+
 
 	
