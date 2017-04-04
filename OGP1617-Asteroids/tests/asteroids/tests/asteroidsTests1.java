@@ -1057,6 +1057,320 @@ public class asteroidsTests1 {
 		assertTrue(ship3.getWorld() == null);
 	} 
 	
+	//--------BULLET TESTS------------
+	
+	@Test
+	public void bulletConstructor1Test() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Ship ship = new Ship();
+		Bullet bullet = new Bullet(10,20,30,40,10,ship);
+		assertEquals(10, bullet.getXCoord(), EPSILON);
+		assertEquals(20, bullet.getYCoord(),EPSILON);
+		assertEquals(30, bullet.getXVelocity(),EPSILON);
+		assertEquals(40, bullet.getYVelocity(),EPSILON);
+		assertEquals(10, bullet.getRadius(),EPSILON);
+		assertTrue(bullet.getShip() == ship);
+		assert bullet.getNbBounces() == 0;
+
+		
+		
+	}
+	
+	@Test
+	public void bulletConstructor2Test() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Bullet bullet = new Bullet(10,20,30,40,10);
+		assertEquals(10, bullet.getXCoord(), EPSILON);
+		assertEquals(20, bullet.getYCoord(),EPSILON);
+		assertEquals(30, bullet.getXVelocity(),EPSILON);
+		assertEquals(40, bullet.getYVelocity(),EPSILON);
+		assertEquals(10, bullet.getRadius(),EPSILON);
+		assertTrue(bullet.getShip() == null);
+		assert bullet.getNbBounces() == 0;
+
+		
+		
+	}
+	
+	@Test
+	public void bulletConstructor3Test() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Bullet bullet = new Bullet(10,20,30,40);
+		assertEquals(10, bullet.getXCoord(), EPSILON);
+		assertEquals(20, bullet.getYCoord(),EPSILON);
+		assertEquals(30, bullet.getXVelocity(),EPSILON);
+		assertEquals(40, bullet.getYVelocity(),EPSILON);
+		assertTrue(bullet.getShip() == null);
+		assert bullet.getNbBounces() == 0;
+
+	}
+	
+	@Test
+	public void bulletConstructor4Test() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Bullet bullet = new Bullet(10,20);
+		assertEquals(10, bullet.getXCoord(), EPSILON);
+		assertEquals(20, bullet.getYCoord(),EPSILON);
+		assertTrue(bullet.getShip() == null);
+		assert bullet.getNbBounces() == 0;
+
+	}
+	
+	@Test
+	public void bulletConstructor5Test() throws IllegalArgumentException{
+		World world = new World(100,100);
+		Bullet bullet = new Bullet();
+		assertEquals(0, bullet.getXCoord(), EPSILON);
+		assertEquals(0, bullet.getYCoord(),EPSILON);
+		assertEquals(0, bullet.getXVelocity(),EPSILON);
+		assertEquals(0, bullet.getYVelocity(),EPSILON);
+		assertTrue(bullet.getShip() == null);
+		assert bullet.getNbBounces() == 0;
+	}
+	
+	@Test
+	public void bulletEqualsTest1(){
+		Bullet bullet1 = new Bullet(10,20,30,40,10,null);
+		Bullet bullet2 = new Bullet(10,20,30,40,10,null);
+		assert bullet1.equals(bullet2);
+	}
+	
+	@Test
+	public void bulletEqualsTest2(){
+		Bullet bullet1 = new Bullet(10,20,30,40,10,null);
+		Bullet bullet2 = new Bullet();
+		assert !bullet1.equals(bullet2);
+		
+	}
+	
+	@Test
+	public void canHaveAsBulletRadiusTest(){
+		Ship ship = new Ship(0,0,0,0,200,0);
+		Bullet bullet1 = new Bullet(10,20,30,40,10,null);
+		Bullet bullet2 = new Bullet(10,20,30,40,100,ship);
+		Bullet bullet3 = new Bullet(10,20,30,40,10,ship);
+		assertTrue(bullet1.canHaveAsRadius(10));
+		assertFalse(bullet1.canHaveAsRadius(5));
+		assertTrue(bullet2.canHaveAsRadius(100));
+		assertTrue(bullet3.canHaveAsRadius(10));
+
+	}
+	
+	@Test
+	public void getBulletDensityTest(){
+		Bullet bullet1 = new Bullet();
+		assertEquals( 7.8*Math.pow(10, 12),bullet1.getDensity(),EPSILON);
+
+	}
+	
+	@Test
+	public void getBulletShipTest(){
+		Ship ship = new Ship(0,0,0,0,200,0);
+		Bullet bullet = new Bullet(10,20,30,40,100,ship);
+		assertTrue(bullet.getShip() == ship);
+
+	}
+	
+	@Test
+	public void bulletHasShipTest(){
+		Ship ship = new Ship(0,0,0,0,200,0);
+		Bullet bullet1 = new Bullet(10,20,30,40,100,ship);
+		Bullet bullet2 = new Bullet(10,20,30,40,100,null);
+		assertTrue(bullet1.hasShip());
+		assertFalse(bullet2.hasShip());
+	}
+		
+	@Test
+	public void canHaveAsShipTest(){
+		Ship ship = new Ship(0,0,0,0,200,0);
+		Bullet bullet1 = new Bullet(10,20,30,40,100,ship);
+		Bullet bullet2 = new Bullet(10,20,30,40,100,null);
+		assertTrue(bullet2.canHaveAsShip(ship));
+		assertFalse(bullet1.canHaveAsShip(ship));
+		
+	}
+
+
+	@Test 
+	public void BulletShipCollideTest1(){
+		Ship ship = new Ship();
+		Bullet bullet = new Bullet();
+		bullet.ship = ship;
+		bullet.collide(ship);
+		assertTrue(ship.getNbBullets() == 1);
+
+	}
+	
+	@Test 
+	public void BulletShipCollideTest2(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship(40,40,0,0);
+		Bullet bullet = new Bullet(0,0,10,0,10,ship2);
+		bullet.collide(ship1);
+		assertTrue(ship1.isTerminated());
+		assertTrue(bullet.isTerminated());
+	}
+	
+	@Test 
+	public void bulletBulletCollideTest(){
+		Bullet bullet1 = new Bullet(0,0,10,0,10);
+		Bullet bullet2 = new Bullet(0,0,10,0,10);
+		bullet1.collide(bullet2);
+		assertTrue(bullet1.isTerminated());
+		assertTrue(bullet2.isTerminated());
+	}
+	
+	@Test
+	public void getMaxNbBouncesTest(){
+		Bullet bullet = new Bullet();
+		assertTrue(bullet.getMaxNbBounces() == 2);
+	}
+	
+	@Test
+	public void getNbBouncesTest(){
+		Bullet bullet = new Bullet();
+		assertTrue(bullet.getNbBounces() == 0);
+	}
+	
+	@Test
+	public void countBounceTest(){
+		Bullet bullet = new Bullet();
+		assertTrue(bullet.getNbBounces() == 0);
+		bullet.countBounce();
+		assertTrue(bullet.getNbBounces() == 1);
+		bullet.countBounce();
+		assertTrue(bullet.getNbBounces() == 2);
+
+	}
+	
+	@Test
+	public void wallbounceTest1(){
+		Bullet bullet = new Bullet();
+		Collision collision = new Collision(CollisionType.leftWall,2,bullet);
+		bullet.countBounce();
+		bullet.countBounce();
+		bullet.wallBounce(collision);
+		assertTrue(bullet.isTerminated());
+	}
+	
+	@Test
+	public void wallbounceTest2(){
+		Bullet bullet = new Bullet(0,0,-10,0);
+		Collision collision = new Collision(CollisionType.leftWall,2,bullet);
+		bullet.countBounce();
+		bullet.wallBounce(collision);
+		assertTrue(bullet.getNbBounces() == 2);
+		assertEquals(10,bullet.getXVelocity(),EPSILON);
+	}
+	
+//------------WORLD TESTS-------------
+	
+	@Test
+	public void worldConstructor1Test() throws IllegalArgumentException{
+		World world = new World(100,100);
+		assertEquals(100, world.getWidth(), EPSILON);
+		assertEquals(100, world.getHeight(),EPSILON);
+
+	}
+	
+	@Test
+	public void worldConstructor2Test() throws IllegalArgumentException{
+		World world = new World();
+		assertEquals(0, world.getWidth(), EPSILON);
+		assertEquals(0, world.getHeight(),EPSILON);
+	}
+	
+	@Test
+	public void getWidthTest() throws IllegalArgumentException{
+		World world1 = new World(100,100);
+		World world2 = new World(50,50);
+		assertEquals(100, world1.getWidth(), EPSILON);
+		assertEquals(50, world2.getWidth(), EPSILON);
+
+	}
+	
+	@Test
+	public void getHeightTest() throws IllegalArgumentException{
+		World world1 = new World(100,100);
+		World world2 = new World(50,50);
+		assertEquals(100, world1.getWidth(), EPSILON);
+		assertEquals(50, world2.getWidth(), EPSILON);
+		
+	}
+	
+	@Test
+	public void getSizeTest(){
+		World world1 = new World(100,100);
+		World world2 = new World(50,50);
+		assertEquals(100, world1.getSize()[0], EPSILON);
+		assertEquals(100, world1.getSize()[1], EPSILON);
+		assertEquals(50, world2.getSize()[0], EPSILON);
+		assertEquals(50, world2.getSize()[1], EPSILON);
+
+	}
+	
+	@Test
+	public void isValidXCoordTest(){
+		World world1 = new World(100,100);
+		World world2 = new World(50,50);
+		assertTrue(world1.isValidXCoord(75));
+		assertFalse(world1.isValidXCoord(125));
+		assertTrue(world2.isValidXCoord(25));
+		assertFalse(world2.isValidXCoord(75));
+	}
+	
+	@Test
+	public void isValidYCoordTest(){
+		World world1 = new World(100,100);
+		World world2 = new World(50,50);
+		assertTrue(world1.isValidYCoord(75));
+		assertFalse(world1.isValidYCoord(125));
+		assertTrue(world2.isValidYCoord(25));
+		assertFalse(world2.isValidYCoord(75));
+	}
+	
+	@Test
+	public void containsPositionTest1(){
+		World world1 = new World(50,50);
+		World world2 = new World(100,100);
+		double[] position1 = new double[2];
+		double[] position2 = new double[2];
+		double[] position3 = new double[2];
+
+		position1[0] = 25;
+		position1[1] = 25;
+		position2[0] = 75;
+		position2[1] = 75;
+		position3[0] = 125;
+		position3[1] = 125;
+		assertTrue(world1.ContainsPosition(position1));
+		assertFalse(world1.ContainsPosition(position2));
+		assertTrue(world2.ContainsPosition(position2));
+		assertFalse(world2.ContainsPosition(position3));
+	}
+	
+	@Test
+	public void containsPositionTest2(){
+		World world1 = new World(50,50);
+		World world2 = new World(100,100);
+		Position position1 = new Position(25,25);
+		Position position2 = new Position(75,75);
+		Position position3 = new Position(125,125);
+		assertTrue(world1.ContainsPosition(position1));
+		assertFalse(world1.ContainsPosition(position2));
+		assertTrue(world2.ContainsPosition(position2));
+		assertFalse(world2.ContainsPosition(position3));
+	}
+	
+	@Test
+	public void getEntityMapTest(){
+		World world = new World();
+		assertTrue(world.getEntityMap().isEmpty());
+	}
+	
+	
+	
+	
 	
 	
 	
