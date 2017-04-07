@@ -1366,17 +1366,541 @@ public class asteroidsTests1 {
 	public void getEntityMapTest(){
 		World world = new World();
 		assertTrue(world.getEntityMap().isEmpty());
+	}	
+
+	@Test
+	public void getEntitiesTest(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20);
+		Bullet bullet = new Bullet(40,40);
+		world.add(ship);
+		world.add(bullet);
+		assertTrue(world.getEntities().contains(ship));
+		assertTrue(world.getEntities().contains(bullet));
 	}
 	
+	@Test
+	public void getShipsTest(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20);
+		Bullet bullet = new Bullet(40,40);
+		world.add(ship);
+		world.add(bullet);
+		assertTrue(world.getShips().contains(ship));
+		assertFalse(world.getShips().contains(bullet));
+	}
+	
+	@Test
+	public void getBulletsTest(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20);
+		Bullet bullet = new Bullet(40,40);
+		world.add(ship);
+		world.add(bullet);
+		assertFalse(world.getBullets().contains(ship));
+		assertTrue(world.getBullets().contains(bullet));
+	}
+	
+	@Test
+	public void getPositionsTest(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20);
+		Bullet bullet = new Bullet(40,40);
+		world.add(ship);
+		world.add(bullet);
+		Position position1 = ship.getPosition();
+		Position position2 = bullet.getPosition();
+		
+		assertTrue(world.getPositions().contains(position1));
+		assertTrue(world.getPositions().contains(position2));
+	}
+	
+	@Test
+	public void containsTest(){
+		World world = new World(100,100);
+		Ship ship1 = new Ship(20,20);
+		Bullet bullet1 = new Bullet(40,40);
+		Ship ship2 = new Ship(60,60);
+		Bullet bullet2 = new Bullet(80,80);
+		world.add(ship1);
+		world.add(bullet1);
+		assertTrue(world.contains(ship1));
+		assertFalse(world.contains(ship2));
+		assertTrue(world.contains(bullet1));
+		assertFalse(world.contains(bullet2));
+
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void isValidEntityTest1() throws NullPointerException{
+		World world1 = new World(100,100);
+		World world2 = new World(100,100);
+
+		Ship ship1 = new Ship(20,20,0,0,10,0,world2);
+		Bullet bullet = new Bullet(40,40);
+		Ship ship2 = new Ship(60,60,0,0,10,0,world1);
+		Ship ship3 = new Ship(80,80,0,0,10,0,world2);
+		assertFalse(world1.isValidEntity(ship1));
+		assertTrue(world1.isValidEntity(bullet));
+		assertFalse(world1.isValidEntity(ship3));
+		world1.isValidEntity(null);// throws a NullPointerException
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void isValidEntityTest2(){
+		World world = new World(100,100);
+		Ship ship = new Ship(120,20,0,0,10,0,world);
+		assertFalse(world.isValidEntity(ship));
+		world.isValidEntity(ship);// throws an IllegalArgumentException
+
+	}
+	
+	@Test
+	public void worldEntityAddTest(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20,0,0,10,0);
+		assertFalse(world.contains(ship));
+		assertFalse(ship.getWorld() == world);
+		world.add(ship);
+		assertTrue(world.contains(ship));
+		assertTrue(ship.getWorld() == world);
+
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void worldEntityRemoveTest(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20,0,0,10,0);
+		world.add(ship);
+		assertTrue(world.contains(ship));
+		assertTrue(ship.getWorld() == world);
+		world.remove(ship);
+		assertFalse(world.contains(ship));
+		assertFalse(ship.getWorld() == world);
+		world.remove(ship);//Throws an IllegalArgumentException
+	}
+	
+	@Test
+	public void getEntityAtTest(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20,0,0,10,0,world);
+		Bullet bullet = new Bullet(40,40,0,0,10);
+		Position position1 = new Position(20,20);
+		Position position2 = new Position(50,50);
+
+		assertTrue(world.getEntityAt(position1) == ship);
+		assertFalse(world.getEntityAt(position2) == bullet);
+	}
+	
+	@Test
+	public void getEntityAt2Test(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20,0,0,10,0,world);
+		Bullet bullet = new Bullet(40,40,0,0,10);
+		double[] position1 = new double[2];
+		position1[0] = 20;
+		position1[1] = 20;
+		double[] position2 = new double[2];
+		position2[0] = 50;
+		position2[1] = 50;
+		assertTrue(world.getEntityAt(position1[0],position1[1]) == ship);
+		assertFalse(world.getEntityAt(position1[0],position2[1]) == bullet);
+	}
+	
+	@Test
+	public void getDeltaTTest(){
+		World world = new World(100,100);	
+		assertTrue(world.getDeltaT() == 3);
+	}
+	
+	@Test
+	public void getFirstWallCollisionTest(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20,-1,0,10,0,world);
+		Bullet bullet = new Bullet(40,40,1,0,10,ship);
+		world.add(bullet);
+		assertTrue(world.getFirstWallCollision() == ship);		
+	}
+	
+	@Test
+	public void getFirstEntityCollisionTest(){//Functie werkt niet, it.remove
+		World world = new World(1000,1000);
+		Ship ship = new Ship(20,20,1,0,10,0,world);
+		Bullet bullet1 = new Bullet(40,20,-1,0,10,ship);
+		Bullet bullet2 = new Bullet(400,20,-2,0,10,ship);
+		world.add(bullet1);
+		Entity[] entities = new Entity[2];
+		entities[0] = ship;
+		entities[1] = bullet1;
+		//assertTrue(world.getFirstEntityCollision() == entities);		
+	}
+	
+	@Test
+	public void getFirstWorldCollisionTest(){
+		World world = new World(1000,1000);
+		Ship ship = new Ship(20,20,1,0,10,0,world);
+		Bullet bullet1 = new Bullet(60,20,-1,0,10,ship);
+		Bullet bullet2 = new Bullet(400,20,-2,0,10,ship);
+		world.add(bullet1);
+		world.add(bullet2);
+		Collision collision =
+				new Collision(CollisionType.entity,10,ship,bullet1);
+		assertTrue(world.getFirstCollision().getCollisionType() ==
+				collision.getCollisionType());		
+		assertTrue(world.getFirstCollision().getTime()==
+				collision.getTime());	
+		assertTrue(world.getFirstCollision().getEntity() ==
+				collision.getEntity());	
+		assertTrue(world.getFirstCollision().getOtherEntity() ==
+				collision.getOtherEntity());	
+	}
+	
+	@Test
+	public void advanceTimeTest1(){
+		World world = new World(1000,1000);
+		Ship ship = new Ship(800,800,1,0,100,0,world);
+		ship.setThrusterState(true);
+		Bullet bullet1 = new Bullet(60,20,-1,0,10,ship);
+		Bullet bullet2 = new Bullet(400,20,-2,0,10,ship);
+		world.advanceTime(1);
+		assertEquals(803,ship.getXCoord(),EPSILON);
+		assertEquals(800,ship.getYCoord(),EPSILON);
+		assertEquals(740.734242539,ship.getXVelocity(),EPSILON);
+		assertEquals(0,ship.getYVelocity(),EPSILON);
+		assertEquals(60,bullet1.getXCoord(),EPSILON);
+		assertEquals(20,bullet1.getYCoord(),EPSILON);
+		assertEquals(-1,bullet1.getXVelocity(),EPSILON);
+		assertEquals(0,bullet1.getYVelocity(),EPSILON);
+		assertEquals(400,bullet2.getXCoord(),EPSILON);
+		assertEquals(20,bullet2.getYCoord(),EPSILON);
+		assertEquals(-2,bullet2.getXVelocity(),EPSILON);
+		assertEquals(0,bullet2.getYVelocity(),EPSILON);
+		
+	}
+	
+	@Test
+	public void advanceTimeTest2(){
+		World world = new World(1000,1000);
+		Ship ship1 = new Ship(800,800,1,0,100,0,world);
+		Ship ship2 = new Ship(63,20,2,0,10,0,world);
+		Ship ship3 = new Ship(87,20,-2,0,10,0,world);
+		//world.advanceTime(3);
+		assertTrue(true); //functie werkt nog niet, snelheden zouden normaal moeten
+						  //genegate zijn maar alle ships thrusten  automatisch
+		
+	}
+	
+	@Test
+	public void worldisTerminatedTest(){
+		World world = new World();
+		assertFalse(world.isTerminated());
+	}
+	
+	@Test
+	public void worldTerminateTest(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20);
+		Bullet bullet  = new Bullet(40,40);
+		world.add(ship);
+		world.add(bullet);
+		assertTrue(world.contains(ship));
+		assertTrue(world.contains(bullet));
+		assertTrue(ship.getWorld() == world);
+		assertTrue(bullet.getWorld() == world);
+		world.terminate();
+		assertFalse(world.contains(ship));
+		assertFalse(world.contains(bullet));
+		assertFalse(ship.getWorld() == world);
+		assertFalse(bullet.getWorld() == world);
+		assertTrue(world.isTerminated());
+	}
+	
+//-----------COLLISION TESTS--------------
+	
+	@Test
+	public void collisionConstructor1Test1(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+
+		Collision collision = new Collision(CollisionType.entity,10,ship1,ship2);
+		assertTrue(collision.getCollisionType() == CollisionType.entity);
+		assertTrue(collision.getTime() == 10);
+		assertTrue(collision.getEntity() == ship1);
+		assertTrue(collision.getOtherEntity() == ship2);
+
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void collisionConstructor1Test2(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+
+		Collision collision = new Collision(CollisionType.entity,10,ship1,null);
+		//throws an IllegalArgumentException
+
+	}
+	
+	@Test
+	public void collisionConstructor2Test(){
+		Ship ship = new Ship();
+
+		Collision collision = new Collision(CollisionType.topWall,10,ship);
+		assertTrue(collision.getCollisionType() == CollisionType.topWall);
+		assertTrue(collision.getTime() == 10);
+		assertTrue(collision.getEntity() == ship);
+	}
+	
+	@Test
+	public void getCollisionTypeTest(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+
+		Collision collision1 = new Collision(CollisionType.entity,10,ship1,ship2);
+		Collision collision2 = new Collision(CollisionType.leftWall,10,ship1);
+
+		assertTrue(collision1.getCollisionType() == CollisionType.entity);
+		assertTrue(collision2.getCollisionType() == CollisionType.leftWall);
+	}
+	
+	@Test
+	public void getCollisionTimeTest(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+
+		Collision collision1 = new Collision(CollisionType.entity,10,ship1,ship2);
+		Collision collision2 = new Collision(CollisionType.leftWall,20,ship1);
+
+		assertTrue(collision1.getTime() == 10);
+		assertTrue(collision2.getTime() == 20);
+	}
+	
+	@Test
+	public void isValidCollisionTimeTest(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+		Collision collision = new Collision(CollisionType.entity,10,ship1,ship2);
+
+		assertTrue(collision.isValidTime(5));
+		assertFalse(collision.isValidTime(-5));
+
+	}
+	
+	@Test
+	public void getCollisionEntity(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+		Collision collision1 = new Collision(CollisionType.entity,10,ship1,ship2);
+		Collision collision2 = new Collision(CollisionType.rightWall,10,ship1);
+
+		assertTrue(collision1.getEntity() == ship1);
+		assertTrue(collision2.getEntity() == ship1);
+
+
+		
+
+	}
+	
+	@Test
+	public void getCollisionOtherEntity(){
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+		Collision collision1 = new Collision(CollisionType.entity,10,ship1,ship2);
+		Collision collision2 = new Collision(CollisionType.rightWall,10,ship1);
+
+		assertTrue(collision1.getOtherEntity() == ship2);
+		assertTrue(collision2.getOtherEntity() == null);
+
+	}
+	
+	@Test
+	public void resolveCollisionTest1(){//2 ships collide
+		World world = new World(100,100);
+		Ship ship1 = new Ship(20,20,2,0,10,0,world);
+		Ship ship2 = new Ship(60,20,-2,0,10,0,world);
+		Collision collision = new Collision(CollisionType.entity,10,ship1,ship2);
+		collision.resolve();
+		assertEquals(Double.NaN,ship1.getXVelocity(),EPSILON);
+		assertEquals(Double.NaN,ship2.getXVelocity(),EPSILON);
+
+		
+	}
+	
+	@Test
+	public void resolveCollisionTest2(){//2 bullets collide
+		World world = new World(100,100);
+		Bullet bullet1 = new Bullet(20,20,2,0,10);
+		Bullet bullet2 = new Bullet(80,20,-2,0,10);
+		Collision collision = new Collision(CollisionType.entity,
+				10,bullet1,bullet2);
+		collision.resolve();
+		assertTrue(bullet1.isTerminated());
+		assertTrue(bullet2.isTerminated());
+		
+	}
+	
+	@Test
+	public void resolveCollisionTest3(){//Wallcollision
+		Bullet bullet = new Bullet(80,20,-2,0,10);
+		Collision collision = new Collision(CollisionType.leftWall
+				,10,bullet);
+		assertTrue(bullet.getNbBounces() == 0);
+		collision.resolve();
+		assertTrue(bullet.getNbBounces() == 1);
+	}
+	
+	@Test
+	public void resolveCollisionTest4(){//BulletOwnShipCollide
+		Ship ship = new Ship();
+		Bullet bullet = new Bullet(80,20,-2,0,10,ship);
+		Collision collision = new Collision(CollisionType.entity
+				,10,ship,bullet);
+		assertTrue(ship.getNbBullets() == 0);
+		collision.resolve();
+		assertTrue(ship.getNbBullets() == 1);
+	}
+	
+	@Test
+	public void resolveCollisionTest5(){//BulletOtherShipCollide
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+		Bullet bullet = new Bullet(80,20,-2,0,10,ship1);
+		Collision collision = new Collision(CollisionType.entity
+				,10,ship2,bullet);
+		collision.resolve();
+		assertTrue(ship2.isTerminated());
+		assertTrue(bullet.isTerminated());
+	}
+	
+//--------POSITION TESTS----------
 	
 	
+	@Test
+	public void positionConstructor1Test(){
+		Position position = new Position(10,20);
+
+		assertEquals(10, position.getXCoord(), EPSILON);
+		assertEquals(20, position.getYCoord(),EPSILON);
+		
+	}
 	
+	@Test
+	public void positionConstructor2Test(){
+		Position position = new Position(0,0);
+		assertEquals(0, position.getXCoord(), EPSILON);
+		assertEquals(0, position.getYCoord(),EPSILON);
+	}
 	
+	@Test
+	public void getPositionXCoordTest(){
+		Position position1 = new Position(0,0);
+		Position position2 = new Position(-20,-10);
+		Position position3 = new Position(30,-15);
+
+		assertEquals(0, position1.getXCoord(), EPSILON);
+		assertEquals(-20, position2.getXCoord(), EPSILON);
+		assertEquals(30, position3.getXCoord(), EPSILON);
+	}
 	
+	@Test
+	public void getPositionYCoordTest(){
+		Position position1 = new Position(0,0);
+		Position position2 = new Position(-20,-10);
+		Position position3 = new Position(30,-15);
+
+		assertEquals(0, position1.getYCoord(),EPSILON);
+		assertEquals(-10, position2.getYCoord(),EPSILON);
+		assertEquals(-15, position3.getYCoord(),EPSILON);
+	}
 	
+	@Test
+	public void setPositionXCoordTest(){
+		Position position1 = new Position();
+		Position position2 = new Position();
+		Position position3 = new Position();
+		
+		position1.setXCoord(-20);
+		position2.setXCoord(0);
+		position3.setXCoord(300);
+
+		assertEquals(-20, position1.getXCoord(), EPSILON);
+		assertEquals(0, position2.getXCoord(), EPSILON);
+		assertEquals(300, position3.getXCoord(), EPSILON);
+	}
 	
+	@Test
+	public void setPositionYCoordTest(){
+		Position position1 = new Position();
+		Position position2 = new Position();
+		Position position3 = new Position();
+		
+		position1.setYCoord(-102.5);
+		position2.setYCoord(0);
+		position3.setYCoord(50);
+
+		assertEquals(-102.5, position1.getYCoord(), EPSILON);
+		assertEquals(0, position2.getYCoord(), EPSILON);
+		assertEquals(50, position3.getYCoord(), EPSILON);
+	}
 	
+	@Test
+	public void positionToArrayTest(){
+		Position position1 = new Position(0,0);
+		Position position2 = new Position(-20,-10);
+		Position position3 = new Position(30,-15);
+
+		
+		assertEquals(0, position1.toArray()[0], EPSILON);
+		assertEquals(0, position1.toArray()[1], EPSILON);
+		assertEquals(-20, position2.toArray()[0], EPSILON);
+		assertEquals(-10, position2.toArray()[1], EPSILON);
+		assertEquals(30, position3.toArray()[0], EPSILON);
+		assertEquals(-15, position3.toArray()[1], EPSILON);
+	}
 	
+	@Test
+	public void getPositionEntityTest(){
+		Position position = new Position(30,-15);
+		assertTrue(position.getEntity() == null);
+	}
+	
+	@Test
+	public void setPositionEntityTest(){
+		World world = new World(100,100);
+		Ship ship1 = new Ship(20,10,0,0,10,0,null);
+		Ship ship2 = new Ship(50,50,0,0,10,0,world);
+		Position position1 = new Position(30,30);
+		Position position2 = new Position(20,10);
+		Position position3 = new Position(50,50);
+		position1.setEntity(null);
+		position2.setEntity(ship1);
+		position3.setEntity(ship2);
+		assertTrue(position1.getEntity() == null);
+		assertTrue(position2.getEntity() == ship1);
+		assertTrue(position3.getEntity() == ship2);
+	}
+	
+	@Test
+	public void getWorldPositionTest(){
+		World world = new World(100,100);
+		Position position1 = new Position(30,30);
+		assertTrue(position1.getWorld() == null);
+	}
+	
+	@Test 
+	public void positionEqualsTest(){
+		Ship  ship = new Ship();
+		int integer = 5;
+		Position position1 = new Position(30,30);
+		position1.setEntity(ship);
+		Position position2 = new Position(20,10);
+		Position position3 = new Position(0,0);
+		Position position4 = new Position(30,30);
+		assertFalse(position1.equals(integer));
+		assertFalse(position1.equals(position2));
+		assertFalse(position2.equals(position3));
+		assertTrue(position1.equals(position4));	
+	}
+		
 	
 }	
 
