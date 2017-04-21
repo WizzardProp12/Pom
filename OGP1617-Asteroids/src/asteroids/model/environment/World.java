@@ -1,12 +1,42 @@
-package asteroids.model.environment;
+package asteroids.model;
 
-import asteroids.model.entities.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import be.kuleuven.cs.som.annotate.*;
 
+
+/**
+ * @author Wouter Cams and Stijn Bruggeman
+ * 
+ * Studies:
+ * Wouter Cams: 2e Bachelor Ingenieurswetenschappen
+ * Hoofdrichting Elektrotechniek, nevenrichting computerwetenschappen
+ * Stijn Bruggeman: 2e Bachelor Ingenieurswetenschappen
+ * Hoofdrichting computerwetenschappen, nevenrichting elektrotechniek
+ * 
+ * @version  0.1
+ * 
+ * A link to the GitHub code repository:
+ * https://github.com/WizzardProp12/Pom
+ * 
+ * A bound space with x and y coordinates representing a two dimensional world.
+ * A world can contain entities, these are added and removed with methods or
+ * by entity interactions.
+ *
+ * @invar ...
+ * 		| canHaveAsWidth(getWidth())
+ * @invar ...
+ * 		| canHaveAsHeight(getHeight())
+ * @invar Every entity in the world has valid coordinates
+ * 		| for (Entity entity : getEntityList())
+ * 		|		isValidPosition(entity.getPosition())
+ * @invar Every entity in the world can be contained by the world
+ * 		| for (Entity entity : getEntityList())
+ * 		|		canContain(entity)
+ */
 public class World {
 	
 	// CONSTRUCTORS
@@ -19,301 +49,360 @@ public class World {
 	 * @param height
 	 * 		  The height of this new world.
 	 * 		| new getWidth() == width
+	 * @post  The width is valid.
+	 * 		| new canHaveAsWidth(new getWidth())
+	 * @post  The height is valid.
+	 * 		| new canHaveAsHeight(new getHeight())
 	 */
-	public World(double height, double width){
-		this.setWidth(width);
-		this.setHeight(height);
+	public World(double width, double height){
+		if (canHaveAsWidth(width))
+			this.width = width;
+		else
+			this.width = World.getDefaultWidth();
+		if (canHaveAsHeight(height))
+			this.height = height;
+		else
+			this.height = World.getDefaultHeight();
 	}
 	
 	/**
 	 * Initialise a new world with default height and default width.
 	 * @post The width is the default value
-	 * 	   | new getWidth() == World.DEFAULT_WIDTH
+	 * 	   | new getWidth() == World.getDefaultWidth()
 	 * @post The height is the default value
-	 * 	   | new getHeight() == World.DEFAULT_HEIGHT
+	 * 	   | new getHeight() == World.getDefaultHeight()
 	 */
 	public World(){
-		this.setWidth(World.DEFAULT_WIDTH);
-		this.setHeight(World.DEFAULT_HEIGHT);
+		this(World.getDefaultWidth(), World.getDefaultHeight());
 	}
-	
 	
 	// SIZE (total)
 	
 	/**
-	 * The maximum width of a world.
+	 * The minimum width of a world object.
+	 */
+	static final double MIN_WIDTH = 0;
+	
+	/**
+	 * The maximum width of a world object.
 	 */
 	static final double MAX_WIDTH = Double.MAX_VALUE;
 	
 	/**
-	 * The maximum height of a world.
+	 * The minimum height of a world object.
+	 */
+	static final double MIN_HEIGHT = 0;
+	
+	/**
+	 * The maximum height of a world object.
 	 */
 	static final double MAX_HEIGHT = Double.MAX_VALUE;
 	
 	/**
-	 * The default width of a world.
+	 * A getter for the minimum width of a world object.
 	 */
-	static final double DEFAULT_WIDTH = 0;
+	@Basic @Immutable @Raw
+	static double getMinWidth() {
+		return World.MIN_WIDTH;
+	}
 	
 	/**
-	 * The default height of a world.
+	 * A getter for the maximum width of a world object.
 	 */
-	static final double DEFAULT_HEIGHT = 0;
+	@Basic @Immutable @Raw
+	static double getMaxWidth() {
+		return World.MAX_WIDTH;
+	}
+	
+	/**
+	 * A getter for the minimum height of a world object.
+	 */
+	@Basic @Immutable @Raw
+	static double getMinHeight() {
+		return World.MIN_HEIGHT;
+	}
+	
+	/**
+	 * A getter for the maximum height of a world object.
+	 */
+	@Basic @Immutable @Raw
+	static double getMaxHeight() {
+		return World.MAX_HEIGHT;
+	}
+	
+	
+	/**
+	 * The default width of a world object.
+	 */
+	static final double DEFAULT_WIDTH = getMaxWidth();
+	
+	/**
+	 * The default height of a world object.
+	 */
+	static final double DEFAULT_HEIGHT = getMaxHeight();
+	
+	/**
+	 * A getter for the default width of a world object.
+	 */
+	@Basic @Immutable @Raw
+	static double getDefaultWidth() {
+		return World.DEFAULT_WIDTH;
+	}
+	
+	/**
+	 * A getter for the default height of a world object.
+	 */
+	@Basic @Immutable @Raw
+	static double getDefaultHeight() {
+		return World.DEFAULT_HEIGHT;
+	}
 	
 	
 	/**
 	 * The width of the world.
 	 */
-	private double width;
+	private final double width;
+	
+	/**
+	 * The height of the world.
+	 */
+	private final double height;
 	
 	/**
 	 * Return the width of the world.
-	 * @see implementation
+	 * @invar The width of the world is valid
+	 * 		| canHaveAsWidth(getWidth())
 	 */
-	@Basic
+	@Basic @Immutable @Raw
 	public double getWidth(){
 		return this.width;
 	}
 	
 	/**
-	 * Set the width of the world.
-	 * @post see implementation...
-	 * 	   | 0 <= new getWidth() <= World.MAX_HEIGHT
-	 */
-	@Model
-	private void setWidth(double width){
-		if (width < 0)
-			this.width = World.DEFAULT_WIDTH;
-		else if (width > World.MAX_WIDTH)
-			this.width = World.MAX_WIDTH;
-		else
-			this.width = width;
-	}
-	
-	
-	/**
-	 * The height of the world.
-	 */
-	private double height;
-	
-	/**
 	 * Return the height of the world.
-	 * @see implementation
+	 * @invar The height of the world is valid
+	 * 		| canHaveAsHeight(getHeight())
 	 */
-	@Basic
+	@Basic  @Immutable @Raw
 	public double getHeight(){
 		return this.height;
 	}
 	
 	/**
-	 * Set the height of the world.
-	 * @post see implementation...
-	 * 	   | 0 <= new getHeight() <= World.MAX_HEIGHT
+	 * Return whether the given width suits the world.
+	 * @return ...
+	 * 		 | World.getMinWidth() <= width <= World.getMaxWidth()
 	 */
-	@Model
-	private void setHeight(double height){
-		if (height < 0)
-			this.height = World.DEFAULT_HEIGHT;
-		else if (height > World.MAX_HEIGHT)
-			this.height = World.MAX_HEIGHT;
-		else
-			this.height = height;
+	public boolean canHaveAsWidth(double width) {
+		return ((!Double.isNaN(width)) 
+				&& World.getMinWidth() <= width && width <= World.getMaxWidth());
 	}
 	
+	/**
+	 * Return whether the given height suits the world.
+	 * @return ...
+	 * 		 | World.getMinHeight() <= height <= World.getMaxHeight()
+	 */
+	public boolean canHaveAsHeight(double height) {
+		return ((!Double.isNaN(height)) 
+				&& World.getMinHeight() <= height && height <= World.getMaxHeight());
+	}
 	
+	/**
+	 * Return the size of the world.
+	 * @invar The size of the world is valid
+	 * 	    | canHaveAsWidth(result[0]) && canHaveAsHeight(result[1])
+	 */
 	public double[] getSize() {
-		return new double[] {getWidth(), getHeight()}; 
+		double[] size = {getWidth(), getHeight()};
+		return size;
 	}
+	
 	
 	// COORDINATE CHECKERS
 	
 	/**
-	 * Return if the given x coordinate is within the worlds borders.
-	 * @see implementation
+	 * Return if the given x coordinate is valid and within the world borders.
+	 * @see implementation...
 	 */
-	@Model
-	public boolean isValidXCoord(double x) {
-		if (0 <= x && x <= getWidth())
-			return true;
-		return false;
+	public boolean isValidXCoord(double xCoord) {
+		if (Double.isNaN(xCoord))
+			return false;
+		else
+			return (0 <= xCoord && xCoord <= getWidth());
 	}
 	
 	/**
-	 * Return if the given y coordinate is within the worlds borders.
-	 * @see implementation
+	 * Return if the given y coordinate is valid and within the world borders.
+	 * @see implementation...
 	 */
-	@Model
-	public boolean isValidYCoord(double y) {
-		if (0 <= y && y <= getHeight())
-			return true;
-		return false;
+	public boolean isValidYCoord(double yCoord) {
+		if (Double.isNaN(yCoord))
+			return false;
+		else
+			return (0 <= yCoord && yCoord <= getHeight());
 	}
 	
-	/** Return whether the given position array is within the bounds of the prime object.
-	 * 
+	/** 
+	 * Return whether the given position array is within the world borders.
 	 * @param xCoord
 	 * 		  The x coordinate of the position.
 	 * @param yCoord
 	 * 		  The y coordinate of the position.
-	 * @return see implementation...
+	 * @return ...
+	 * 		 | isValidXCoord(position[0]) && isValidYCoord(position[1]
 	 */
-	public boolean ContainsPosition(double[] position) {
-		if (isValidXCoord(position[0]) && isValidYCoord(position[1]))
-			return true;
-		return false;
+	public boolean isValidPosition(double[] position) {
+		return (isValidXCoord(position[0]) && isValidYCoord(position[1]));
 	}
 	
-	/** Return whether the given Position is within the bounds of the prime object.
-	 * @param Position
+	/** 
+	 * Return whether the given Position is within the bounds of the prime object.
+	 * @param position
 	 * 		  The position to be checked.
-	 * @return see implementation...
+	 * @return ...
+	 * 		 | isValidPosition(position.toArray())
 	 */
-	public boolean ContainsPosition(Position position) {
-		if (isValidXCoord(position.getXCoord()) && isValidYCoord(position.getYCoord()))
-			return true;
-		return false;
+	public boolean isValidPosition(Position position) {
+		return isValidPosition(position.toArray());
 	}
 	
 	// ENTITIES - GETTERS
 	
 	/**
-	 * A HashMap storing all the Entities with their Positions as keys.
+	 * A set storing all the Entities in the world.
 	 */
-	HashMap<Position, Entity> entityMap = new HashMap<Position, Entity>();
+	private Set<Entity> entitySet = new HashSet<Entity>();
 	
 	/**
-	 * Return the HashSet storing all the Entities with their Positions
+	 * Return an ArrayList of the Entities contained by the prime object.
+	 * @invar All the entities in the result are contained by the world.
+	 * 		| for (Entity entity : getEntityList())
+	 * 		|		world.contains(entity)
 	 */
-	public HashMap<Position, Entity> getEntityMap() {
-		return new HashMap<Position, Entity>(entityMap);
+	@Basic
+	public ArrayList<Entity> getEntityList() {
+		return new ArrayList<Entity>(entitySet);
 	}
 	
 	/**
 	 * Return a HashSet of the Entities contained by the prime object.
+	 * @invar All the entities in the result are contained by the world.
+	 * 		| for (Entity entity : getEntitySet())
+	 * 		|		world.contains(entity)
 	 */
-	public HashSet<Entity> getEntities() {
-		return new HashSet<Entity>(getEntityMap().values());
+	@Basic
+	public HashSet<Entity> getEntitySet() {
+		return new HashSet<Entity>(entitySet);
 	}
 	
 	/**
 	 * Return a HashSet of the Ships contained by the prime object.
+	 * @invar All the ships in the result are contained by the world.
+	 * 		| for (Ship ship : getShipSet())
+	 * 		|		world.contains(ship)
 	 */
-	public HashSet<Ship> getShips() {
+	@Basic
+	public HashSet<Ship> getShipSet() {
 		HashSet<Ship> shipSet = new HashSet<Ship>();
-		for (Entity entity : getEntities()){
+		for (Entity entity : getEntityList())
 			if (entity instanceof Ship)
 				shipSet.add((Ship) entity);
-		}
 		return shipSet;
 	}
 	
 	/**
 	 * Return a HashSet of the Bullets contained by the prime object.
+	 * @invar All the bullets in the result are contained by the world.
+	 * 		| for (Bullet bullet : getBulletSet())
+	 * 		|		world.contains(ship)
 	 */
-	public HashSet<Bullet> getBullets() {
+	@Basic
+	public HashSet<Bullet> getBulletSet() {
 		HashSet<Bullet> bulletSet = new HashSet<Bullet>();
-		for (Entity entity : getEntities()){
+		for (Entity entity : getEntityList())
 			if (entity instanceof Bullet)
 				bulletSet.add((Bullet) entity);
-		}
 		return bulletSet;
 	}
-		
-	/**
-	* 
-	* Return an HashSet of the ships contained by the prime object.
-	*/
-	public HashSet<Entity> getAllShips(){
-		HashSet<Entity> Entities = new HashSet<Entity>(getEntityMap().values());
-		HashSet<Entity> allShips = new HashSet<Entity>();
-		for (Entity entity : Entities){
-			if (entity instanceof Ship)
-				allShips.add(entity);
-		}
-	return allShips;
-	}
 	
-	/**
-		* 
-		 * Return an HashSet of the bullets contained by the prime object.
-		 */
-	public HashSet<Entity> getAllBullets(){
-		HashSet<Entity> Entities = new HashSet<Entity>(getEntityMap().values());
-		HashSet<Entity> allBullets = new HashSet<Entity>();
-		for (Entity entity : Entities){
-			if (entity instanceof Ship)
-				allBullets.add(entity);
-		}
-		return allBullets;
-	}
-	
-	
-	/**
-	 * Return a HashSet of all the occupied positions of the prime object.
-	 */
-	 public HashSet<Position> getPositions() {
-		 return new HashSet<Position>(getEntityMap().keySet());
-		 
-	 }
 	
 	// ENTITIES - ADDING AND REMOVING (defensively)
 	
 	/**
-	 * Return whether the given Entity is present in the prime object.
-	 * @return see implementation...
-	 */
-	 public boolean contains(Entity entity) {
-		 return getEntities().contains(entity);
-	 }
-	 
-	/**
-	 * Return whether the given Entity is valid for the prime object.
-	 * @param entity
-	 * 		  The Entity to be checked.
-	 * @return see implementation...
-	 * @throws NullPointerException
-	 * 		   If the argument references the null pointer.
-	 */
-	public boolean isValidEntity(Entity entity) 
-			throws NullPointerException, IllegalArgumentException {
-		if (entity == null)
-			throw new NullPointerException("given argument references the null pointer.");
-		if (! entity.withinBoundariesOf(this))
-			throw new IllegalArgumentException("given argument not inside world boundaries.");
-		for(Entity other : getEntities())
-			if (entity.overlaps(other))
-				throw new IllegalArgumentException("given argument overlaps other entity.");
-		if (entity.getWorld() == null || entity.getWorld() == this)
-			return true;
-		return false;
+	* Return whether the given Entity is present in the prime object.
+	* @return ...
+	* 		| getEntitySet().contains(entity)
+	*/
+	public boolean contains(Entity entity) {
+		 return getEntitySet().contains(entity);
 	}
 	
 	/**
-	 * Add the given Entity to the prime object.
-	 * @param entity
-	 * 		  The Entity to be added.
+	 * Return whether the prime object can contain the given entity.
+	 * @return ...
+	 * 		 | entity.isWithinBoundariesOf(this)
+	 */
+	public boolean canContain(Entity entity) {
+		return entity.isWithinBoundariesOf(this);
+	}
+	
+	
+	/**
+	 * Add the given entity to the prime object.
+	 * @param  entity
+	 * 		   The entity to be added.
+	 * @pre    The given entity must not already be located in this world
+	 * 		 | entity.getWorld() != this
+	 * @pre    The given entity must be able to change its world.
+	 * 		 | entity.canChangeWorld()
+	 * @pre    The given entity must be able to be placed in the world
+	 * 		 | entity.canBePlacedIn(this)
+	 * @post   The world contains the given entity.
+	 * 		 | contains(entity)
+	 * @post   The entity references the world.
+	 * 		 | entity.getWorld() == this
 	 * @throws IllegalArgumentException
-	 * 		   If the given Entity is not valid.
+	 * 		   If the given entity references the null pointer.
+	 * @throws IllegalArgumentException
+	 * 		   If the given entity is already located in this world.
+	 * @throws IllegalArgumentException
+	 * 		   If the given entity is still referenced by another world.
+	 * @throws IllegalArgumentException
+	 * 		   If the given entity can't be placed in the world.
 	 */
 	public void add(Entity entity) throws NullPointerException, IllegalArgumentException {
-		if (isValidEntity(entity)) {
-			// add to world
-			entityMap.put(entity.getPosition(), entity);
-			// set entity world
-			entity.setWorld(this);
-		} else
-			throw new IllegalArgumentException("given parameter is an invalid entity.");
+		
+		if (entity == null) throw new NullPointerException(
+				"cannot add nullpointer to world");
+		if (entity.getWorld() == this) throw new IllegalArgumentException(
+				"entity is already located in this world");
+		if (! entity.canChangeWorld()) throw new IllegalArgumentException(
+				"entity is still referenced by another world");
+		if (! entity.canBePlacedIn(this)) throw new IllegalArgumentException(
+				"entity can't be placed in this world");
+		
+		entitySet.add(entity);
+		entity.setWorld(this);
 	}
 	
 	/**
 	 * Remove the given entity from the world.
+	 * @pre    The world must contain the given entity
+	 * 		 | contains(entity)
+	 * @post   The world doesn't contain the given entity
+	 * 		 | ! contains(entity)
+	 * @post   The given entity has the null pointer as world reference
+	 * 		 | entity.getWorld() == null
 	 * @throws IllegalArgumentException
-	 * 		   If the given entity was not located in the world.
+	 * 		   If the given entity is not located in the world.
+	 * 		 | ! contains(entity)
 	 */
+	@Raw
 	public void remove(Entity entity) throws IllegalArgumentException {
-		if (! contains(entity))
-			throw new IllegalArgumentException("given entity is not in world.");
-		entityMap.remove(entity.getPosition());
+		if (! contains(entity)) throw new IllegalArgumentException(
+				"given entity is not in world.");
+		entitySet.remove(entity);
 		entity.setWorld(null);
 	}
 	
@@ -322,17 +411,17 @@ public class World {
 	/**
 	 * Return the Entity at the given position. If there
 	 * is no Entity, the null pointer is returned.
-	 * @param position
-	 * 		  The position to be checked
-	 * @return If there is an Entity at the given position
-	 * 		   		then return that Entity.
-	 * 		   Otherwise, return the null pointer reference
-	 * @post The Entity is within the bounds of the prime object.
-	 * 	   | isValidEntity()
+	 * @param  position
+	 * 		   The position to be checked
+	 * @return ...
+	 * 		| (result == null || result.getPosition() == position)
 	 */
+	@Basic
 	public Entity getEntityAt(Position position) {
-		Entity foundEntity = getEntityMap().get(position);
-		return foundEntity;
+		for (Entity entity : getEntityList()) 
+			if (entity.getPosition() == position)
+				return entity;
+		return null;
 	}
 	
 	/**
@@ -342,161 +431,135 @@ public class World {
 	 * 		  The x coordinate to be checked
 	 * @param yCoord
 	 * 		  The y coordinate to be checked
-	 * @return If there is an Entity at the given coordinates
-	 * 				then return that Entity
-	 * 		   Otherwise, return the null pointer reference
-	 * @post The Entity is within the bounds of the prime object.
-	 * 	   | isValidEntity()
+	 * @return ...
+	 * 		| (result == null || result.getPosition() == new Position(xCoord, yCoord))
 	 */
+	@Basic
 	public Entity getEntityAt(double xCoord, double yCoord) {
+		if (!isValidXCoord(xCoord) || !isValidYCoord(yCoord))
+			return null;
 		return getEntityAt(new Position(xCoord, yCoord));
 	}
 	
-	// 
-
+	// ENTITIES - COLLISIONS (defensive)
+	
 	/**
-	 * Return a string representing the World.
-	 * @Return ...
-	 * 		 | result == name + hashCode
+	 * Return the entity collision that is going to occur first
+	 * @return The first entity collision that occurs
+	 * 		 | result == null 
+	 * 		 |   || (result.getCollisionType() == entity && result.getOtherEntity() != null)
 	 */
-	@Basic
-	public String toString() {
-		String size = "width:"+String.valueOf(getWidth()) 
-						+ " height:"+String.valueOf(getHeight());
-		return size;
+	public Collision getFirstEntityCollision() {
+		Collision firstCollision = null;
+		
+		ArrayList<Entity> entities = getEntityList();
+		Iterator<Entity> iterator = entities.iterator();
+		while(iterator.hasNext()) {
+			Entity currentEntity = iterator.next();
+			iterator.remove(); // remove Entity from the set (to avoid double collision checks)
+			Collision currentCollision = currentEntity.getFirstCollision(entities);
+			if (firstCollision == null 
+					|| (currentCollision != null 
+						&& firstCollision.getTime() > currentCollision.getTime()))
+				firstCollision = currentCollision;
+		}
+		return firstCollision;
 	}
-
+	
+	/**
+	 * Return the wall collision that is going to occur first.
+	 * @return The first wall collision that occurs
+	 *       | result == null
+	 *       |   || (    result.getCollisionType() == leftWall
+	 * 		 | 	      || result.getCollisionType() == rightWall
+	 * 		 |        || result.getCollisionType() == topWall
+	 * 		 |        || result.getCollisionType() == bottomWall)
+	 */
+	public Collision getFirstWallCollision() {
+		Collision firstCollision = null;
+		for(Entity entity : getEntityList()) {
+			Collision currentCollision = entity.getCollision(this);
+			if (firstCollision == null || firstCollision.getTime() > currentCollision.getTime())
+				firstCollision = currentCollision;
+		}
+		return firstCollision;
+	}
+	
+	/**
+	 * Return the collision that is going to occur first
+	 * @return The first collision that is going to occur
+	 * 		 | result == getFirstEntityCollision() || result == getFirstWallCollision()
+	 */
+	public Collision getFirstCollision() {
+		Collision entityCollision = getFirstEntityCollision();
+		Collision wallCollision = getFirstWallCollision();
+		if (entityCollision == null) return wallCollision;
+		if (wallCollision == null) return entityCollision;
+		if (entityCollision.getTime() < wallCollision.getTime())
+			return entityCollision;
+		else return wallCollision;
+	}
+	
 	
 	// ADVANCING TIME (defensive)
 	
 	/**
 	 * Time interval of world evolutions.
 	 */
-	private final double DELTA_T = 3;
+	public final double DELTA_T = 0.01;
 	
 	/**
 	 * Return the time interval of world evolutions.
 	 */
+	@Basic @Immutable @Raw
 	public double getDeltaT() {
 		return DELTA_T;
 	}
 	
 	/**
-	 * Return the Entity that is going to collide with a wall first.
-	 */
-	public Entity getFirstWallCollision() {
-		
-		Double minTime = Double.POSITIVE_INFINITY;
-		Entity collisionEntity = null;
-
-		HashSet<Entity> entities = getEntities();
-		
-		// iterate through every Entity
-		Iterator<Entity> iterator = entities.iterator();
-		while(iterator.hasNext()) {
-			Entity currentEntity = iterator.next();
-			double collisionTime = currentEntity.getTimeToWallCollision();
-			if (collisionTime < minTime) {
-				minTime = collisionTime;
-				collisionEntity = currentEntity;
-			}
-		}
-		return collisionEntity;
-	}
-	
-	/**
-	 * Return the collision between 2 Entities that will happen first.
-	 */
-	public Entity[] getFirstEntityCollision() {
-		
-		Double minTime = Double.POSITIVE_INFINITY;
-		Entity[] collisionEntities = {null, null};
-		
-		HashSet<Entity> entities = getEntities();
-		
-		// iterate through every Entity
-		Iterator<Entity> iterator = entities.iterator();
-		while(iterator.hasNext()) {
-			Entity currentEntity = iterator.next();
-			
-			// remove Entity from the set (to avoid double collision checks)
-			entities.remove(currentEntity);
-			
-			// new iterator to check for collisions
-			Iterator<Entity> nestedIterator = entities.iterator();
-			while(nestedIterator.hasNext()) {
-				Entity otherEntity = nestedIterator.next();
-				
-				double time = currentEntity.getTimeToEntityCollision(otherEntity);
-				if (time < minTime) {
-					minTime = time;
-					collisionEntities[0] = currentEntity;
-					collisionEntities[1] = otherEntity;
-				}
-			}
-		}
-		return collisionEntities;
-	}
-	
-	
-	/**
-	 * Return the first collision that will occur in the world.
-	 * @return The first collision that will occur, null if none occurs.
-	 */
-	public Collision getFirstCollision() {
-		HashSet<Entity> entities = getEntities();
-		
-		Collision firstCollision = null;
-		
-		for (Iterator<Entity> i = entities.iterator(); i.hasNext();) {
-			Entity entity = i.next();
-		    i.remove();
-		    
-		    Collision collision = entity.getFirstCollision(entities);
-		    
-		    if (firstCollision == null || collision.getTime() < firstCollision.getTime())
-		    	firstCollision = collision;
-		}
-		
-		return firstCollision;
-	}
-	
-	
-	/**
-	 * Advance the time of the prime object.
+	 * Advance the time.
 	 */
 	public void advanceTime(double time) {
-		
+		System.out.println("Advance Time (" + time + " sec)");
 		Collision firstCollision = getFirstCollision();
 		
 		if (firstCollision != null && firstCollision.getTime() <= time) {
-			// Advance all entities
-			for(Entity entity : getEntities())
+			System.out.println("collision!");
+			System.out.println(firstCollision.getCollisionType());
+			
+			// Advance all entities up to the point of the first collision
+			for(Entity entity : getEntityList())
 				entity.move(firstCollision.getTime());
 			
-			// Update velocities
-			for(Ship ship : getShips())
-				ship.thrust(firstCollision.getTime());
+			System.out.println(firstCollision.getEntity().getXVelocity() + " " 
+								+ firstCollision.getEntity().getYVelocity());
 			
 			// Resolve the collision
 			firstCollision.resolve();
+			
+			System.out.println(firstCollision.getEntity().getXVelocity() + " " 
+								+ firstCollision.getEntity().getYVelocity());
+			
+			// Update velocities
+			for(Ship ship : getShipSet())
+				ship.thrust(firstCollision.getTime());
 			
 			// Advance time for the remaining time
 			advanceTime(getDeltaT() - firstCollision.getTime());
 			
 		} else {
-		// Advance all entities
-		for(Entity entity : getEntities())
-			entity.move(getDeltaT());
-		
-		// Update velocities
-		for(Ship ship : getShips())
-			ship.thrust(getDeltaT());
+			// Advance all entities
+			for(Entity entity : getEntityList())
+				entity.move(time);
+			
+			// Update velocities
+			for(Ship ship : getShipSet())
+				ship.thrust(time);
 		}
 	}
 	
 	/**
-	 * Advance the time of the prime object.
+	 * Advance the time getDeltaT seconds.
 	 */
 	public void advanceTime() {
 		advanceTime(getDeltaT());
@@ -513,6 +576,7 @@ public class World {
 	/**
 	 * Returns whether the world is terminated.
 	 */
+	@Basic
 	public boolean isTerminated() {
 		return isTerminated;
 	}
@@ -520,11 +584,10 @@ public class World {
 	/**
 	 * Terminate the world by removing all it's entities.
 	 */
-	@Basic
 	public void terminate() {
-		HashSet<Entity> entities = getEntities();
-		for (Entity entity : entities)
+		for (Entity entity : getEntityList()) {
 			remove(entity);
+		}
 		isTerminated = true;
 	}
 
