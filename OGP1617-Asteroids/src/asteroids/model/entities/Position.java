@@ -1,18 +1,32 @@
-package asteroids.model.entities;
+package asteroids.model;
 
-import asteroids.model.environment.World;
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
+import be.kuleuven.cs.som.annotate.Raw;
 
 /**
  * A class representing the position of an Entity.
+ * @invar isValidXCoord(getXCoord)
+ * @invar isValidYCoord(getYCoord)
  */
 public class Position {
 	
 	// CONSTRUCTOR
 	
 	/**
-	 * Initialise a new Position with given x and y coordinates.
+	 * Initialise a new Position with given coordinates.
+	 * @throws IllegalArgumentException
+	 * 		   If the x coordinate is NaN.
+	 * 	     | xCoord == Double.NaN
+	 * @throws IllegalArgumentException
+	 * 		   If the y coordinate is NaN.
+	 * 	     | yCoord == Double.NaN
 	 */
-	public Position(double xCoord, double yCoord) {
+	public Position(double xCoord, double yCoord) throws IllegalArgumentException {
+		if (xCoord == Double.NaN) throw new IllegalArgumentException(
+				"given xCoord is NaN");
+		if (yCoord == Double.NaN) throw new IllegalArgumentException(
+				"given yCoord is NaN");
 		setXCoord(xCoord);
 		setYCoord(yCoord);
 	}
@@ -26,26 +40,57 @@ public class Position {
 	
 	// COORDINATES
 	
+	/**
+	 * The x coordinate of the position.
+	 */
 	private double xCoord;
 	
+	/**
+	 * The y coordinate of the position.
+	 */
 	private double yCoord;
 	
+	/**
+	 * Return the x coordinate of the position.
+	 * @pre The x coordinate is a number
+	 * 	  | ! xCoord == Double.NaN
+	 */
+	@Basic @Raw
 	public double getXCoord() {
 		return xCoord;
 	}
 	
+	/**
+	 * Return the y coordinate of the position.
+	 * @pre The y coordinate is a number
+	 * 	  | ! yCoord == Double.NaN
+	 */
+	@Basic @Raw
 	public double getYCoord() {
 		return yCoord;
 	}
 	
-	public void setXCoord(double newXCoord) {
-		xCoord = newXCoord;
+	/**
+	 * Set the x-coordinate of the position.
+	 * @post ...
+	 * 	   | new getXCoord() == xCoord
+	 */
+	protected void setXCoord(double xCoord) throws IllegalArgumentException {
+		this.xCoord = xCoord;
 	}
 	
-	public void setYCoord(double newYCoord) {
-		yCoord = newYCoord;
+	/**
+	 * Set the y-coordinate of the position.
+	 * @post ...
+	 * 	   | new getYCoord() == yCoord
+	 */
+	protected void setYCoord(double yCoord) throws IllegalArgumentException {
+		this.yCoord = yCoord;
 	}
 	
+	/**
+	 * Return the coordinates of this position in an array.
+	 */
 	public double[] toArray() {
 		double position[] = new double[2];
 		position[0] = getXCoord();
@@ -55,46 +100,44 @@ public class Position {
 	
 	// ENTITY
 	
+	/**
+	 * The entity assigned to this position.
+	 */
 	private Entity entity;
 	
+	/**
+	 * Return the entity assigned to this position.
+	 * @invar This position is valid for the entity (if it is not null)
+	 * 		| getEntity() == null || getEntity().canHaveAsPosition(this)
+	 */
+	@Basic
 	public Entity getEntity() {
 		return entity;
 	}
 	
-	public void setEntity(Entity newEntity) {
-		entity = newEntity;
-		if (newEntity != null && newEntity.getWorld() != null)
-			setWorld(newEntity.getWorld());
-	}
-	
-	// WORLD
-	
 	/**
-	 * The world in which the position is located. If no world is 
-	 * assigned to the position, this is the null pointer reference.
+	 * Set a new entity reference for this position.
+	 * @pre    The previous entity must not reference this position.
+	 * 		 | getEntity() == null || newEntity().getPosition() != this
+	 * @pre    The given entity must reference this position.
+	 * 		 | newEntity.getPosition() == this
+	 * @post   The position references the given entity.
+	 * 		 | getEntity() == newEntity
+	 * @throws IllegalArgumentException
+	 * 		   If the current entity still references this position
+	 * 		 | getEntity() != null && getEntity().getPosition() == this
+	 * @throws IllegalArgumentException
+	 * 		   If the new entity does not reference this position
+	 * 		 | newEntity != null && newEntity.getPosition() != this
 	 */
-	private World world;
-	
-	/**
-	 * Returns a reference to the positions world, if any.
-	 * @return If the position is located in a world
-	 * 				then return the positions world
-	 * 		   Else return the null pointer reference
-	 */
-	public World getWorld() {
-		return world;
-	}
-	
-	/**
-	 * Set the world of the position if and only if the position has no
-	 * entity or the entity is in the given world
-	 */
-	protected void setWorld(World newWorld) throws IllegalArgumentException{
-		if (getEntity() == null	|| getEntity().getWorld() == newWorld)
-			world = newWorld;
-		else
+	protected void setEntity(Entity newEntity) throws IllegalArgumentException{
+		if (getEntity() != null && getEntity().getPosition() == this)
 			throw new IllegalArgumentException(
-					"associated entity is connected to another world");
+					"the position is still referenced by its current entity");
+		if (newEntity != null && newEntity.getPosition() != this)
+			throw new IllegalArgumentException(
+					"the given entity must reference this position");
+		entity = newEntity;
 	}
 	
 	
@@ -102,17 +145,12 @@ public class Position {
 	
 	/**
 	 * Return whether the given argument equals the prime object.
-	 * @return true if and only if the coordinates of the Positions are the same.
 	 */
 	@Override
 	public boolean equals(Object other){
 		if (! (other instanceof Position))
 			return false;
-		else if (getXCoord() == ((Position) other).getXCoord()
-				&& getYCoord() == ((Position) other).getYCoord())
-			return true;
-		else
-			return false;
+		else return hashCode() == other.hashCode();
 	}
 	
 	/**
@@ -121,33 +159,16 @@ public class Position {
 	 */
 	@Override
 	public int hashCode() {
-		Integer max = (int) Math.floor(Math.sqrt(Integer.MAX_VALUE));
-		double xCoord = getXCoord();
-		double yCoord = getYCoord();
-		Integer xValue;
-		Integer yValue;
-		
-		if (getWorld() != null && getWorld().getWidth() >= max)
-			xValue = (int) Math.round(xCoord * (max/getWorld().getWidth()));
-		else
-			xValue = (int) Math.round(xCoord);
-		
-		if (getWorld() != null && getWorld().getHeight() >= max)
-			yValue = (int) Math.round(yCoord * (max/getWorld().getHeight()));
-		else
-			yValue = (int) Math.round(yCoord);
-		
-		String stringCode = xValue.toString() + yValue.toString();
-		
-		int intCode = Integer.parseInt(stringCode);
-        return intCode;
+		Integer xValue = (int) Math.round(getXCoord()/4);
+		Integer yValue = (int) Math.round(getYCoord()/4);
+        return Integer.parseInt(xValue.toString() + yValue.toString());
     }
 	
 	/**
 	 * Return a string representing the Position.
 	 */
 	public String toString() {
-		return "Position at (x:" + String.valueOf(getXCoord()) 
-						+ ", y:" + String.valueOf(getYCoord()) + ")";
+		return "(" + String.valueOf(getXCoord()) 
+						+ ", " + String.valueOf(getYCoord()) + ")";
 	}
 }
