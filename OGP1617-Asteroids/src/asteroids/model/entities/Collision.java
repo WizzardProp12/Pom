@@ -1,5 +1,27 @@
-package asteroids.model.entities;
+package asteroids.model;
 
+import be.kuleuven.cs.som.annotate.*;
+
+/**
+ * @author Wouter Cams and Stijn Bruggeman
+ * 
+ * Studies:
+ * Wouter Cams: 2e Bachelor Ingenieurswetenschappen
+ * Hoofdrichting Elektrotechniek, nevenrichting computerwetenschappen
+ * Stijn Bruggeman: 2e Bachelor Ingenieurswetenschappen
+ * Hoofdrichting computerwetenschappen, nevenrichting elektrotechniek
+ * 
+ * @version  0.1
+ * 
+ * A link to the GitHub code repository:
+ * https://github.com/WizzardProp12/Pom
+ * 
+ * A class of collision objects 
+ * A collision object stores the involved entities,
+ * the collision type and the time until the collision.
+ * @invar isValidtime(time)
+ * @invar getEntity() != null
+ */
 public class Collision {
 	
 	// CONSTRUCTORS
@@ -13,7 +35,7 @@ public class Collision {
 	 * @param entity
 	 * 		  The entity that collides with the other entity or wall.
 	 * @param other
-	 * 		  If the entity collied with another entity, this is that entity.
+	 * 		  The other entity involved in the collision, this can be the null pointer
 	 * @pre   The given time must be valid.
 	 * 		| isValidTime(time)
 	 * @pre   The given other entity can only be null if the the collisionType is not CollisionType.Entity
@@ -29,7 +51,7 @@ public class Collision {
 	 * 		| new getOtherEntity() == other
 	 */
 	public Collision(CollisionType type, double time, Entity entity, Entity other) {
-		if (type == CollisionType.entity || other == null)
+		if (type == CollisionType.entity && other == null)
 			throw new IllegalArgumentException("other entity cannot reference null if the collision is of the Entity type.");
 		setCollisionType(type);
 		setTime(time);
@@ -75,12 +97,15 @@ public class Collision {
 	 * Return the CollisionType of the Collision.
 	 * @return Entity, TopWall, BottomWall, LeftWall or RightWall
 	 */
+	@Basic @Raw @Immutable
 	public CollisionType getCollisionType() {
 		return collisionType;
 	}
 	
 	/**
 	 * Set the CollisionType of the Collision.
+	 * @post ...
+	 * 	   | getCollisionType() = type
 	 */
 	private void setCollisionType(CollisionType type) {
 		collisionType = type;
@@ -96,15 +121,17 @@ public class Collision {
 	
 	/**
 	 * Get the amount of time left before the collision.
-	 * @return see implementation...
+	 * @invar The time is valid
+	 * 	    | isValidTime(getTime())
 	 */
+	@Basic @Raw @Immutable
 	public double getTime() {
 		return time;
 	}
 	
 	/**
 	 * Return whether the time left before the collision is valid.
-	 * @return see implementation...
+	 * @return time >= 0
 	 */
 	public boolean isValidTime(double time) {
 		return (time >= 0);
@@ -112,6 +139,9 @@ public class Collision {
 	
 	/**
 	 * Set the amount of time left before the collision.
+	 * @throws IllegalArgumentException
+	 * 		   If the given time is invalid
+	 * 	     | ! isValidTime(time)
 	 */
 	private void setTime(double time) throws IllegalArgumentException {
 		if (! isValidTime(time))
@@ -131,6 +161,7 @@ public class Collision {
 	/**
 	 * Return the main entity of the collision.
 	 */
+	@Basic @Raw @Immutable
 	public Entity getEntity() {
 		return entity;
 	}
@@ -152,12 +183,8 @@ public class Collision {
 	
 	/**
 	 * Return the other entity of the collision, if one exists.
-	 * @return The other entity
-	 * 		 | if collisionType = Entity
-	 * 		 | 		return other
-	 * 		 | else
-	 * 		 |		return null
 	 */
+	@Basic @Raw @Immutable
 	public Entity getOtherEntity() {
 		return other;
 	}
@@ -170,22 +197,32 @@ public class Collision {
 	}
 
 	
+	// COLLISION POSITION
+	
+	/**
+	 * Return the position of the collision
+	 * @return see implementation...
+	 */
+	public Position getPosition() {
+		if (getCollisionType() == CollisionType.entity)
+			return getEntity().getCollisionPosition(getOtherEntity());
+		else
+			return getEntity().getCollisionPosition(getEntity().getWorld());
+	}
+	
+	
 	// RESOLVE COLLISION
 	
+	/**
+	 * Resolve the collision by colliding the involved entities.
+	 */
 	public void resolve() {
-		// Entity - Entity collision
 		if (getCollisionType() == CollisionType.entity) {
-			if (getEntity() instanceof Ship)
-				((Ship) getEntity()).collide(getOtherEntity());
-			else if (getEntity() instanceof Bullet)
-				((Bullet) getEntity()).collide(getOtherEntity());
-		// Entity - Wall collision
-		} else {
-			getEntity().wallBounce(getCollisionType());
-		}
+			getEntity().collide(getOtherEntity());
+		} else
+			if (getEntity() instanceof Bullet)
+				((Bullet) getEntity()).wallBounce(getCollisionType());
+			else
+				getEntity().wallBounce(getCollisionType());
 	}
-
-	
-	
-	
 }
