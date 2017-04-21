@@ -1,25 +1,50 @@
-package asteroids.model.entities;
+package asteroids.model;
 
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
 
-import asteroids.model.environment.*;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
+ * @author Wouter Cams and Stijn Bruggeman
+ * 
+ * Studies:
+ * Wouter Cams: 2e Bachelor Ingenieurswetenschappen
+ * Hoofdrichting Elektrotechniek, nevenrichting computerwetenschappen
+ * Stijn Bruggeman: 2e Bachelor Ingenieurswetenschappen
+ * Hoofdrichting computerwetenschappen, nevenrichting elektrotechniek
+ * 
+ * @version  0.1
+ * 
+ * A link to the GitHub code repository:
+ * https://github.com/WizzardProp12/Pom
+ * 
  * A class of entities in an unbounded two dimensional space, 
  * involving coordinates, velocities, a radius and an 
  * orientation. 
  * 
  * Superclass of Ship.java and Bullet.java
+ * @invar ...
+ * 		| isValidXCoord(getXCoord())
+ * @invar ...
+ * 		| isValidYCoord(getYCoord())
+ * @invar ...
+ * 		| getXVelocity() <= getSpeedLimit()
+ * @invar ...
+ * 		| getYVelocity() <= getSpeedLimit()
+ * @invar ...
+ * 		| getSpeed() <= getSpeedLimit()
+ * @invar ...
+ * 		| canHaveAsRadius(getRadius())
+ * @invar ...
+ * 		| canHaveAsWorld(getWorld())
+ * @invar The entity is always located in a valid world
+ * 		| canBePlacedInWorld(getWorld())
+ * @invar The mass of the entity is equal to or greater than the minimum mass
+ * 		| getMass() >= getMinimumMass()
  */
-
 public abstract class Entity {
-	
-	public boolean test() {
-		return false;
-	}
 	
 	// CONSTRUCTORS
 	
@@ -44,9 +69,11 @@ public abstract class Entity {
 	 * 		  The world in which the entity is located.
 	 * 		| getWorld() == world
 	 * @pre   The given coordinates must be valid.
-	 * 		| canHaveAsXCoordinate() && canHaveAsYCoordinate()
+	 * 		| canHaveAsXCoordinate(xCoord) && canHaveAsYCoordinate(yCoord)
 	 * @pre   The given radius must be valid.
-	 * 		| canHaveAsRadius()
+	 * 		| canHaveAsRadius(radius)
+	 * @pre   The given world must be valid.
+	 * 		| canBePlacedIn(world)
 	 * @post ...
 	 * 		| new.getPosition() == [xCoord, yCoord]
 	 * @post ...
@@ -55,70 +82,73 @@ public abstract class Entity {
 	 * @post ...
 	 * 		| getSpeed() <= Entity.SPEED_LIMIT
 	 * @post ...
-	 * 		| new getRadius() == radius
+	 * 		| new getRadius() >= getMinRadius()
 	 * @post ...
 	 * 		| new getWorld() == world
-	 * 
+	 * @throws IllegalArgumentException
+	 * 		   If the given coordinates are not legal.
+	 * 		 | ! canHaveAsXCoordinate(xCoord) || ! canHaveAsYCoordinate(yCoord)
+	 * @throws IllegalArgumentException
+	 * 		   If the entity cannot be assigned to its position.
+	 * 		 || ! isValidPosition(position)
+	 * @throws IllegalArgumentException
+	 * 		   If the entity cannot be added to the world.
+	 * 		 | ! canBePlacedIn(world)
 	 */
 	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity, 
-			double radius, World world) {
+			double radius, World world) throws IllegalArgumentException{
 		
-		name = getName();
-		
-		// defensive
-		if (canHaveAsRadius(radius))
-			setRadius(radius);
-		
-		// total
+		// velocities (total)
 		double[] velocities = limitSpeed(xVelocity, yVelocity);
 		setXVelocity(velocities[0]);
 		setYVelocity(velocities[1]);
 		
+		// position (defensive)
+		setXCoord(xCoord);
+		setYCoord(yCoord);
+		
 		// defensive
-		if (isValidXCoord(xCoord))
-			setXCoord(xCoord);
-		if (isValidYCoord(yCoord))
-			setYCoord(yCoord);
+		if (canHaveAsRadius(radius))
+			this.radius = radius;
+		else
+			this.radius = getDefaultRadius();
+		
 		
 		getPosition().setEntity(this);
 		
 		if (world == null)
-			setWorld(world);
+			this.setWorld(world);
 		else
 			world.add(this);
 	}
 	
 	/**
 	 * Initialise a new entity with given coordinates, velocity, radius and no world.
-	 * @see implementation...
 	 */
-	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity, 
+	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity,
 			double radius) {
 		this(xCoord, yCoord, xVelocity, yVelocity, radius, null);
 	}
 	
 	/**
-	 * Initialise a new entity with given coordinates, 
-	 * velocity, the minimal radius and no world.
-	 * @see implementation...
+	 * Initialise a new entity with given coordinates, velocity, default
+	 * radius and no world.
 	 */
 	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity) {
-		this(xCoord, yCoord, xVelocity, yVelocity, MIN_RADIUS);
+		this(xCoord, yCoord, xVelocity, yVelocity, 0);
 	}
 	
 	/**
-	 * Initialise a new entity with given coordinates, 
-	 * no velocity, the minimal radius and no world.
-	 * @see implementation...
+	 * Initialise a new entity with given coordinates, no velocity, default
+	 * radius and no world.
 	 */
 	public Entity(double xCoord, double yCoord) {
 		this(xCoord, yCoord, 0, 0);
 	}
 	
 	/**
-	 * Initialise a new entity with coordinates (0,0), 
-	 * no velocity, the minimal radius and no world.
-	 * @see implementation...
+	 * Initialise a new entity with  coordinates (0, 0) , no velocity, default
+	 * radius and no world.
 	 */
 	public Entity() {
 		this(0, 0);
@@ -130,13 +160,23 @@ public abstract class Entity {
 	/**
 	 * The position of the Entity.
 	 */
-	private Position position = new Position();
+	protected Position position = new Position();
 	
+	/**
+	 * Return the Position object of the prime object
+	 * @invar The returned position is always valid
+	 * 		| isValidPosition(getPosition())
+	 */
+	public Position getPosition() {
+		return position;
+	}
 	
 	/**
 	 * Returns the x-coordinate of the prime entity.
+	 * @invar The returned xCoord is always valid.
+	 * 		| isValidPosition(getXCoord(), validYCoord)
 	 * @return The x-coordinate of the prime entity.
-	 * 		|  result == this.xCoord
+	 * 		|  result == getPosition().getXCoord()
 	 */
 	@Basic @Raw
 	public double getXCoord() {
@@ -144,34 +184,60 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Return whether the given x-coordinate is valid in the given world.
-	 * @param  xCoord
-	 * 		   The x-coordinate to be checked.
-	 * @param  world
-	 * 		   The world for which the coordinate has to be valid.
-	 * @return true if and only if the x-coordinate is valid.
-	 * @throws IllegalArgumentException
-	 * 		   If the xCoord argument is NaN.
+	 * Returns the y-coordinate of the prime entity.
+	 * @invar The returned yCoord is always valid.
+	 * 		| isValidPosition(validXCoord, getYCoord())
+	 * @return The y-coordinate of the prime entity.
+	 * 		|  result == getPosition().getYCoord();
 	 */
-	public boolean isValidXCoord(double xCoord, World world)  throws IllegalArgumentException{
-		if (Double.isNaN(xCoord))
-			throw new IllegalArgumentException("xCoord parameter is NaN.");
-		if (world == null)
-			return (0 <= xCoord);
-		else
-			return world.isValidXCoord(xCoord);
+	@Basic @Raw
+	public double getYCoord() {
+		return getPosition().getYCoord();
+	}
+	
+	
+	/**
+	 * Return whether the given position would be valid for the prime object.
+	 * @return see implementation...
+	 */
+	@Raw
+	public boolean isValidPosition(Position position) {
+		if (getWorld() == null) return true;
+		else return isWithinBoundariesOf(getWorld(), position);
 	}
 	
 	/**
-	 * Return whether the given x-coordinate is valid in the world of the prime object.
-	 * @param  xCoord
-	 * 		   The x-coordinate to be checked.
-	 * @return true if and only if the x-coordinate is valid.
-	 * @throws IllegalArgumentException
-	 * 		   If the xCoord argument is NaN.
+	 * Return whether the prime object can take the given position.
+	 * This method is like isValidPosition() but also takes in account
+	 * other entities.
+	 * @return see implementation...
 	 */
-	public boolean isValidXCoord(double xCoord)  throws IllegalArgumentException{
-		return isValidXCoord(xCoord, getWorld());
+	@Raw
+	public boolean canTakePosition(Position position) {
+		if (! isValidPosition(position))
+			return false;
+		return (getWorld() == null || ! wouldOverLapAt(position, getWorld().getEntityList()));
+	}
+	
+	
+	/**
+	 * Set the position of the entity.
+	 * @post The new position is valid.
+	 * 	   | isValidPosition(position)
+	 * @throws IllegalArgumentException
+	 * 		   If the given position is not valid
+	 * 		 | ! isValidPosition(position)
+	 */
+	@Model @Raw
+	protected void setPosition(Position position) throws IllegalArgumentException {
+		if (! canTakePosition(position)) throw new IllegalArgumentException(
+				"invalid position, see canTakePosition()");
+		if (position == getPosition()) throw new IllegalArgumentException(
+				"entity already has this position");
+		if (position.getEntity() != null) throw new IllegalArgumentException(
+				"given position already references another entity");
+		this.position = position;
+		position.setEntity(this);
 	}
 	
 	/**
@@ -180,57 +246,20 @@ public abstract class Entity {
 	 * 		  The new x-coordinate of the entity.
 	 * @post  The x-coordinate of this entity is equal 
 	 * 		  to the given x-coordinate.
-	 * 	   |  new.getXCoord() = newXCoord
+	 * 	    | new.getXCoord() = newXCoord
 	 * @throws IllegalArgumentException
-	 * 		   see isValidXCoord()
+	 * 		   If the given x-coordinate is NaN.
+	 * 	    |  newXCoord == Double.NaN
+	 * @throws IllegalArgumentException
+	 * 		   If the given x-coordinate would result in a position the entity cannot take
+	 * 		|  ! canTakePosition(new Position(xCoord, getYCoord())
 	 */
 	@Model @Raw
-	public void setXCoord(double newXCoord) throws IllegalArgumentException{
-		if (isValidXCoord(newXCoord))
-			position.setXCoord(newXCoord);
-		else
-			throw new IllegalArgumentException("parameter newXCoord is invalid.");
-	}
-	
-	
-	/**
-	 * Returns the y-coordinate of the prime entity.
-	 * @return The y-coordinate of the prime entity.
-	 */
-	@Basic @Raw
-	public double getYCoord() {
-		return getPosition().getYCoord();
-	}
-
-	/**
-	 * Return whether the given y-coordinate is valid in the given world.
-	 * @param  yCoord
-	 * 		   The y-coordinate to be checked.
-	 * @param  world
-	 * 		   The world for which the coordinate has to be valid.
-	 * @return true if and only if the y-coordinate is valid.
-	 * @throws IllegalArgumentException
-	 * 		   If the yCoord argument is NaN.
-	 */
-	public boolean isValidYCoord(double yCoord, World world) throws IllegalArgumentException{
-		if (Double.isNaN(yCoord))
-			throw new IllegalArgumentException("yCoord parameter is NaN.");
-		if (world == null)
-			return (0 <= yCoord);
-		else
-			return world.isValidYCoord(yCoord);
-	}
-	
-	/**
-	 * Return whether the given y-coordinate is valid in the world of the prime object.
-	 * @param  yCoord
-	 * 		   The y-coordinate to be checked.
-	 * @return true if and only if the y-coordinate is valid.
-	 * @throws IllegalArgumentException
-	 * 		   If the yCoord argument is NaN.
-	 */
-	public boolean isValidYCoord(double yCoord) throws IllegalArgumentException{
-		return isValidYCoord(yCoord, getWorld());
+	protected void setXCoord(double xCoord) throws IllegalArgumentException {
+		if (! canTakePosition(new Position(xCoord, getYCoord()))) throw new 
+		IllegalArgumentException("given xCoord would result in an illegal position, "
+								+ "see canTakePosition()");
+		getPosition().setXCoord(xCoord);
 	}
 	
 	/**
@@ -239,106 +268,146 @@ public abstract class Entity {
 	 * 		  The new y-coordinate of the entity.
 	 * @post  The y-coordinate of this entity is equal 
 	 * 		  to the given y-coordinate.
-	 * 	   |  new.getYCoord() = newYCoord
+	 * 	    | new.getYCoord() = newYCoord
 	 * @throws IllegalArgumentException
-	 * 		   The given y-coordinate is NaN.
-	 * 	   |   newYCoord == Double.NaN
+	 * 		   If the given y-coordinate is NaN.
+	 * 	    |  newYCoord == Double.NaN
 	 * @throws IllegalArgumentException
-	 * 		   The given y-coordinate is out of the world boundaries.
-	 * 	   |   ! (0 <= newYCoord <= getWorld().getHeight())
+	 * 		   If the given y-coordinate would result in a position the entity cannot take
+	 * 		|  ! canTakePosition(new Position(getXCoord(), yCoord)
 	 */
 	@Model @Raw
-	public void setYCoord(double newYCoord) throws IllegalArgumentException{
-		if (isValidYCoord(newYCoord))
-			position.setYCoord(newYCoord);
-		else
-			throw new IllegalArgumentException("parameter newYCoord is invalid.");
+	protected void setYCoord(double yCoord) throws IllegalArgumentException {
+		if (! canTakePosition(new Position(getXCoord(), yCoord))) throw new 
+		IllegalArgumentException("given yCoord would result in an illegal position, "
+								+ "see canTakePosition()");
+		getPosition().setYCoord(yCoord);
 	}
 	
 	
 	/**
-	 * Return the Position object of the prime object
-	 * @return
+	 * Return whether the prime object would be within the given worlds 
+	 * boundaries if it would be at the given position in that world.
+	 * @return see implementation...
 	 */
-	public Position getPosition() {
-		return position;
-	}
-	
-	/**
-	 * Return the x and y positions of the prime entity.
-	 * @return An array of the x-coordinate and the y-coordinate of the entity
-	 * 		 | result == [xCoord,yCoord]
-	 */
-	public double[] getPositionArray() {
-		return getPosition().toArray();
-	}
-	
-	/**
-	 * Return whether the prime object is within the boundaries of the given world.
-	 * @return true if the entity is located within the boundaries
-	 * 		   of the world, or if the given argument is the null
-	 * 		   pointer reference.
-	 */
-	public boolean withinBoundariesOf(World world) throws NullPointerException {
+	public boolean isWithinBoundariesOf(World world, Position position) {
 		if (world == null)
-			throw new NullPointerException("the given argument references the null pointer.");
-
-		double x = getXCoord();
-		double y = getYCoord();
+			return true;
+		
+		double x = position.getXCoord();
+		double y = position.getYCoord();
 		double r = getRadius();
 		double w = world.getWidth();
 		double h = world.getHeight();
-
+		
 		// left, right, top, bottom
-		if (x > 0.99*r && w - x > 0.99*r && h - y > 0.99*r && y > 0.99*r)
-			return true;
-		return false;
+		return (0.99*r < x && x + 0.99*r < w && 0.99*r < y && y + 0.99*r < h);
 	}
 	
-
 	/**
-	 * Change the position of the entity based on the current position, 
-	 * velocity and a given time duration named time.
-	 * @param  time
-	 * 		   The time for which the entity must be moved.
-	 * @effect The coordinate of the entity along the x-axis is set to 
-	 * 		   the old x-coordinate plus the given time multiplied by 
-	 * 		   the velocity of the entity along the x-axis. 
-	 * 	     | setXcoord(getXcoord() + time*getxVelocity())
-	 * @effect The coordinate of the entity along the y-axis
-	 * 		   is set to the old y-coordinate plus the given
-	 * 		   time multiplied by the velocity of the entity 
-	 * 		   along the y-axis.  		
-	 * 		 | setYcoord(getYcoord() + time*getyVelocity())
+	 * Return whether the prime object would be within the given worlds 
+	 * boundaries if it would be at its current position in that world.
+	 * @return see implementation...
+	 */
+	public boolean isWithinBoundariesOf(World world) {
+		double x = getXCoord();
+		double y = getYCoord();
+		return isWithinBoundariesOf(world, new Position(x, y));
+	}
+	
+	/**
+	 * Return with which border the entity is currently overlapping
+	 * @result == 0 (if none)
+	 * 			  1 (if left)
+	 * 			  2 (if top)
+	 * 			  3 (if right)
+	 * 			  4 (if bottom)
+	 */
+	public int getOverLappingBorder(World world) {
+		double left   = getXCoord();
+		double top    = world.getHeight() - getYCoord();
+		double right  = world.getWidth() - getXCoord();
+		double bottom = getYCoord();
+		double[] distances = {left, top, right, bottom};
+		
+		double min = distances[0];
+		for (double distance : distances)
+			if (distance < min) min = distance;
+		
+		if (0.99*getRadius() < min) return 0;
+		else if (min == left) 	return 1;
+		else if (min == top) 	return 2;
+		else if (min == right)  return 3;
+		else if (min == bottom) return 4;
+		else return 0;
+	}
+	
+	
+	/**
+	 * Check whether the given time is valid.
+	 * @see implementation...
+	 */
+	@Basic @Immutable @Raw
+	public static boolean isValidTime(double time) {
+		return (0 <= time && !Double.isNaN(time) && !Double.isInfinite(time));
+	}
+	
+	/**
+	 * Return the coordinates the entity would be at after moving forward for
+	 * the given amount of seconds.
 	 * @throws IllegalArgumentException
-	 * 		   The given duration time is less than zero.
+	 * 		   The given duration time is invalid.
 	 * 		 | ! isValidTime(time)
 	 */
-	public void move(double time) throws IllegalArgumentException {
-		if (!isValidTime(time))
-			throw new IllegalArgumentException("invalid argument (must be positive).");
-		double newxCoord = getXCoord() + time*getXVelocity();
-		double newyCoord = getYCoord() + time*getYVelocity();
-		setXCoord(newxCoord);
-		setYCoord(newyCoord);
+	public double[] getFutureCoordinates(double time) throws IllegalArgumentException {
+		if (!Entity.isValidTime(time))
+			throw new IllegalArgumentException("the given time ("+ time +") is invalid");
+		
+		double xCoord = getXCoord() + time*getXVelocity();
+		double yCoord = getYCoord() + time*getYVelocity();
+		return new double[] {xCoord, yCoord};
 	}
+	
+	/**
+	 * Return the position the entity would be at after moving forward for
+	 * the given amount of seconds.
+	 * @throws IllegalArgumentException
+	 * 		   The given duration time is invalid.
+	 * 		 | ! isValidTime(time)
+	 */
+	public Position getFuturePosition(double time) throws IllegalArgumentException {
+		double[] newCoords = getFutureCoordinates(time);
+		return new Position(newCoords[0], newCoords[1]);
+	}
+	
+	/**
+	 * Change the position of the entity based on the current position, 
+	 * velocity and a given time duration.
+	 * @param  time
+	 * 		   The time for which the entity must be moved.
+	 * @effect The entity is moved to it's future position
+	 * 		 | new.getPosition() == old.getFuturePosition(time)
+	 * @throws IllegalArgumentException
+	 * 		   The given duration time is invalid.
+	 * 		 | ! isValidTime(time)
+	 * @throws IllegalArgumentException
+	 * 		   The given duration would place the entity outside of its world boundaries
+	 * 		 | ! isValidPosition(getFuturePosition(time))
+	 */
+	public void move(double time) throws IllegalArgumentException {
+		Position futurePosition = getFuturePosition(time);
+		if (! isWithinBoundariesOf(getWorld(), futurePosition))
+			throw new IllegalArgumentException(
+					"moving the entity for the given time would place "
+					+ "it outside of the world boundaries");
+		else {
+			getPosition().setXCoord(futurePosition.getXCoord());
+			getPosition().setYCoord(futurePosition.getYCoord());
+		}
+	}
+	
 	
 	// VELOCITIES (total)
-	
-	// TODO: moet speed limit static zijn?
-	/**
-	 * A static final variable that represents the speed limit.
-	 */
-	private final static double SPEED_LIMIT = 300000;
-	
-	/**
-	 * Return the speed limit of the entity.
-	 */
-	@Basic @Immutable
-	public static double getSpeedLimit() {
-		return SPEED_LIMIT;
-	}
-	
 	
 	/**
 	 * The velocity of the entity along the x-axis.
@@ -346,13 +415,32 @@ public abstract class Entity {
 	private double xVelocity = 0;
 	
 	/**
+	 * The velocity of the entity along the y-axis.
+	 */
+	private double yVelocity = 0;
+	
+	/**
 	 * Return the velocity of the prime object along the x-axis.
+	 * @post The x velocity of the prime object is under the speed limit.
+	 * 	     | getAbsVelocity(getXVelocity(), 0) <= SPEED_LIMIT
 	 * @return The velocity of the prime object along the x-axis.
 	 * 		|  result == this.xVelocity
 	 */
 	@Basic @Raw
 	public double getXVelocity() {
 		return this.xVelocity;
+	}
+	
+	/**
+	 * Return the velocity of the prime object along the y-axis.
+	 * @post The y velocity of the prime object is under the speed limit.
+	 * 	     | getAbsVelocity(0, getYVelocity()) <= SPEED_LIMIT
+	 * @return The velocity of the prime object along the y-axis.
+	 * 		 | result == this.yVelocity
+	 */
+	@Basic @Raw
+	public double getYVelocity() {
+		return this.yVelocity;
 	}
 	
 	/**
@@ -363,27 +451,11 @@ public abstract class Entity {
 	 * 		 the speed limit.
 	 * 	     | getAbsVelocity(new xVelocity, new yVelocity) <= SPEED_LIMIT
 	 */
-	public void setXVelocity(double xVelocity) {
+	protected void setXVelocity(double xVelocity) {
 		yVelocity = getYVelocity();
-		double[] newVelocities = Entity.limitSpeed(xVelocity, yVelocity);
+		double[] newVelocities = limitSpeed(xVelocity, yVelocity);
 		this.xVelocity = newVelocities[0];
 		this.yVelocity = newVelocities[1];
-	}
-	
-	
-	/**
-	 * The velocity of the entity along the y-axis.
-	 */
-	private double yVelocity = 0;
-	
-	/**
-	 * Return the velocity of the prime object along the y-axis.
-	 * @return The velocity of the prime object along the y-axis.
-	 * 		 | result == this.yVelocity
-	 */
-	@Basic @Raw
-	public double getYVelocity() {
-		return this.yVelocity;
 	}
 	
 	/**
@@ -394,24 +466,29 @@ public abstract class Entity {
 	 * 		 the speed limit.
 	 * 	     | getAbsVelocity(new xVelocity, new yVelocity) <= SPEED_LIMIT
 	 */
-	public void setYVelocity(double yVelocity) {
+	protected void setYVelocity(double yVelocity) {
 		xVelocity = getXVelocity();
-		double[] newVelocities = Entity.limitSpeed(xVelocity, yVelocity);
+		double[] newVelocities = limitSpeed(xVelocity, yVelocity);
 		this.xVelocity = newVelocities[0];
 		this.yVelocity = newVelocities[1];
 	}
 	
 	
+	// ABSOLUTE VELOCITY (total)
+	
 	/**
 	 * Return an array of the x and y velocities of the entity.
+	 * @post The absolute speed of the prime object will be kept under
+	 * 		 the speed limit.
+	 * 	     | getAbsVelocity(result[0], result[1]) <= SPEED_LIMIT
 	 * @return An array of the x and y velocity
 	 * 		 | result[0] == getXVelocity()
 	 * 		 | result[1] == getYVelocity()
 	 */
+	@Basic @Raw
 	public double[] getVelocities() {
 		return new double[] {getXVelocity(), getYVelocity()};
 	}
-	
 	
 	/**
 	 * Returns the absolute velocity using the formula of the vector length
@@ -423,25 +500,20 @@ public abstract class Entity {
 	 * @return The absolute velocity
 	 * 		  | result == Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(xVelocity, 2)
 	 */
-	public static double getAbsVelocity(double xVelocity, double yVelocity) {
+	public static double getAbsSpeed(double xVelocity, double yVelocity) {
 		return Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(yVelocity, 2));
 	}
 	
 	/**
 	 * Return the speed of the prime object.
-	 * @return The absolute value of the x and y velocity.
-	 * 		|  result == 
-	 * 		|	if (getAbsVelocity(xVelocity, yVelocity) < speedLimit)
-	 * 		|	  return getAbsVelocity(xVelocity, yVelocity)
-	 * 		|	else
-	 * 		|	  return speedLimit
-	 * @invar The speed is lower than the speed limit.
-	 * 		| getSpeed() <= entity.SPEED_LIMIT
+	 * @invar The absolute speed is lower than or equal to the speed limit
+	 * 		| getSpeed() <= getSpeedLimit()
 	 */
+	@Basic @Raw
 	public double getSpeed() {
-		double absSpeed = getAbsVelocity(getXVelocity(), getYVelocity());
-		if (absSpeed > SPEED_LIMIT)
-			return SPEED_LIMIT;
+		double absSpeed = Entity.getAbsSpeed(getXVelocity(), getYVelocity());
+		if (absSpeed > getSpeedLimit())
+			return getSpeedLimit();
 		return absSpeed;
 	}
 	
@@ -452,15 +524,16 @@ public abstract class Entity {
 	 * 		  The x velocity of the entity.
 	 * @param yVelocity
 	 * 		  The y velocity of the entity.
+	 * @post  ...
+	 * 		| getAbsVelocity(result[0], result[1]) <= getSpeedLimiet
 	 * @return An array of the scaled down velocities.
-	 * @post new getAbsVelocity() <= SPEED_LIMIT
 	 */
-	public static double[] limitSpeed(double xVelocity, double yVelocity) {
+	public double[] limitSpeed(double xVelocity, double yVelocity) {
 		double newVelocities[] = new double[2];
-		double absVelocity = getAbsVelocity(xVelocity, yVelocity);
-		if (absVelocity > getSpeedLimit()) {
-			newVelocities[0] = xVelocity*(absVelocity/getSpeedLimit());
-			newVelocities[1] = yVelocity*(absVelocity/getSpeedLimit());
+		double absVelocity = Entity.getAbsSpeed(xVelocity, yVelocity);
+		if (absVelocity > this.getSpeedLimit()) {
+			newVelocities[0] = xVelocity*(getSpeedLimit()/absVelocity);
+			newVelocities[1] = yVelocity*(getSpeedLimit()/absVelocity);
 			return newVelocities;
 		}
 		newVelocities[0] = xVelocity;
@@ -469,138 +542,157 @@ public abstract class Entity {
 	}
 	
 	
+	// SPEED LIMIT (total)
+	
 	/**
-	 * Return the position the entity will be at in a given amount of seconds
+	 * A static variable representing the speed limit.
+	 * This is used as the upper bound for the speed limits.
 	 */
-	public Position getFuturePosition(double time) {
-		double xCoord = getXCoord() + time*getXVelocity();
-		double yCoord = getYCoord() + time*getYVelocity();
-		return new Position(xCoord, yCoord);
+	public static double LIGHT_SPEED = 300000;
+	
+	/**
+	 * Return the light speed.
+	 */
+	@Basic @Raw @Immutable
+	public static double getLightSpeed() {
+		return Entity.LIGHT_SPEED;
 	}
 	
 	/**
-	 * Return the coordinates the entity will be at in a given amount of seconds
+	 * A that represents the speed limit of the Entity.
 	 */
-	public double[] getFutureCoordinates(double time) {
-		double xCoord = getXCoord() + time*getXVelocity();
-		double yCoord = getYCoord() + time*getYVelocity();
-		return new double[] {xCoord, yCoord};
+	private double speedLimit = Entity.getLightSpeed();
+	
+	/**
+	 * Return the speed limit of the prime object.
+	 */
+	@Basic @Immutable @Raw
+	public double getSpeedLimit() {
+		return speedLimit;
+	}
+	
+	/**
+	 * Check whether the given speed limit is valid.
+	 * @return true if the speed limit is smaller than the speed of light.
+	 * 		 | (0 < speedLimit || speedLimit <= Entity.getLightSpeed())
+	 */
+	@Raw
+	public boolean canHaveAsSpeedLimit(double speedLimit) {
+		return (0 < speedLimit || speedLimit <= Entity.getLightSpeed());
+	}
+	
+	/**
+	 * Set the speed limit of the prime object if the given speed limit is valid.
+	 * @post The speed limit is valid
+	 * 	   | canHaveAsSpeedLimit(speedLimit)
+	 */
+	public void setSpeedLimit(double speedLimit) {
+		if (canHaveAsSpeedLimit(speedLimit))
+			this.speedLimit = speedLimit;
 	}
 	
 	
 	// RADIUS (defensive)
 	
 	/**
-	 * The minimum radius of the entity.
-	 */
-	private final static double MIN_RADIUS = 10;
-	
-	/**
-	 * Return the minimum radius of every entity.
-	 */
-	@Basic @Immutable
-	public static double getMinRadius() {
-		return MIN_RADIUS;
-	}
-	
-	
-	/**
 	 * The radius of the entity.
 	 */
-	private double radius;
+	private final double radius;
 	
 	/**
 	 * Return the radius of the prime object.
-	 * @return The radius of the prime object.
-	 * @invar The radius has a minimum value.
-	 * 		| getRadius() >= MIN_RADIUS
+	 * @invar The radius is valid.
+	 * 		| canHaveAsRadius(getRadius()) == true
 	 */
-	@Basic @Immutable
+	@Basic @Immutable @Raw
 	public double getRadius() {
 		return this.radius;
 	}
 	
 	/**
-	 * Check if the given radius satisfies the requirements.
-	 * @see implementation...
+	 * Return the default radius of the prime object.
+	 * This abstract method must be overwritten in the subclasses.
 	 */
-	@Basic
-	public boolean canHaveAsRadius(double radius) {
-		return (radius >= MIN_RADIUS); 
-	}
+	@Basic @Immutable @Raw
+	public abstract double getDefaultRadius();
 	
 	/**
-	 * Sets the radius of the entity.
-	 * @param radius
-	 * @throws IllegalArgumentException
-	 * 		   The given radius is too small.
-	 * 		 | radius < MIN_RADIUS
+	 * Check if the given radius suits the prime object.
+	 * @return see implementation...
 	 */
-
-	protected void setRadius(double radius) throws IllegalArgumentException {
-		if (! canHaveAsRadius(radius)) {
-			throw new IllegalArgumentException("Radius is too small.");
-		}
-		this.radius = radius;
-	}
+	@Raw
+	public abstract boolean canHaveAsRadius(double radius);
 	
 	
 	// WORLD - ADDING AND REMOVING (defensively)
+	
 
 	/**
-	 * The variable referencing the container of the entity.
+	 * The world in which the entity is located.
 	 */
 	private World world;
 	
 	/**
-	 * Return the container in which the entity is located.
-	 * @see implementation...
+	 * Return the world in which the entity is located.
+	 * @invar The world contains the entity
+	 * 		 | getWorld().contains()
+	 * @invar The entity is located within the world boundaries.
+	 * 		 | isWithinBoundaries(getWorld())
 	 */
 	@Basic
 	public World getWorld() {
-		return this.world;
+		return world;
+	}
+	
+	/**
+	 * Returns whether the entity can change world.
+	 */
+	@Basic
+	public boolean canChangeWorld() {
+		if (getWorld() == null) return true;
+		else {
+			System.out.println("canChangeWorld()");
+			return ! getWorld().contains(this);
+		}
+	}
+	
+	/**
+	 * Returns whether the entity can be placed in the given world.
+	 * @return ...
+	 * 		 | (isWithinBoundariesOf(world) && ! overlaps(world.getEntitySet()) )
+	 */
+	public boolean canBePlacedIn(World world) {
+		if (world == null) return true;
+		return (isWithinBoundariesOf(world) && !overlaps(world.getEntityList()));
 	}
 	
 	/**
 	 * Set the container of the entity.
+	 * @post   ...
+	 * 	     | getWorld() == world
 	 * @throws IllegalArgumentException
-	 * 		   If the prime object is not present in the given world.
-	 * 		 | ! world.contains(this)
+	 * 		   If the entity is still referenced by its current world.
+	 * 		 | ! canChangeWorld()
+	 * @throws IllegalArgumentException
+	 * 		   If the entity can't be placed in the given world
+	 * 		 | ! canBePlacedIn(world)
+	 * @throws IllegalArgumentException
+	 *		   If the the entity is not referenced by the given world.
+	 *		 | world != null && ! world.contains(this)
 	 */
-	public void setWorld(World newWorld) throws IllegalArgumentException {
-		// check if the entity references a current world
-		if (getWorld() == null) {
-			this.world = newWorld;
-			getPosition().setWorld(newWorld);
-			return;
-		}
-		
-		// check if new world contains the prime object
-		if (! (newWorld == null || newWorld.contains(this)))
-			throw new IllegalArgumentException("given argument must contain the prime object");
-		
-		// check if the current world no longer contains the prime object
-		if (getWorld() != null && getWorld().contains(this)) {
-			throw new IllegalArgumentException("prime object is already in a world");
-		}
-		
-		this.world = newWorld;
-		getPosition().setWorld(newWorld);
+	protected void setWorld(World world) throws IllegalArgumentException {
+		if (! canChangeWorld()) throw new IllegalArgumentException(
+				"entity is still referenced by current world");
+		if (! canBePlacedIn(world)) throw new IllegalArgumentException(
+				"entity can't be placed in the given world");
+		if (world != null && ! world.contains(this)) throw new IllegalArgumentException(
+				"the entity is not referenced by the given world");
+		this.world = world;
 	}
+	
 	
 	// WORLD - SEARCHING (total)
 	
-	/**
-	 * Returns the hashCode of the entity. 
-	 * The hashCode is based on the coordinates of the 
-	 * entity and 32 numbers long.
-	 * @return An int between 0 and 
-	 */
-	@Override @Basic
-    public int hashCode() {
-		Position position = getPosition();
-        return position.hashCode();
-    }
 	
 	/**
 	 * Return whether the prime object equals the argument.
@@ -608,7 +700,7 @@ public abstract class Entity {
 	 * 		  The other entity.
 	 * @return see implementation...
 	 */
-	@Basic
+	@Override @Basic
 	public boolean equals(Object other){
 		if (! (other instanceof Entity))
 			return false;
@@ -616,108 +708,37 @@ public abstract class Entity {
 				&& getYCoord() == ((Entity) other).getYCoord()
 				&& getXVelocity() == ((Entity) other).getXVelocity() 
 				&& getYVelocity() == ((Entity) other).getYVelocity()
-				&& getRadius() == ((Entity) other).getRadius()
-				&& getWorld() == ((Entity) other).getWorld())
+				&& getRadius() == ((Entity) other).getRadius())
 			return true;
 		else
 			return false;
 	}
 	
-	/**
-	 * Return a string representing the Entity.
-	 * @Return ...
-	 * 		 | result == name + hashCode
-	 */
-	@Basic
-	public String toString() {
-		String hashCode = String.valueOf(hashCode());
-		return name + " (hc:" + hashCode + ")";
-	}
-	
-	// NAME
-	
-	/**
-	 * The name of the Entity.
-	 */
-	public String name;
-	
-	/**
-	 * The list of name prefixes.
-	 */
-	private String[] prefixes = {"zwarte", "witte", "blauwe", "gele", 
-	                                 "groene", "rode", "oranje", "paarse"};
-	
-	/**
-	 * The list of name suffixes.
-	 */
-	private String[] suffixes = {"tijger", "haai", "gekko", "kikker", 
-	                             "zebra", "kolibri", "gorilla", "sprinkhaan"};
-	
-	/**
-	 * Returns a generated name.
-	 */
-	private String getName() {
-		int x = (int)(Math.random() * prefixes.length-1);
-		int y = (int)(Math.random() * suffixes.length-1);
-		return prefixes[x] + " " + suffixes[y];
-	}
 	
 	// MASS (total)
 	
 	/**
-	 * The density of the entity, the default value is
-	 * overwritten in the subclasses.
+	 * Return the density of the entity
 	 */
-	private final double DENSITY = 0;
+	@Basic @Immutable @Raw
+	public abstract double getDensity();
 	
 	/**
-	 * Return the density of the entity
-	 * @see implementation...
+	 * Return the minimum mass of the entity.
 	 */
-	@Basic @Immutable
-	public double getDensity() {
-		return this.DENSITY;
+	@Basic @Immutable @Raw
+	public double getMinimumMass() {
+		return (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
 	}
-	
 	
 	/**
 	 * Return the mass of the entity.
-	 * @return (4/3)*PI*(radius^3)*DENSITY
 	 */
-	@Basic @Immutable
-	public double getMass() {
-		double mass = (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
-		return mass;
-	}
+	@Basic @Raw @Immutable
+	abstract double getMass();
 	
 	
-	// COLLISIONS (defensive)
-	
-	/**
-	 * Collide the entity with another entity.
-	 * @throws IllegalArgumentException
-	 * 		   If the given argument is not a ship or bullet.
-	 * 		 | !(entity instanceof Ship) && !(entity instanceof Bullet)
-	 */
-	public void collide(Entity entity) throws IllegalArgumentException {
-		if (entity instanceof Ship) {
-			collide((Ship) entity);
-		} else if (entity instanceof Bullet) {
-			collide((Bullet) entity);
-		} else
-			throw new IllegalArgumentException("given argument must be a Bullet or Ship");
-	}
-	
-	// distance and overlap
-
-	/**
-	 * Check whether the given time is valid.
-	 * @see implementation...
-	 */
-	@Basic @Raw
-	public static boolean isValidTime(double time) {
-		return time >= 0;
-	}
+	// COLLISION PREDICTION (defensive)
 	
 	/**
 	 * Return the distance between the centres of two entities.
@@ -753,116 +774,60 @@ public abstract class Entity {
 		return getDistanceBetweenCentres(other) - getRadius() - other.getRadius();
 	}
 	
+	
 	/**
-	 * Return whether this entity significantly overlaps with the other entity
+	 * Return whether this entity significantly overlaps with the other entity.
+	 * Important: this function ignores the entities worlds.
 	 * @param other
 	 * 		  The other entity.
-	 * @return see implementation...
 	 * @throws NullPointerException
 	 * 		   The given argument references a null pointer.
-	 *         | other == null
+	 *       | other == null
+	 * @return True if the entities overlap
+	 * 		 | getDistanceBetweenCentres(other) <= 0.99*(getRadius() + other.getRadius())
 	 */
 	public boolean overlaps(Entity other) throws NullPointerException {
-		if (other == null)
-			throw new NullPointerException("argument references null pointer.");
-		double totalRadii = getRadius() - other.getRadius();
+		if (other == null) return false;
+		double totalRadii = getRadius() + other.getRadius();
 		return getDistanceBetweenCentres(other) <= 0.99*totalRadii;
 	}
 	
-	// wallcollisions (total)
-
 	/**
-	 * Return the first collision of the entity with a wall
-	 * that will occur.
-	 * @return the type of wall collision. (String)
-	 * 		   "horizontal", "vertical" or "none"
+	 * Return whether the entity overlaps with one or more of the
+	 * entities in the given array.
 	 */
-	public Collision getWallCollision() {
-		if (getWorld() == null || (getXVelocity() == 0 && getYVelocity() == 0))
-			return null;
-		
-		CollisionType type;
-		double time;
-		
-		double timeToRightCollision = (getXVelocity() > 0) 
-									? (getWorld().getWidth() - getXCoord() - getRadius()) / getXVelocity()
-									: Double.POSITIVE_INFINITY;
-		time = timeToRightCollision;
-		type = CollisionType.rightWall;
-		
-		double timeToLeftCollision = (getXVelocity() < 0)
-									? (getXCoord() - getRadius()) / -getXVelocity()
-									: Double.POSITIVE_INFINITY;
-		if (time > timeToLeftCollision) {
-			time = timeToLeftCollision;
-			type = CollisionType.leftWall;
+	public boolean overlaps(ArrayList<Entity> otherEntities) {
+		for (Entity other : otherEntities){
+			if (this != other && overlaps(other))
+				return true;
 		}
-		double timeToTopCollision = (getYVelocity() > 0)
-									? (getWorld().getHeight() - getYCoord() - getRadius()) / getYVelocity()
-									: Double.POSITIVE_INFINITY;
-		if (time > timeToTopCollision) {
-			time = timeToTopCollision;
-			type = CollisionType.topWall;
+		return false;
+	}
+	
+	/**
+	 * Return whether this entity would overlap the given entity
+	 * if it was placed at the given position.
+	 */
+	public boolean wouldOverLapAt(Position position, Entity other) {
+		if (position == null || other == null) return false;
+		double deltaX = position.getXCoord() - other.getXCoord();
+		double deltaY = position.getYCoord() - other.getYCoord();
+		double distBetweenCenters = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+		return distBetweenCenters < 0.99 * (getRadius() + other.getRadius());
+	}
+	
+	/**
+	 * Return whether this entity would overlap any of the given entities
+	 * if it was placed at the given position.
+	 */
+	public boolean wouldOverLapAt(Position position, ArrayList<Entity> otherEntities) {
+		for (Entity other : otherEntities){
+			if (this != other && wouldOverLapAt(position, other))
+				return true;
 		}
-		double timeToBottomCollision = (getYVelocity() < 0)
-									? (getYCoord() - getRadius()) / -getYVelocity()
-									: Double.POSITIVE_INFINITY;
-		if (time > timeToBottomCollision) {
-			time = timeToBottomCollision;
-			type = CollisionType.bottomWall;
-		}
-		
-		return new Collision(type, time, this);
+		return false;
 	}
 	
-	/**
-	 * Return the duration before the prime object will collide with a world border.
-	 * @throws NullPointerException
-	 * 		   If the prime object has no reference to a world.
-	 */
-	public double getTimeToWallCollision() {
-		Collision collision = getWallCollision();
-		if (collision == null)
-			return Double.POSITIVE_INFINITY;
-		else
-			return collision.getTime();
-	}
-	
-	/**
-	 * Return the position the entity will be in when it first hits a wall.
-	 */
-	public double[] getWallCollisionPosition() {
-		double time = getTimeToWallCollision();
-		double xCoord = getXCoord() + time*getXVelocity();
-		double yCoord = getYCoord() + time*getYVelocity();
-		return new double[] {xCoord, yCoord};
-	}
-	
-	/**
-	 * Bounce the entity of a horizontal or vertical wall.
-	 * @effect If the entity bounces with a vertical wall, negate the x velocity
-	 * 		 | new getXVelocity() == -getXVelocity()
-	 * @effect If the entity bounces with a horizontal wall, negate the y velocity
-	 * 		 | new getYVelocity() == -getYVelocity()
-	 */
-	public void wallBounce(CollisionType type) {
-		if (type == CollisionType.bottomWall || type == CollisionType.topWall)
-			setYVelocity(-getYVelocity());
-		else if (type == CollisionType.leftWall || type == CollisionType.rightWall)
-			setXVelocity(-getXVelocity());
-	}
-	
-	// entitycollisions (total)
-	
-	/**
-	 * Return the collision of the entity with another entity
-	 * @param other
-	 * 		| A reference to the other entity.
-	 */
-	public Collision getEntityCollision(Entity other) {
-		double time = getTimeToEntityCollision(other);
-		return new Collision(CollisionType.entity, time, this, other);
-	}
 	
 	/**
 	 * Return the time it will take for this entity to collide with the other entity.
@@ -871,19 +836,12 @@ public abstract class Entity {
 	 * @return The time it will take before the entities collide,
 	 * 		   if and only if the entities collide.
 	 * 		   Else, infinity is returned.
-	 * @throws IllegalStateException
-	 * 		   This entity already overlaps with the other entity.
-	 * 		 | overlap(other) == True
 	 * @throws NullPointerException
-	 * 		   The given argument references a null pointer.
-	 *         | other == null
+	 * 		   If the given argument references the null pointer (thrown by .overlaps())
+	 * 		 | other == null
 	 */
-	public double getTimeToEntityCollision(Entity other) 
-			throws IllegalStateException, NullPointerException {
-		if (this.overlaps(other) == true)
-			throw new IllegalStateException("The entities overlap.");
-		if (other == null)
-			throw new NullPointerException("argument references null pointer.");
+	public double getTimeToCollision(Entity other) throws NullPointerException {
+		if (this.overlaps(other) == true) return 0;
 		
 		double deltaRX = other.getXCoord() - this.getXCoord();
 		double deltaRY = other.getYCoord() - this.getYCoord();
@@ -904,103 +862,196 @@ public abstract class Entity {
 		return time;
 	}
 	
-	// TODO: zou dit niet de coordinaten van de entity moeten teruggeven
-	//		 ipv de coordinaten van het punt waar de entities elkaar raken.
+	/**
+	 * Return how long it will take before the entity collides with
+	 * one of the world boundaries.
+	 * @throws NullPointerException
+	 * 		   If the given argument references the null pointer
+	 * 		 | world == null
+	 */
+	public double getTimeToCollision(World world) throws NullPointerException {
+		if (world == null) throw new NullPointerException(
+				"given argument references the null pointer");
+		Collision collision = getCollision(world);
+		if (collision == null) return Double.POSITIVE_INFINITY;
+		else return collision.getTime();
+	}
+	
+	
+	/**
+	 * Return the collision of the entity with another entity. Returns
+	 * the null pointer if no collision occurs.
+	 * @param other
+	 * 		| A reference to the other entity.
+	 * @throws NullPointerException
+	 * 		   If the given argument references the null pointer (thrown by .overlaps())
+	 * 		 | other == null
+	 */
+	public Collision getCollision(Entity other) throws NullPointerException {
+		double time = getTimeToCollision(other);
+		if (Double.isInfinite(time)) return null;
+		else return new Collision(CollisionType.entity, time, this, other);
+	}
+	
+	/**
+	 * Return the first collision the entity will have with the boundaries of 
+	 * the given world. Returns the null pointer if no collision occurs.
+	 * @throws NullPointerException
+	 * 		   If the given argument references the null pointer (thrown by .overlaps())
+	 * 		 | world == null
+	 */
+	public Collision getCollision(World world) throws NullPointerException {
+		
+		// world references the null pointer
+		if (world == null) throw new NullPointerException(
+				"the given argument references the null pointer");
+		
+		// entity is already overlapping a border.
+		if (! isWithinBoundariesOf(world)) {
+			int border = getOverLappingBorder(world);
+			if      (border == 1) return new Collision(CollisionType.leftWall,   0, this);
+			else if (border == 2) return new Collision(CollisionType.topWall,    0, this);
+			else if (border == 3) return new Collision(CollisionType.rightWall,  0, this);
+			else if (border == 4) return new Collision(CollisionType.bottomWall, 0, this);
+		}
+		
+		// entity is not moving
+		if (getSpeed() == 0) return null;
+		
+		// entity is moving (regular situation)
+		double horizontalTime = (getXVelocity() > 0) 
+			? Math.abs((world.getWidth() - getXCoord() - 0.99*getRadius()) / getXVelocity())
+			: Double.POSITIVE_INFINITY;
+		
+		double verticalTime = (getYVelocity() > 0)
+			? Math.abs((world.getHeight() - getYCoord() - 0.99*getRadius()) / getYVelocity())
+			: Double.POSITIVE_INFINITY;
+		
+		if (horizontalTime < verticalTime) {
+			if (getXVelocity() < 0)
+				return new Collision(CollisionType.leftWall, horizontalTime, this);
+			else
+				return new Collision(CollisionType.rightWall, horizontalTime, this);
+		} else {
+			if (getYVelocity() < 0)
+				return new Collision(CollisionType.bottomWall, verticalTime, this);
+			else
+				return new Collision(CollisionType.topWall, verticalTime, this);
+		}
+	}
+	
+	
 	/**
 	 * Return the position where the entities will collide.
-	 * @param other
-	 * 		 The other entity.
-	 * @return The position where the entities will collide,
-	 * 		   if and only if the time to collision is less than infinity.
-	 * 		   Else, null is returned.
-	 * 	    |  If (this.getTimeToCollision(other) == Double.POSITIVE_INFINITY)
-	 * 		|	 result == null
-	 * 		|  else
-	 * 		|     result == [collisionX,collisionY] where
-	 * 		|
-	 * 		|     collisionX = other.getXCoord() + this.getTimeToCollision(other)
-	 * 		|	  other.getXvelocity() + (other.getXCoord() - this.getXCoord())
-	 * 		|	  * other.getRadius() / (other.getRadius() + this.getRadius())
-	 * 		|
-	 * 		|     collisionY = other.getYCoord() + this.getTimeToCollision(other)
-	 * 		|	  other.getYvelocity() + (other.getYCoord() - this.getYCoord())
-	 * 		|     * other.getRadius() / (other.getRadius() + this.getRadius())
-	 * @throws IllegalStateException
-	 * 		   This entity overlaps with the other entity.
-	 * 		|  overlap(other) 
+	 * @param  other
+	 * 		   The other entity.
+	 * @return The position where the entities will collide if they collide.
 	 * @throws NullPointerException
 	 * 		   The given argument references a null pointer.
-	 *         | other == null
+	 *       | other == null
 	 */
-	public double[] getEntityCollisionPosition(Entity other) 
-			throws IllegalStateException, NullPointerException {
-		if (this.overlaps(other) == true)
-			throw new IllegalStateException("The entities overlap.");
-		if (other == null)
-			throw new NullPointerException("argument references null pointer.");
+	public Position getCollisionPosition(Entity other) throws  NullPointerException {
+		double deltaT = getTimeToCollision(other);
+		if (deltaT == Double.POSITIVE_INFINITY) return null;
 		
-		double deltaT = getTimeToEntityCollision(other);
+		double[] coords = getFutureCoordinates(deltaT);
+		double[] otherCoords = getFutureCoordinates(deltaT);
 		
-		if (deltaT == Double.POSITIVE_INFINITY)
-			return null;
+		double deltaX = otherCoords[0] - coords[0];
+		double deltaY = otherCoords[1] - coords[1];
 		
-		double thisxCoord = getXCoord() + deltaT*getXVelocity();
-		double thisyCoord = getYCoord() + deltaT*getYVelocity();
+		double sigma = this.getRadius() + other.getRadius();
 		
-		double otherxCoord = other.getXCoord() + deltaT*other.getXVelocity();
-		double otheryCoord = other.getYCoord() + deltaT*other.getYVelocity();
+		double collisionX = otherCoords[0] + deltaX * (other.getRadius()/sigma);
+		double collisionY = otherCoords[1] + deltaY * (other.getRadius()/sigma);
 		
-		double deltaX = otherxCoord - thisxCoord;
-		double deltaY = otheryCoord - thisyCoord;
-		
-		double sigma = other.getRadius() + this.getRadius();
-		
-		double collisionX = otherxCoord + deltaX * (other.getRadius()/sigma);
-		double collisionY = otheryCoord + deltaY * (other.getRadius()/sigma);
-		
-		double collisionPosition[] = new double[2];
-		collisionPosition[0] = collisionX;
-		collisionPosition[1] = collisionY;
-		return collisionPosition;
+		return new Position(collisionX, collisionY);
 	}
 	
-	// both
+	/**
+	 * Return the position where the entity will hit the world boundary.
+	 * @throws NullPointerException
+	 * 		   The given argument references a null pointer.
+	 *       | world == null
+	 */
+	public Position getCollisionPosition(World world) throws  NullPointerException {
+		
+		Collision collision = getCollision(world);
+		if (collision == null) return null;
+		
+		double[] futurePosition = getFutureCoordinates(collision.getTime());
+		
+		switch (collision.getCollisionType()) {
+			case leftWall:
+				return new Position(0, futurePosition[1]);
+			case topWall:
+				return new Position(futurePosition[0], world.getHeight());
+			case rightWall:
+				return new Position(world.getWidth(), futurePosition[1]);
+			case bottomWall:
+				return new Position(futurePosition[0], 0);
+			default:
+				return null;
+		}
+	}
+	
 	
 	/**
-	 * Return the first collision with a wall or one of the given 
-	 * entities that will occur for the prime entity.
-	 * @param entities
-	 * 		| The entities to check.
-	 * @return The first collision that will occur (with a wall or another entity).
+	 * Return the first collision that will occur between the prime
+	 * object and one of the entities of the given ArrayList.
 	 */
-	public Collision getFirstCollision(HashSet<Entity> entities) {
-		// wall
-		Collision collision = getWallCollision();
+	public Collision getFirstCollision(ArrayList<Entity> entities) {
+		Collision firstCollision = null;
 		
-		// entities
 		for (Iterator<Entity> i = entities.iterator(); i.hasNext();) {
 			Entity other = i.next();
-			if (other != null && getWorld() == other.getWorld()) {
-				Collision currentCollision = getEntityCollision(other);
-				if (currentCollision == null || collision.getTime() > currentCollision.getTime())
-					collision = currentCollision;
+			
+			if (this != other && other != null) {
+				Collision currentCollision = getCollision(other);
+				if (firstCollision == null 
+						|| (currentCollision != null 
+							&& firstCollision.getTime() > currentCollision.getTime()))
+					firstCollision = currentCollision;
 			}
 		}
-		return collision;
+		return firstCollision;
 	}
 	
 	/**
-	 * Return the first collision with a wall or one of the worlds
-	 * entities that will occur for the prime entity.
-	 * @return The first collision that will occur (with a wall or another entity).
+	 * Return the first collision the entity will experience in the given world.
+	 * The collision can be with a border or any other entity in the given world.
 	 */
-	public Collision getFirstCollision() {
-		if (getWorld() == null)
-			return null;
+	public Collision getFirstCollision(World world) {
+		if (world == null) return null;
 		else {
-			HashSet<Entity> entities = getWorld().getEntities();
-			return getFirstCollision(entities);
+			Collision entityCollision = getFirstCollision(world.getEntityList());
+			Collision worldCollision = getCollision(world);
+			if (entityCollision.getTime() < worldCollision.getTime()) return entityCollision;
+			else return worldCollision;
 		}
+	}
+	
+	
+	// COLLISION RESOLVING (total)
+	
+	/**
+	 * Collide the entity with another entity.
+	 */
+	public abstract void collide(Entity entity);
+	
+	/**
+	 * Bounce the entity of a horizontal or vertical wall.
+	 * @effect If the entity bounces with a vertical wall, negate the x velocity
+	 * 		 | new getXVelocity() == -getXVelocity()
+	 * @effect If the entity bounces with a horizontal wall, negate the y velocity
+	 * 		 | new getYVelocity() == -getYVelocity()
+	 */
+	public void wallBounce(CollisionType type) {
+		System.out.println("entity wallbounce");
+		if (type == CollisionType.bottomWall || type == CollisionType.topWall)
+			setYVelocity(-getYVelocity());
+		else if (type == CollisionType.leftWall || type == CollisionType.rightWall)
+			setXVelocity(-getXVelocity());
 	}
 	
 	
@@ -1014,16 +1065,19 @@ public abstract class Entity {
 	/**
 	 * Returns whether the entity is terminated.
 	 */
+	@Basic @Raw
 	public boolean isTerminated() {
 		return isTerminated;
 	}
 	
-	
 	/**
 	 * Terminate the entity by removing it from its current world.
+	 * @post The entity isn't located in any world
+	 * 	   | getWorld() == null
 	 */
-	@Basic
+	@Raw
 	public void terminate() {
+		System.out.println("terminate");
 		if (getWorld() != null)
 			getWorld().remove(this);
 		isTerminated = true;
