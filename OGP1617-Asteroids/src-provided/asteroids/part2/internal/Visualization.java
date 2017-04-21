@@ -1,5 +1,5 @@
 package asteroids.part2.internal;
-
+ 
 import java.awt.Color;
 import java.awt.Image;
 

@@ -2,9 +2,9 @@ package asteroids.part2.facade;
 
 import java.util.*;
 
+import asteroids.model.Bullet;
+import asteroids.model.Ship;
 import asteroids.model.World;
-import asteroids.model.entities.Bullet;
-import asteroids.model.entities.Ship;
 import asteroids.part2.CollisionListener;
 import asteroids.util.ModelException;
 
@@ -412,3 +412,4 @@ public interface IFacade extends asteroids.part1.facade.IFacade {
 	}
 
 }
+

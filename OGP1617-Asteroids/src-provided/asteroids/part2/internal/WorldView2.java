@@ -22,8 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import asteroids.model.World;
-import asteroids.model.entities.Bullet;
-import asteroids.model.entities.Ship;
+import asteroids.model.Bullet;
+import asteroids.model.Ship;
 import asteroids.part2.CollisionListener;
 import asteroids.part2.facade.IFacade;
 import asteroids.util.ModelException;

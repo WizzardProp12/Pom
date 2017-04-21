@@ -10,8 +10,8 @@ import java.util.*;
 import javax.swing.JFrame;
 
 import asteroids.model.World;
-import asteroids.model.entities.Bullet;
-import asteroids.model.entities.Ship;
+import asteroids.model.Bullet;
+import asteroids.model.Ship;
 import asteroids.part2.facade.IFacade;
 import asteroids.util.ModelException;
 
