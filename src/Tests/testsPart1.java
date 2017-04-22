@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 
-import asteroids.model.entities.Ship;
+import asteroids.model.Ship;
 
 public class testsPart1 {
 	

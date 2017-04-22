@@ -25,9 +25,7 @@ public class asteroidsTests1 {
 	public void setUp() {
 		Ship ship = new Ship();
 	}
-	
 
-	
 	
 	@Test
 	public void shipConstructor1Test() throws IllegalArgumentException{
