@@ -66,7 +66,6 @@ public class Part1TestPartial {
 		assertNotNull(position);
 		assertEquals(130, position[0], EPSILON);
 		assertEquals(85, position[1], EPSILON);
-	}
-	
+	}	
 	
 }
