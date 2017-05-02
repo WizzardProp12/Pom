@@ -38,7 +38,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 		|		canContain(entity)
  */
 public class World {
-	
+	// TEST
 	// CONSTRUCTORS
 	
 	/**
