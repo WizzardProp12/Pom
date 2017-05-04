@@ -872,9 +872,21 @@ public abstract class Entity {
 	public double getTimeToCollision(World world) throws NullPointerException {
 		if (world == null) throw new NullPointerException(
 				"given argument references the null pointer");
-		Collision collision = getCollision(world);
-		if (collision == null) return Double.POSITIVE_INFINITY;
-		else return collision.getTime();
+		if (getSpeed() == 0) return Double.POSITIVE_INFINITY;
+		
+		double w = world.getWidth();
+		double h = world.getHeight();
+		double x = getPosition().getXCoord();
+		double y = getPosition().getYCoord();
+		double r = 0.99*getRadius();
+		// (99% of the radius is used because of significant overlapping)
+		
+		double horizontal_time = getXVelocity() > 0 ? (w - x - r) / getXVelocity()
+													: (x - r) / -getXVelocity();
+		double vertical_time = getYVelocity() > 0 ? (h - y - r) / getYVelocity()
+												  : (y - r) / -getYVelocity();
+		
+		return Math.min(horizontal_time, vertical_time);
 	}
 	
 	
