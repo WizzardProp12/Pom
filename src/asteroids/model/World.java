@@ -524,8 +524,6 @@ public class World {
 		Collision firstCollision = getFirstCollision();
 		
 		if (firstCollision != null && firstCollision.getTime() <= time) {
-			System.out.println("collision!");
-			System.out.println(firstCollision.getCollisionType());
 			
 			// Advance all entities up to the point of the first collision
 			for(Entity entity : getEntityList())

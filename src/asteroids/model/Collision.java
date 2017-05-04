@@ -53,13 +53,10 @@ public class Collision {
 	public Collision(CollisionType type, double time, Entity entity, Entity other) {
 		if (type == CollisionType.entity && other == null)
 			throw new IllegalArgumentException("other entity cannot reference null if the collision is of the Entity type.");
-		setCollisionType(type);
-		setTime(time);
-		setEntity(entity);
-		if (type != CollisionType.entity)
-			setOtherEntity(null);
-		else
-			setOtherEntity(other);
+		this.collisionType = type;
+		this.time = time;
+		this.entity = entity;
+		this.other = other;
 	}
 	
 	/**
@@ -91,33 +88,23 @@ public class Collision {
 	/**
 	 * The CollisionType of the Collision.
 	 */
-	private CollisionType collisionType;
+	private final CollisionType collisionType;
 	
 	/**
 	 * Return the CollisionType of the Collision.
-	 * @return Entity, TopWall, BottomWall, LeftWall or RightWall
+	 * @return entity, horizontalWall or verticalWall
 	 */
 	@Basic @Raw @Immutable
 	public CollisionType getCollisionType() {
 		return collisionType;
 	}
 	
-	/**
-	 * Set the CollisionType of the Collision.
-	 * @post ...
-	 * 	   | getCollisionType() = type
-	 */
-	private void setCollisionType(CollisionType type) {
-		collisionType = type;
-	}
-	
-	
 	// TIME
 	
 	/**
 	 * The amount of time left before the collision occurs.
 	 */
-	private double time;
+	private final double time;
 	
 	/**
 	 * Get the amount of time left before the collision.
@@ -129,34 +116,12 @@ public class Collision {
 		return time;
 	}
 	
-	/**
-	 * Return whether the time left before the collision is valid.
-	 * @return time >= 0
-	 */
-	public boolean isValidTime(double time) {
-		return (time >= 0);
-	}
-	
-	/**
-	 * Set the amount of time left before the collision.
-	 * @throws IllegalArgumentException
-	 * 		   If the given time is invalid
-	 * 	     | ! isValidTime(time)
-	 */
-	private void setTime(double time) throws IllegalArgumentException {
-		if (! isValidTime(time))
-			throw new IllegalArgumentException("illegal argument (time), must be positive.");
-		else
-			this.time = time;
-	}
-	
-	
 	// MAIN ENTITY
 	
 	/**
 	 * The main entity of the collision
 	 */
-	private Entity entity;
+	private final Entity entity;
 	
 	/**
 	 * Return the main entity of the collision.
@@ -166,20 +131,13 @@ public class Collision {
 		return entity;
 	}
 	
-	/**
-	 * Set the main entity of the collision.
-	 */
-	private void setEntity(Entity entity) {
-		this.entity = entity;
-	}
-	
 	
 	// OTHER ENTITY
 	
 	/**
 	 * The other entity of the collision
 	 */
-	private Entity other;
+	private final Entity other;
 	
 	/**
 	 * Return the other entity of the collision, if one exists.
@@ -187,13 +145,6 @@ public class Collision {
 	@Basic @Raw @Immutable
 	public Entity getOtherEntity() {
 		return other;
-	}
-	
-	/**
-	 * Set the other entity of the collision.
-	 */
-	private void setOtherEntity(Entity other) {
-		this.other = other;
 	}
 
 	

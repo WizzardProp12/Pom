@@ -873,21 +873,30 @@ public abstract class Entity {
 		if (world == null) throw new NullPointerException(
 				"given argument references the null pointer");
 		if (getSpeed() == 0) return Double.POSITIVE_INFINITY;
-		
-		double w = world.getWidth();
-		double h = world.getHeight();
-		double x = getPosition().getXCoord();
-		double y = getPosition().getYCoord();
-		double r = 0.99*getRadius();
-		// (99% of the radius is used because of significant overlapping)
-		
-		double horizontal_time = getXVelocity() > 0 ? (w - x - r) / getXVelocity()
-													: (x - r) / -getXVelocity();
-		double vertical_time = getYVelocity() > 0 ? (h - y - r) / getYVelocity()
-												  : (y - r) / -getYVelocity();
-		
-		return Math.min(horizontal_time, vertical_time);
+		return Math.min(getTimeToHorizontalCollision(world), 
+						getTimeToVerticalCollision(world));
 	}
+	
+	public double getTimeToHorizontalCollision(World world) throws NullPointerException {
+		if (getXVelocity() > 0) {
+			return (world.getWidth() - getPosition().getXCoord() - 0.99*getRadius())
+						/ getXVelocity();
+		} else if (getXVelocity() < 0) {
+			return (getPosition().getXCoord() - 0.99*getRadius())
+						/ -getXVelocity();
+		} else { return Double.POSITIVE_INFINITY; }
+	}
+	
+	public double getTimeToVerticalCollision(World world) throws NullPointerException {
+		if (getYVelocity() > 0) {
+			return (world.getHeight() - getPosition().getYCoord() - 0.99*getRadius())
+						/ getYVelocity();
+		} else if (getYVelocity() < 0) {
+			return (getPosition().getYCoord() - 0.99*getRadius())
+						/ getYVelocity();
+		} else { return Double.POSITIVE_INFINITY; }
+	}
+	
 	
 	
 	/**
@@ -913,42 +922,20 @@ public abstract class Entity {
 	 * 		 | world == null
 	 */
 	public Collision getCollision(World world) throws NullPointerException {
-		
 		// world references the null pointer
 		if (world == null) throw new NullPointerException(
 				"the given argument references the null pointer");
-		
-		// entity is already overlapping a border.
-		if (! isWithinBoundariesOf(world)) {
-			int border = getOverLappingBorder(world);
-			if      (border == 1) return new Collision(CollisionType.leftWall,   0, this);
-			else if (border == 2) return new Collision(CollisionType.topWall,    0, this);
-			else if (border == 3) return new Collision(CollisionType.rightWall,  0, this);
-			else if (border == 4) return new Collision(CollisionType.bottomWall, 0, this);
-		}
-		
+
 		// entity is not moving
 		if (getSpeed() == 0) return null;
 		
-		// entity is moving (regular situation)
-		double horizontalTime = (getXVelocity() > 0) 
-			? Math.abs((world.getWidth() - getXCoord() - 0.99*getRadius()) / getXVelocity())
-			: Double.POSITIVE_INFINITY;
+		double horizontal_time = getTimeToHorizontalCollision(world);
+		double vertical_time = getTimeToVerticalCollision(world);
 		
-		double verticalTime = (getYVelocity() > 0)
-			? Math.abs((world.getHeight() - getYCoord() - 0.99*getRadius()) / getYVelocity())
-			: Double.POSITIVE_INFINITY;
-		
-		if (horizontalTime < verticalTime) {
-			if (getXVelocity() < 0)
-				return new Collision(CollisionType.leftWall, horizontalTime, this);
-			else
-				return new Collision(CollisionType.rightWall, horizontalTime, this);
+		if (horizontal_time < vertical_time) {
+			return new Collision(CollisionType.verticalWall, horizontal_time, this);
 		} else {
-			if (getYVelocity() < 0)
-				return new Collision(CollisionType.bottomWall, verticalTime, this);
-			else
-				return new Collision(CollisionType.topWall, verticalTime, this);
+			return new Collision(CollisionType.horizontalWall, vertical_time, this);
 		}
 	}
 	
@@ -994,14 +981,18 @@ public abstract class Entity {
 		double[] futurePosition = getFutureCoordinates(collision.getTime());
 		
 		switch (collision.getCollisionType()) {
-			case leftWall:
-				return new Position(0, futurePosition[1]);
-			case topWall:
-				return new Position(futurePosition[0], world.getHeight());
-			case rightWall:
-				return new Position(world.getWidth(), futurePosition[1]);
-			case bottomWall:
-				return new Position(futurePosition[0], 0);
+			case verticalWall:
+				if (getXVelocity() > 0) {
+					return new Position(getWorld().getWidth(), futurePosition[1]);
+				} else {
+					return new Position(0, futurePosition[1]);
+				}
+			case horizontalWall:
+				if (getYVelocity() > 0) {
+					return new Position(futurePosition[0], getWorld().getHeight());
+				} else {
+					return new Position(futurePosition[0], 0);
+				}
 			default:
 				return null;
 		}
@@ -1059,10 +1050,9 @@ public abstract class Entity {
 	 * 		 | new getYVelocity() == -getYVelocity()
 	 */
 	public void wallBounce(CollisionType type) {
-		System.out.println("entity wallbounce");
-		if (type == CollisionType.bottomWall || type == CollisionType.topWall)
+		if (type == CollisionType.horizontalWall)
 			setYVelocity(-getYVelocity());
-		else if (type == CollisionType.leftWall || type == CollisionType.rightWall)
+		else if (type == CollisionType.verticalWall)
 			setXVelocity(-getXVelocity());
 	}
 	

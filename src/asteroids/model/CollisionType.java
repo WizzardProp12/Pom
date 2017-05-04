@@ -17,5 +17,5 @@ package asteroids.model;
  * An enum describing a type of collision.
  */
 public enum CollisionType {
-	entity, topWall, bottomWall, leftWall, rightWall
+	entity, horizontalWall, verticalWall
 }
