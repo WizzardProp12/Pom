@@ -69,6 +69,7 @@ public class Bullet extends Entity {
 		super(xCoord, yCoord, xVelocity, yVelocity, radius);
 		if (canHaveAsShip(ship) && ship != null)
 			ship.load(this);
+		
 	}
 	
 	/**
