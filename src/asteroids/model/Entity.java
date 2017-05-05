@@ -613,7 +613,7 @@ public abstract class Entity {
 	 * Set the given radius.
 	 */
 	@Raw
-	public void setAsRadius(double radius) throws IllegalArgumentException {
+	public void setRadius(double radius) throws IllegalArgumentException {
 		if (! canHaveAsRadius(radius)) throw new IllegalArgumentException(
 				"The given radius is not valid");
 		this.radius = radius;

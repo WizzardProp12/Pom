@@ -31,16 +31,6 @@ public abstract class MinorPlanet extends Entity{
 		return 0;
 	}
 
-
-	
-	@Override
-	public void collide(Entity other) {
-		if (other instanceof Ship) collide((Ship) other);
-		if (other instanceof Bullet) collide((Bullet) other);
-		if (other instanceof Asteroid) collide((Asteroid) other);
-		if (other instanceof Planetoid) collide((Planetoid) other);
-
-	}
 	
 
 }

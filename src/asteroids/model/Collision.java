@@ -167,7 +167,7 @@ public class Collision {
 	/**
 	 * Resolve the collision by examining all possible situations.
 	 */
-	public void resolve() throws Exception {
+	public void resolve() {
 		// ENTITY - WALL
 		if (getCollisionType() == CollisionType.horizontalWall) {
 			getEntity().bounce(CollisionType.horizontalWall);

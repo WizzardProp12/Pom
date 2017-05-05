@@ -86,7 +86,7 @@ public class Ship extends Entity{
 		super(xCoord, yCoord, xVelocity, yVelocity, radius, world);
 		setOrientation(orientation);
 		if (getMinimumMass() < mass)
-			setMass(mass);
+			setShipMass(mass);
 	}
 	
 	/**
@@ -142,20 +142,25 @@ public class Ship extends Entity{
 	
 	// TELEPORT (defensive)
 	
-	public void teleport() throws Exception {
+	public void teleport() {
+		double x0;
+		double y0;
+		double w;
+		double h;
+		
 		if (getWorld() == null) {
-			double x0 = 0;
-			double y0 = 0;
-			double w = World.getMaxWidth();
-			double h = World.getMaxHeight();
+			x0 = 0;
+			y0 = 0;
+			w = World.getMaxWidth();
+			h = World.getMaxHeight();
 		} else {
-			double x0 = getRadius();
-			double y0 = getRadius();
-			double w = getWorld().getWidth() - 2 * getRadius();
-			double h = getWorld().getHeight() - 2 * getRadius();
+			x0 = getRadius();
+			y0 = getRadius();
+			w = getWorld().getWidth() - 2 * getRadius();
+			h = getWorld().getHeight() - 2 * getRadius();
 		}
 		Position newPosition = new Position(x0 + Math.random() * w, y0 + Math.random() * h);
-		if (canHaveAsPosition(newPosition))
+		if (canTakePosition(newPosition))
 			setPosition(newPosition);
 		else
 			terminate();

@@ -1,5 +1,7 @@
 package asteroids.model;
 
+import be.kuleuven.cs.som.annotate.*;
+
 public class Planetoid extends MinorPlanet {
 	
 	// CONSTRUCTORS
@@ -11,7 +13,7 @@ public class Planetoid extends MinorPlanet {
 	
 	public void move(double time) throws IllegalArgumentException {
 		super.move(time);
-		shrink(getSpeed() * time * getShrinkingPercentage())
+		shrink(getSpeed() * time * getShrinkingPercentage());
 	}
 	
 	// MASS (total)
@@ -19,11 +21,37 @@ public class Planetoid extends MinorPlanet {
 	private final double density = 0.917 * Math.pow(10, 12);
 	
 	@Basic @Immutable @Raw
-	public abstract double getDensity();
+	public double getDensity() {
+		return this.density;
+	}
 	
 	@Basic @Raw
 	public double getMass() {
 		return (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
+	}
+	
+	// RADIUS (defensive)
+
+	/**
+	 * The minimum radius of a planetoid.
+	 */
+	public static final double MIN_RADIUS = 5;
+	
+	/**
+	 * Return the minimum radius of a planetoid.
+	 */
+	@Basic @Immutable @Raw
+	public static double getMinRadius() {
+		return MIN_RADIUS;
+	}
+	
+	/**
+	 * Check if the given radius suits the prime object.
+	 * @return see implementation...
+	 */
+	@Raw
+	public boolean canHaveAsRadius(double radius) {
+		return (radius >= getMinRadius());
 	}
 	
 	// SHRINKING AND DISSOLVING
@@ -46,7 +74,7 @@ public class Planetoid extends MinorPlanet {
 	public void dissolve() {
 		terminate();
 		
-		if (getRadius() >= 30 and getWorld() != null) { // spawn two asteroids
+		if (getRadius() >= 30 && getWorld() != null) { // spawn two asteroids
 			double radius = getRadius() / 2;
 			double direction = Math.random() * 2 * Math.PI;
 			double xVelocity = Math.cos(direction) * 1.5 * getSpeed();
