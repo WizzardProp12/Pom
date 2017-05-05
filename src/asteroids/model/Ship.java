@@ -636,7 +636,8 @@ public class Ship extends Entity{
 		// check if the bullet overlaps with any entity in the world
 		for(Entity other : getWorld().getEntityList())
 			if (bullet.overlaps(other) && this != other) {
-				bullet.collide(other);
+				bullet.terminate();
+				other.terminate();
 				return;
 			}
 		

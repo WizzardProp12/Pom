@@ -165,15 +165,39 @@ public class Collision {
 	// RESOLVE COLLISION
 	
 	/**
-	 * Resolve the collision by colliding the involved entities.
+	 * Resolve the collision by examining all possible situations.
 	 */
 	public void resolve() {
-		if (getCollisionType() == CollisionType.entity) {
-			getEntity().collide(getOtherEntity());
+		// ENTITY - WALL
+		if (getCollisionType() == CollisionType.horizontalWall) {
+			getEntity().bounce(CollisionType.horizontalWall);
+			return;
+		} else if (getCollisionType() == CollisionType.verticalWall) {
+			getEntity().bounce(CollisionType.verticalWall);
+			return;
+		}
+		
+		// Ship - Entity
+		if (getEntity() instanceof Ship || getOther() instanceof Ship) {
+			Ship ship = getEntity() instanceof Ship ? (Ship) getEntity()
+													: (Ship) getOther();
+			Entity other = ! getEntity() instanceof Ship ? (Ship) getEntity()
+														 : (Ship) getOther();
+			// Ship - Bullet fired by Ship
+			if (other instanceof Bullet && Bullet.getSourceShip() == ship)
+				ship.load((Bullet) other);
+			// Ship - Asteroid
+			else if (other instanceof Asteroid)
+				ship.terminate();
+			// Ship - Planetoid
+			else if (other instanceof Planetoid)
+				ship.teleport();
+		// Bullet - Entity
+		} else if (getEntity() instanceof Bullet || getOther() instanceof Bullet) {
+			getEntity().terminate();
+			getOther().terminate();
+		// all other combinations
 		} else
-			if (getEntity() instanceof Bullet)
-				((Bullet) getEntity()).wallBounce(getCollisionType());
-			else
-				getEntity().wallBounce(getCollisionType());
+			getEntity().bounce(getOther());
 	}
 }

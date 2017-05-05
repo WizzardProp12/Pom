@@ -290,33 +290,6 @@ public class Bullet extends Entity {
 	}
 	
 	
-	// COLLISIONS RESOLVING (total)
-	
-	/**
-	 * Collide the bullet with the given entity.
-	 */
-	public void collide(Entity other) {
-		if (other instanceof Ship) collide((Ship) other);
-		if (other instanceof Bullet) collide((Bullet) other);
-	}
-	
-	/**
-	 * Collide the bullet with a ship.
-	 */
-	public void collide(Ship ship) {
-		ship.collide(this);
-	}
-	
-	/**
-	 * Collide the bullet with another bullet.
-	 * @post Both bullets are terminated
-	 *     | new isTerminated() && new other.isTerminated()
-	 */
-	public void collide(Bullet other) {
-		terminate();
-		other.terminate();
-	}
-	
 	
 	// BOUNCES ()
 	
