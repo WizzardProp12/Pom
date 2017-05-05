@@ -590,7 +590,7 @@ public abstract class Entity {
 	/**
 	 * The radius of the entity.
 	 */
-	private final double radius;
+	private double radius;
 	
 	/**
 	 * Return the radius of the prime object.
@@ -1043,7 +1043,7 @@ public abstract class Entity {
 	/**
 	 * Collide the entity with another entity.
 	 */
-	public abstract void bounce(Entity entity) {
+	public void bounce(Entity other) {
 		double mass = getMass();
 		double otherMass = other.getMass();
 		double totalMass = mass + otherMass;
