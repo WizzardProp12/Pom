@@ -143,7 +143,7 @@ public class Collision {
 	 * Return the other entity of the collision, if one exists.
 	 */
 	@Basic @Raw @Immutable
-	public Entity getOtherEntity() {
+	public Entity getOther() {
 		return other;
 	}
 
@@ -156,7 +156,7 @@ public class Collision {
 	 */
 	public Position getPosition() {
 		if (getCollisionType() == CollisionType.entity)
-			return getEntity().getCollisionPosition(getOtherEntity());
+			return getEntity().getCollisionPosition(getOther());
 		else
 			return getEntity().getCollisionPosition(getEntity().getWorld());
 	}
@@ -167,7 +167,7 @@ public class Collision {
 	/**
 	 * Resolve the collision by examining all possible situations.
 	 */
-	public void resolve() {
+	public void resolve() throws Exception {
 		// ENTITY - WALL
 		if (getCollisionType() == CollisionType.horizontalWall) {
 			getEntity().bounce(CollisionType.horizontalWall);
@@ -181,10 +181,10 @@ public class Collision {
 		if (getEntity() instanceof Ship || getOther() instanceof Ship) {
 			Ship ship = getEntity() instanceof Ship ? (Ship) getEntity()
 													: (Ship) getOther();
-			Entity other = ! getEntity() instanceof Ship ? (Ship) getEntity()
+			Entity other = ! (getEntity() instanceof Ship) ? (Ship) getEntity()
 														 : (Ship) getOther();
 			// Ship - Bullet fired by Ship
-			if (other instanceof Bullet && Bullet.getSourceShip() == ship)
+			if (other instanceof Bullet && ((Bullet) other).getSourceShip() == ship)
 				ship.load((Bullet) other);
 			// Ship - Asteroid
 			else if (other instanceof Asteroid)

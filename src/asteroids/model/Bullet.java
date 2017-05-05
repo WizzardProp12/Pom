@@ -335,11 +335,11 @@ public class Bullet extends Entity {
 	 *      | new getNbBounces() < getMaxNbBounces()
 	 */
 	@Override
-	public void wallBounce(CollisionType type) {
+	public void bounce(CollisionType type) {
 		if (getNbBounces() == getMaxNbBounces())
 			terminate();
 		else {
-			super.wallBounce(type);
+			super.bounce(type);
 			countBounce();
 		}
 	}
