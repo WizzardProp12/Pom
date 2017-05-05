@@ -3,7 +3,7 @@ package asteroids.model;
 import be.kuleuven.cs.som.annotate.*;
 /**
  * @author Wouter Cams and Stijn Bruggeman
- * 
+ * test
  * Studies:
  * Wouter Cams: 2e Bachelor Ingenieurswetenschappen
  * Hoofdrichting Elektrotechniek, nevenrichting computerwetenschappen
