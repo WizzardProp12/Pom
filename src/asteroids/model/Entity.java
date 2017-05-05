@@ -610,18 +610,28 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Return the default radius of the prime object.
-	 * This abstract method must be overwritten in the subclasses.
-	 */
-	@Basic @Immutable @Raw
-	public abstract double getDefaultRadius();
-	
-	/**
 	 * Check if the given radius suits the prime object.
 	 * @return see implementation...
 	 */
 	@Raw
 	public abstract boolean canHaveAsRadius(double radius);
+	
+	/**
+	 * Set the given radius.
+	 */
+	@Raw
+	public void setAsRadius(double radius) throws IllegalArgumentException {
+		if (! canHaveAsRadius(radius)) throw new IllegalArgumentException(
+				"The given radius is not valid");
+		this.radius = radius;
+	}
+	
+	/**
+	 * Return the default radius of the prime object.
+	 * This abstract method must be overwritten in the subclasses.
+	 */
+	@Basic @Immutable @Raw
+	public abstract double getDefaultRadius();
 	
 	
 	// WORLD - ADDING AND REMOVING (defensively)
