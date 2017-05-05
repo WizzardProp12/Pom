@@ -11,8 +11,7 @@ public class Planetoid extends MinorPlanet {
 	
 	public void move(double time) throws IllegalArgumentException {
 		super.move(time);
-		double distance = getSpeed() * time;
-		shrink(distance * 0,000001)
+		shrink(getSpeed() * time * getShrinkingPercentage())
 	}
 	
 	// MASS (total)
@@ -24,7 +23,7 @@ public class Planetoid extends MinorPlanet {
 	
 	@Basic @Raw
 	public double getMass() {
-		return 2 * Math.PI * getRadius * getDensity();
+		return (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
 	}
 	
 	// SHRINKING AND DISSOLVING
@@ -36,11 +35,11 @@ public class Planetoid extends MinorPlanet {
 	}
 	
 	public void shrink(double percentage) {
-		double new_radius = getRadius() * 0.01 * percentage;
-		if (new_radius < getMinRadius()) {
+		double newRadius = getRadius() * 0.01 * percentage;
+		if (newRadius < getMinRadius()) {
 			terminate();
 		} else {
-			setRadius(new_radius);
+			setRadius(newRadius);
 		}
 	}
 	

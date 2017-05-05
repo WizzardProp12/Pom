@@ -114,8 +114,6 @@ public abstract class Entity {
 			this.radius = getDefaultRadius();
 		
 		
-		getPosition().setEntity(this);
-		
 		if (world == null)
 			this.setWorld(world);
 		else
@@ -232,12 +230,7 @@ public abstract class Entity {
 	protected void setPosition(Position position) throws IllegalArgumentException {
 		if (! canTakePosition(position)) throw new IllegalArgumentException(
 				"invalid position, see canTakePosition()");
-		if (position == getPosition()) throw new IllegalArgumentException(
-				"entity already has this position");
-		if (position.getEntity() != null) throw new IllegalArgumentException(
-				"given position already references another entity");
 		this.position = position;
-		position.setEntity(this);
 	}
 	
 	/**
@@ -1050,7 +1043,37 @@ public abstract class Entity {
 	/**
 	 * Collide the entity with another entity.
 	 */
-	public abstract void collide(Entity entity);
+	public abstract void bounce(Entity entity) {
+		double mass = getMass();
+		double otherMass = other.getMass();
+		double totalMass = mass + otherMass;
+		
+		double deltaX = getXCoord() - other.getXCoord();
+		double deltaY = getYCoord() - other.getYCoord();
+		
+		double deltaVX = getXVelocity() - other.getXVelocity();
+		double deltaVY = getYVelocity() - other.getYVelocity();
+		
+		double totalRadii = getRadius() + other.getRadius();
+		
+		double J = (2 * mass * otherMass
+						* (deltaX * deltaVX + deltaY * deltaVY))
+					/ (totalRadii * totalMass);
+		double Jx = (J*deltaX)/totalRadii;
+		double Jy = (J*deltaY)/totalRadii;
+	
+		double[] velocities1 = {getXVelocity() + Jx/mass, getYVelocity() + Jy/mass};
+		double[] velocities2 = {other.getXVelocity() - Jx/otherMass, 
+													other.getYVelocity() - Jy/otherMass};
+		
+		velocities1 = limitSpeed(velocities1[0], velocities1[1]);
+		velocities2 = limitSpeed(velocities2[0], velocities2[1]);
+		
+		setXVelocity(velocities1[0]);
+		setYVelocity(velocities1[1]);
+		other.setXVelocity(velocities2[0]);
+		other.setYVelocity(velocities2[1]);
+	}
 	
 	/**
 	 * Bounce the entity of a horizontal or vertical wall.
@@ -1058,12 +1081,16 @@ public abstract class Entity {
 	 * 		 | new getXVelocity() == -getXVelocity()
 	 * @effect If the entity bounces with a horizontal wall, negate the y velocity
 	 * 		 | new getYVelocity() == -getYVelocity()
+	 * @throws IllegalArgumentException
+	 * 		   If the given collisiontype is not horizontalWall or verticalWall
 	 */
-	public void wallBounce(CollisionType type) {
+	public void bounce(CollisionType type) {
 		if (type == CollisionType.horizontalWall)
 			setYVelocity(-getYVelocity());
 		else if (type == CollisionType.verticalWall)
 			setXVelocity(-getXVelocity());
+		else throw new IllegalArgumentException(
+				"The given collisiontype must be horizontalWall or verticalWall");
 	}
 	
 	

@@ -98,48 +98,6 @@ public class Position {
 		return position;
 	}
 	
-	// ENTITY
-	
-	/**
-	 * The entity assigned to this position.
-	 */
-	private Entity entity;
-	
-	/**
-	 * Return the entity assigned to this position.
-	 * @invar This position is valid for the entity (if it is not null)
-	 * 		| getEntity() == null || getEntity().canHaveAsPosition(this)
-	 */
-	@Basic
-	public Entity getEntity() {
-		return entity;
-	}
-	
-	/**
-	 * Set a new entity reference for this position.
-	 * @pre    The previous entity must not reference this position.
-	 * 		 | getEntity() == null || newEntity().getPosition() != this
-	 * @pre    The given entity must reference this position.
-	 * 		 | newEntity.getPosition() == this
-	 * @post   The position references the given entity.
-	 * 		 | getEntity() == newEntity
-	 * @throws IllegalArgumentException
-	 * 		   If the current entity still references this position
-	 * 		 | getEntity() != null && getEntity().getPosition() == this
-	 * @throws IllegalArgumentException
-	 * 		   If the new entity does not reference this position
-	 * 		 | newEntity != null && newEntity.getPosition() != this
-	 */
-	protected void setEntity(Entity newEntity) throws IllegalArgumentException{
-		if (getEntity() != null && getEntity().getPosition() == this)
-			throw new IllegalArgumentException(
-					"the position is still referenced by its current entity");
-		if (newEntity != null && newEntity.getPosition() != this)
-			throw new IllegalArgumentException(
-					"the given entity must reference this position");
-		entity = newEntity;
-	}
-	
 	
 	// OVERRIDES
 	

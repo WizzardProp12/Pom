@@ -159,7 +159,7 @@ public class Bullet extends Entity {
 	/**
 	 * The density of the bullet.
 	 */
-	private final double density = 7.8*Math.pow(10, 12);
+	private final double density = 7.8 * Math.pow(10, 12);
 	
 	/**
 	 * Return the density of the bullet.

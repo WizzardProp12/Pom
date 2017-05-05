@@ -87,8 +87,6 @@ public class Ship extends Entity{
 		setOrientation(orientation);
 		if (getMinimumMass() < mass)
 			setMass(mass);
-		else
-			setMass(getMinimumMass());
 	}
 	
 	/**
@@ -140,6 +138,27 @@ public class Ship extends Entity{
 	 */
 	public Ship() {
 		this(0, 0);
+	}
+	
+	// TELEPORT (defensive)
+	
+	public void teleport() throws Exception {
+		if (getWorld() == null) {
+			double x0 = 0;
+			double y0 = 0;
+			double w = World.getMaxWidth();
+			double h = World.getMaxHeight();
+		} else {
+			double x0 = getRadius();
+			double y0 = getRadius();
+			double w = getWorld().getWidth() - 2 * getRadius();
+			double h = getWorld().getHeight() - 2 * getRadius();
+		}
+		Position newPosition = new Position(x0 + Math.random() * w, y0 + Math.random() * h);
+		if (canHaveAsPosition(newPosition))
+			setPosition(newPosition);
+		else
+			terminate();
 	}
 	
 	
@@ -304,11 +323,10 @@ public class Ship extends Entity{
 		return density;
 	}
 	
-	
 	/**
 	 * The mass of the ship.
 	 */
-	private double mass = getMinimumMass();
+	private double shipMass = getMinimumMass();
 	
 	/**
 	 * Return the mass of the ship.
@@ -316,8 +334,8 @@ public class Ship extends Entity{
 	 * 		| getMinimumMass() <= getMass()
 	 */
 	@Basic @Raw @Immutable
-	public double getMass() {
-		return mass;
+	public double getShipMass() {
+		return shipMass;
 	}
 	
 	/**
@@ -327,8 +345,8 @@ public class Ship extends Entity{
 	 * @post The new mass is bigger than or equal to the minimum mass.
 	 * 		| getMinimumMass() <= new getMass()
 	 */
-	public void setMass(double mass) {
-		if (getMinimumMass() < mass) this.mass = mass;
+	public void setShipMass(double mass) {
+		if (getMinimumMass() < mass) this.shipMass = mass;
 	}
 	
 	/**
@@ -336,8 +354,8 @@ public class Ship extends Entity{
 	 * @see implementation...
 	 */
 	@Basic @Raw
-	public double getTotalMass() {
-		double shipMass = getMass();
+	public double getMass() {
+		double shipMass = getShipMass();
 		double bulletMass = 0;
 		for(Bullet bullet : getBulletSet())
 			bulletMass += bullet.getMass();
@@ -637,73 +655,6 @@ public class Ship extends Entity{
 		bullet.setXVelocity(xVelocity);
 		bullet.setYVelocity(yVelocity);
 	}
-		
-	// COLLISIONS RESOLVING (total)
-	
-	/**
-	 * Collide the ship with the given entity.
-	 */
-	@Override
-	public void collide(Entity other) {
-		if (other instanceof Ship) collide((Ship) other);
-		if (other instanceof Bullet) collide((Bullet) other);
-	}
-	
-	/**
-	 * Collide the ship with another. The ships bounce of
-	 * eachother and the new velocities are calculated
-	 * based on the mass and velocities of the ships.
-	 */
-	public void collide(Ship other) {
-		
-		double totalMass = getTotalMass() + other.getTotalMass();
-		double mass = getTotalMass();
-		double otherMass = other.getTotalMass();
-		
-		double deltaX = getXCoord() - other.getXCoord();
-		double deltaY = getYCoord() - other.getYCoord();
-		
-		double deltaVX = getXVelocity() - other.getXVelocity();
-		double deltaVY = getYVelocity() - other.getYVelocity();
-		
-		double totalRadii = getRadius() + other.getRadius();
-		
-		double J = (2 * mass * otherMass
-						* (deltaX * deltaVX + deltaY * deltaVY))
-					/ (totalRadii * totalMass);
-		double Jx = (J*deltaX)/totalRadii;
-		double Jy = (J*deltaY)/totalRadii;
-
-		double[] velocities1 = {getXVelocity() + Jx/mass, getYVelocity() + Jy/mass};
-		double[] velocities2 = {other.getXVelocity() - Jx/otherMass, 
-													other.getYVelocity() - Jy/otherMass};
-		
-		velocities1 = limitSpeed(velocities1[0], velocities1[1]);
-		velocities2 = limitSpeed(velocities2[0], velocities2[1]);
-		
-		setXVelocity(velocities1[0]);
-		setYVelocity(velocities1[1]);
-		other.setXVelocity(velocities2[0]);
-		other.setYVelocity(velocities2[1]);
-	}
-	
-	/**
-	 * Collide the ship with a bullet.
-	 * @post If the bullet was fired by the ship
- 	 *			then it is loaded back on the ship
- 	 *		 else
- 	 *   	 	then the ship and bullet are terminated
-	 */
-	public void collide(Bullet bullet) {
-		if (bullet.getSourceShip() == this) {
-			bullet.getWorld().remove(bullet);
-			load(bullet);
-		} else {
-			terminate();
-			bullet.terminate();
-		}
-	}
-	
 	
 	// TERMINATION
 	
