@@ -620,6 +620,7 @@ public class Ship extends Entity{
 		Bullet bullet = getBulletAtIndex(0);
 		removeBulletAt(0);
 		bullet.setSourceShip(this);
+		bullet.setShip(null);
 		
 		// if the ship isn't in a world, the bullet is destroyed
 		if (getWorld() == null) {
