@@ -11,10 +11,13 @@ public class Planetoid extends MinorPlanet {
 	
 	}
 	
+	@Override
 	public void move(double time) throws IllegalArgumentException {
 		super.move(time);
 		shrink(getSpeed() * time * getShrinkingPercentage());
 	}
+	
+	
 	
 	// MASS (total)
 	
@@ -29,30 +32,7 @@ public class Planetoid extends MinorPlanet {
 	public double getMass() {
 		return (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
 	}
-	
-	// RADIUS (defensive)
 
-	/**
-	 * The minimum radius of a planetoid.
-	 */
-	public static final double MIN_RADIUS = 5;
-	
-	/**
-	 * Return the minimum radius of a planetoid.
-	 */
-	@Basic @Immutable @Raw
-	public static double getMinRadius() {
-		return MIN_RADIUS;
-	}
-	
-	/**
-	 * Check if the given radius suits the prime object.
-	 * @return see implementation...
-	 */
-	@Raw
-	public boolean canHaveAsRadius(double radius) {
-		return (radius >= getMinRadius());
-	}
 	
 	// SHRINKING AND DISSOLVING
 	
