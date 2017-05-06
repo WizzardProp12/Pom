@@ -495,8 +495,6 @@ public class World {
 		Collision wallCollision = getFirstWallCollision();
 		if (entityCollision == null) return wallCollision;
 		if (wallCollision == null) return entityCollision;
-		System.out.println("wall time: " + wallCollision.getTime() 
-								+ " - entity time: " + entityCollision.getTime());
 		if (entityCollision.getTime() < wallCollision.getTime())
 			return entityCollision;
 		else return wallCollision;
@@ -522,24 +520,23 @@ public class World {
 	 * Advance the time.
 	 */
 	public void advanceTime(double time) {
-		System.out.println("Advance Time (" + time + " sec)");
 		Collision firstCollision = getFirstCollision();
-		System.out.println("firstcollision type: " + firstCollision.getCollisionType()
-							+ " - firstcollision time: " + firstCollision.getTime());
-		
 		if (firstCollision != null && firstCollision.getTime() <= time) {
-			System.out.println("__COLLISION RESOLVING__");
+			System.out.println();
+			System.out.println("__" + firstCollision.getCollisionType() + " COLLISION__");
 			System.out.println(firstCollision.getEntity());
+			System.out.println("firstcollision type: " + firstCollision.getCollisionType()
+			+ " - firstcollision time: " + firstCollision.getTime());
 				
 			// Advance all entities up to the point of the first collision
 			for(Entity entity : getEntityList())
 				entity.move(firstCollision.getTime());
 			
 			// DELETE
-			System.out.println("pre resolve: (" + firstCollision.getEntity().getXVelocity()
+			System.out.println("pre resolve vel: (" + firstCollision.getEntity().getXVelocity()
 								+ "," + firstCollision.getEntity().getYVelocity() + ")");
 			if (firstCollision.getCollisionType() == CollisionType.entity)
-				System.out.println("             (" + firstCollision.getOther().getXVelocity()
+				System.out.println("                 (" + firstCollision.getOther().getXVelocity()
 								+ "," + firstCollision.getOther().getYVelocity() + ")");
 			
 			
@@ -547,19 +544,15 @@ public class World {
 			firstCollision.resolve();
 			
 			// DELETE
-			System.out.println("post resolve: (" + firstCollision.getEntity().getXVelocity()
+			System.out.println("post resolve vel: (" + firstCollision.getEntity().getXVelocity()
 					+ "," + firstCollision.getEntity().getYVelocity() + ")");
 			if (firstCollision.getCollisionType() == CollisionType.entity)
-				System.out.println("             (" + firstCollision.getOther().getXVelocity()
+				System.out.println("                 (" + firstCollision.getOther().getXVelocity()
 								+ "," + firstCollision.getOther().getYVelocity() + ")");
 			
 			// Update velocities
 			for(Ship ship : getShipSet())
 				ship.thrust(firstCollision.getTime());
-			
-			System.out.println("Collision resolved...");
-			System.out.println("   given time: " + time);
-			System.out.println("   used time: " + firstCollision.getTime());
 			
 			// Advance time for the remaining time
 			advanceTime(time - firstCollision.getTime());
@@ -607,5 +600,4 @@ public class World {
 		}
 		isTerminated = true;
 	}
-
 }

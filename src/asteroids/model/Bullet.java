@@ -227,7 +227,7 @@ public class Bullet extends Entity {
 	 * @see implementation...
 	 */
 	public boolean canHaveAsShip(Ship ship) {
-		return (getShip() == null || ship.canHaveAsBullet(this));
+		return (ship == null || ship.canHaveAsBullet(this));
 	}
 	
 	/**

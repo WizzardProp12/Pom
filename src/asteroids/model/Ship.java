@@ -549,6 +549,8 @@ public class Ship extends Entity{
 											"the bullet is already loaded on this ship");
 			else if (bullet.getShip() != null) throw new IllegalArgumentException(
 											"the bullet is already loaded on another ship");
+			if (bullet.getWorld() != null)
+				bullet.getWorld().remove(bullet);
 			bulletList.add(bullet);
 			bullet.setShip(this);
 		} else

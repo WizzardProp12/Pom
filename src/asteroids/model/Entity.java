@@ -163,7 +163,7 @@ public abstract class Entity {
 	private int nr_ = 0;
 	
 	public String toString() {
-		String output = "Entity nr " + nr + " at (" 
+		String output = "Entity nr " + nr_ + " at (" 
 						+ ((Integer) ((Double) getXCoord()).intValue()).toString() 
 						+ "," + ((Integer) ((Double) getYCoord()).intValue()).toString() + ")"
 						+ "(" + this.getClass() + ")";
@@ -671,10 +671,7 @@ public abstract class Entity {
 	@Basic
 	public boolean canChangeWorld() {
 		if (getWorld() == null) return true;
-		else {
-			System.out.println("canChangeWorld()");
-			return ! getWorld().contains(this);
-		}
+		else return ! getWorld().contains(this);
 	}
 	
 	/**
@@ -1142,7 +1139,6 @@ public abstract class Entity {
 	 */
 	@Raw
 	public void terminate() {
-		System.out.println("terminate");
 		if (getWorld() != null)
 			getWorld().remove(this);
 		isTerminated = true;

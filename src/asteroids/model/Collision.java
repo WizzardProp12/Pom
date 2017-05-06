@@ -170,7 +170,6 @@ public class Collision {
 	 * Resolve the collision by examining all possible situations.
 	 */
 	public void resolve() {
-		System.out.println("__resolve:");
 		// Entity - Wall
 		if (getCollisionType() == CollisionType.horizontalWall) {
 			System.out.println("bounce horizontal");
@@ -186,28 +185,60 @@ public class Collision {
 		if (getEntity() instanceof Ship || getOther() instanceof Ship) {
 			Ship ship = getEntity() instanceof Ship ? (Ship) getEntity()
 													: (Ship) getOther();
-			Entity other = getOther() instanceof Ship ? (Ship) getOther()
-														 : (Ship) getEntity();
+			Entity other = getEntity() instanceof Ship ? getOther()
+														 : getEntity();
+			if (ship instanceof Ship && other instanceof Bullet)
+				System.out.println("one ship and one bullet");
 			// Ship - Bullet fired by Ship
 			if (other instanceof Bullet && ((Bullet) other).getSourceShip() == ship) {
 				System.out.println("load bullet on ship");
 				ship.load((Bullet) other);
+				return;
 			// Ship - Asteroid
 			} else if (other instanceof Asteroid) {
 				System.out.println("asteroid - ship");
 				ship.terminate();
+				return;
 			// Ship - Planetoid
-			} else if (other instanceof Planetoid)
+			} else if (other instanceof Planetoid) {
 				System.out.println("planetoid - ship");
 				ship.teleport();
+				return;
+			}
 		// Bullet - Entity
-		} else if (getEntity() instanceof Bullet || getOther() instanceof Bullet) {
+		} 
+		if (getEntity() instanceof Bullet || getOther() instanceof Bullet) {
 			System.out.println("entity - bullet");
+			System.out.println("sourceship:");
+			if (getEntity() instanceof Bullet) System.out.println(
+					((Bullet) getEntity()).getSourceShip() == getOther());
+			if (getOther() instanceof Bullet) System.out.println(
+					((Bullet) getOther()).getSourceShip() == getEntity());
+			System.out.println();
 			getEntity().terminate();
 			getOther().terminate();
+			return;
+		}
 		// all other combinations
-		} else
-			System.out.println("else: bounce");
-			getEntity().bounce(getOther());
+		System.out.println("else: bounce");
+		System.out.println("properties:");
+		System.out.println("  entity 1");
+		System.out.println("  x:" + getEntity().getXCoord() + " y:" + getEntity().getYCoord());
+		System.out.println("  vx:" + getEntity().getXVelocity() + " vy:" + getEntity().getYVelocity());
+		System.out.println("  mass:" + getEntity().getMass());
+		System.out.println("  radius:" + getEntity().getRadius());
+		System.out.println("  entity 2");
+		System.out.println("  x:" + getOther().getXCoord() + " y:" + getOther().getYCoord());
+		System.out.println("  vx:" + getOther().getXVelocity() + " vy:" + getOther().getYVelocity());
+		System.out.println("  mass:" + getOther().getMass());
+		System.out.println("  radius:" + getOther().getRadius());
+		
+		getEntity().bounce(getOther());
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
