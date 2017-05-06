@@ -118,6 +118,9 @@ public abstract class Entity {
 			this.setWorld(world);
 		else
 			world.add(this);
+		
+		nr = nr+1;
+		this.nr_ = nr;
 	}
 	
 	/**
@@ -150,6 +153,21 @@ public abstract class Entity {
 	 */
 	public Entity() {
 		this(0, 0);
+	}
+	
+	
+	// tostring
+	
+	public static int nr = 0;
+	
+	private int nr_ = 0;
+	
+	public String toString() {
+		String output = "Entity nr " + nr + " at (" 
+						+ ((Integer) ((Double) getXCoord()).intValue()).toString() 
+						+ "," + ((Integer) ((Double) getYCoord()).intValue()).toString() + ")"
+						+ "(" + this.getClass() + ")";
+		return output;
 	}
 	
 	
@@ -865,6 +883,7 @@ public abstract class Entity {
 		return time;
 	}
 	
+	
 	/**
 	 * Return how long it will take before the entity collides with
 	 * one of the world boundaries.
@@ -876,30 +895,30 @@ public abstract class Entity {
 		if (world == null) throw new NullPointerException(
 				"given argument references the null pointer");
 		if (getSpeed() == 0) return Double.POSITIVE_INFINITY;
+		
 		return Math.min(getTimeToHorizontalCollision(world), 
 						getTimeToVerticalCollision(world));
 	}
 	
 	public double getTimeToHorizontalCollision(World world) throws NullPointerException {
 		if (getXVelocity() > 0) {
-			return (world.getWidth() - getPosition().getXCoord() - 0.99*getRadius())
+			return (world.getWidth() - getPosition().getXCoord() - getRadius())
 						/ getXVelocity();
 		} else if (getXVelocity() < 0) {
-			return (getPosition().getXCoord() - 0.99*getRadius())
+			return (getPosition().getXCoord() - getRadius())
 						/ -getXVelocity();
 		} else { return Double.POSITIVE_INFINITY; }
 	}
 	
 	public double getTimeToVerticalCollision(World world) throws NullPointerException {
 		if (getYVelocity() > 0) {
-			return (world.getHeight() - getPosition().getYCoord() - 0.99*getRadius())
+			return (world.getHeight() - getPosition().getYCoord() - getRadius())
 						/ getYVelocity();
 		} else if (getYVelocity() < 0) {
-			return (getPosition().getYCoord() - 0.99*getRadius())
+			return (getPosition().getYCoord() - getRadius())
 						/ getYVelocity();
 		} else { return Double.POSITIVE_INFINITY; }
 	}
-	
 	
 	
 	/**

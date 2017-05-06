@@ -1,5 +1,7 @@
 package asteroids.model;
 
+import java.util.concurrent.TimeUnit;
+
 import be.kuleuven.cs.som.annotate.*;
 
 /**
@@ -168,11 +170,14 @@ public class Collision {
 	 * Resolve the collision by examining all possible situations.
 	 */
 	public void resolve() {
-		// ENTITY - WALL
+		System.out.println("__resolve:");
+		// Entity - Wall
 		if (getCollisionType() == CollisionType.horizontalWall) {
+			System.out.println("bounce horizontal");
 			getEntity().bounce(CollisionType.horizontalWall);
 			return;
 		} else if (getCollisionType() == CollisionType.verticalWall) {
+			System.out.println("bounce vertical");
 			getEntity().bounce(CollisionType.verticalWall);
 			return;
 		}
@@ -181,23 +186,28 @@ public class Collision {
 		if (getEntity() instanceof Ship || getOther() instanceof Ship) {
 			Ship ship = getEntity() instanceof Ship ? (Ship) getEntity()
 													: (Ship) getOther();
-			Entity other = ! (getEntity() instanceof Ship) ? (Ship) getEntity()
-														 : (Ship) getOther();
+			Entity other = getOther() instanceof Ship ? (Ship) getOther()
+														 : (Ship) getEntity();
 			// Ship - Bullet fired by Ship
-			if (other instanceof Bullet && ((Bullet) other).getSourceShip() == ship)
+			if (other instanceof Bullet && ((Bullet) other).getSourceShip() == ship) {
+				System.out.println("load bullet on ship");
 				ship.load((Bullet) other);
 			// Ship - Asteroid
-			else if (other instanceof Asteroid)
+			} else if (other instanceof Asteroid) {
+				System.out.println("asteroid - ship");
 				ship.terminate();
 			// Ship - Planetoid
-			else if (other instanceof Planetoid)
+			} else if (other instanceof Planetoid)
+				System.out.println("planetoid - ship");
 				ship.teleport();
 		// Bullet - Entity
 		} else if (getEntity() instanceof Bullet || getOther() instanceof Bullet) {
+			System.out.println("entity - bullet");
 			getEntity().terminate();
 			getOther().terminate();
 		// all other combinations
 		} else
+			System.out.println("else: bounce");
 			getEntity().bounce(getOther());
 	}
 }

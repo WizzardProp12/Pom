@@ -292,38 +292,13 @@ public class World {
 	 * 		|		world.contains(entity)
 	 */
 	@Basic
-	public HashSet<Entity> getEntitySet() {
+	public HashSet<Entity> getEntities() {
 		return new HashSet<Entity>(entitySet);
 	}
 	
-	/**
-	 * Return a HashSet of the Ships contained by the prime object.
-	 * @invar All the ships in the result are contained by the world.
-	 * 		| for (Ship ship : getShipSet())
-	 * 		|		world.contains(ship)
-	 */
-	@Basic
-	public HashSet<Ship> getShipSet() {
-		HashSet<Ship> shipSet = new HashSet<Ship>();
-		for (Entity entity : getEntityList())
-			if (entity instanceof Ship)
-				shipSet.add((Ship) entity);
-		return shipSet;
-	}
-	
-	/**
-	 * Return a HashSet of the Bullets contained by the prime object.
-	 * @invar All the bullets in the result are contained by the world.
-	 * 		| for (Bullet bullet : getBulletSet())
-	 * 		|		world.contains(ship)
-	 */
-	@Basic
-	public HashSet<Bullet> getBulletSet() {
-		HashSet<Bullet> bulletSet = new HashSet<Bullet>();
-		for (Entity entity : getEntityList())
-			if (entity instanceof Bullet)
-				bulletSet.add((Bullet) entity);
-		return bulletSet;
+	// TODO
+	public void getEntitiesOfType(Class type) {
+		return;
 	}
 	
 	
@@ -335,7 +310,7 @@ public class World {
 	* 		| getEntitySet().contains(entity)
 	*/
 	public boolean contains(Entity entity) {
-		 return getEntitySet().contains(entity);
+		 return getEntities().contains(entity);
 	}
 	
 	/**
@@ -495,6 +470,8 @@ public class World {
 		Collision wallCollision = getFirstWallCollision();
 		if (entityCollision == null) return wallCollision;
 		if (wallCollision == null) return entityCollision;
+		System.out.println("wall time: " + wallCollision.getTime() 
+								+ " - entity time: " + entityCollision.getTime());
 		if (entityCollision.getTime() < wallCollision.getTime())
 			return entityCollision;
 		else return wallCollision;
@@ -522,28 +499,46 @@ public class World {
 	public void advanceTime(double time) {
 		System.out.println("Advance Time (" + time + " sec)");
 		Collision firstCollision = getFirstCollision();
+		System.out.println("firstcollision type: " + firstCollision.getCollisionType()
+							+ " - firstcollision time: " + firstCollision.getTime());
 		
 		if (firstCollision != null && firstCollision.getTime() <= time) {
+			
+			System.out.println("__COLLISION RESOLVING__");
+			System.out.println(firstCollision.getEntity());
 			
 			// Advance all entities up to the point of the first collision
 			for(Entity entity : getEntityList())
 				entity.move(firstCollision.getTime());
 			
-			System.out.println(firstCollision.getEntity().getXVelocity() + " " 
-								+ firstCollision.getEntity().getYVelocity());
+			// DELETE
+			System.out.println("pre resolve: (" + firstCollision.getEntity().getXVelocity()
+								+ "," + firstCollision.getEntity().getYVelocity() + ")");
+			if (firstCollision.getCollisionType() == CollisionType.entity)
+				System.out.println("             (" + firstCollision.getOther().getXVelocity()
+								+ "," + firstCollision.getOther().getYVelocity() + ")");
+			
 			
 			// Resolve the collision
 			firstCollision.resolve();
 			
-			System.out.println(firstCollision.getEntity().getXVelocity() + " " 
-								+ firstCollision.getEntity().getYVelocity());
+			// DELETE
+			System.out.println("post resolve: (" + firstCollision.getEntity().getXVelocity()
+					+ "," + firstCollision.getEntity().getYVelocity() + ")");
+			if (firstCollision.getCollisionType() == CollisionType.entity)
+				System.out.println("             (" + firstCollision.getOther().getXVelocity()
+								+ "," + firstCollision.getOther().getYVelocity() + ")");
 			
 			// Update velocities
 			for(Ship ship : getShipSet())
 				ship.thrust(firstCollision.getTime());
 			
+			System.out.println("Collision resolved...");
+			System.out.println("   given time: " + time);
+			System.out.println("   used time: " + firstCollision.getTime());
+			
 			// Advance time for the remaining time
-			advanceTime(getDeltaT() - firstCollision.getTime());
+			advanceTime(time - firstCollision.getTime());
 			
 		} else {
 			// Advance all entities
