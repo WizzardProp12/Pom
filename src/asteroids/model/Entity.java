@@ -900,7 +900,11 @@ public abstract class Entity {
 						getTimeToVerticalCollision(world));
 	}
 	
-	public double getTimeToHorizontalCollision(World world) throws NullPointerException {
+	public double getTimeToHorizontalCollision(World world) 
+			throws NullPointerException, IllegalArgumentException {
+		if (! isWithinBoundariesOf(world)) throw new IllegalArgumentException(
+				"the entity is not within the world boundaries");
+		
 		if (getXVelocity() > 0) {
 			return (world.getWidth() - getPosition().getXCoord() - getRadius())
 						/ getXVelocity();
@@ -910,13 +914,16 @@ public abstract class Entity {
 		} else { return Double.POSITIVE_INFINITY; }
 	}
 	
-	public double getTimeToVerticalCollision(World world) throws NullPointerException {
+	public double getTimeToVerticalCollision(World world) 
+			throws NullPointerException, IllegalArgumentException {
+		if (! isWithinBoundariesOf(world)) throw new IllegalArgumentException(
+				"the entity is not within the world boundaries");
 		if (getYVelocity() > 0) {
 			return (world.getHeight() - getPosition().getYCoord() - getRadius())
 						/ getYVelocity();
 		} else if (getYVelocity() < 0) {
 			return (getPosition().getYCoord() - getRadius())
-						/ getYVelocity();
+						/ -getYVelocity();
 		} else { return Double.POSITIVE_INFINITY; }
 	}
 	

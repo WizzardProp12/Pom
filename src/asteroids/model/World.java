@@ -292,13 +292,38 @@ public class World {
 	 * 		|		world.contains(entity)
 	 */
 	@Basic
-	public HashSet<Entity> getEntities() {
+	public HashSet<Entity> getEntitySet() {
 		return new HashSet<Entity>(entitySet);
 	}
 	
-	// TODO
-	public void getEntitiesOfType(Class type) {
-		return;
+	/**
+	 * Return a HashSet of the Ships contained by the prime object.
+	 * @invar All the ships in the result are contained by the world.
+	 * 		| for (Ship ship : getShipSet())
+	 * 		|		world.contains(ship)
+	 */
+	@Basic
+	public HashSet<Ship> getShipSet() {
+		HashSet<Ship> shipSet = new HashSet<Ship>();
+		for (Entity entity : getEntityList())
+			if (entity instanceof Ship)
+				shipSet.add((Ship) entity);
+		return shipSet;
+	}
+	
+	/**
+	 * Return a HashSet of the Bullets contained by the prime object.
+	 * @invar All the bullets in the result are contained by the world.
+	 * 		| for (Bullet bullet : getBulletSet())
+	 * 		|		world.contains(ship)
+	 */
+	@Basic
+	public HashSet<Bullet> getBulletSet() {
+		HashSet<Bullet> bulletSet = new HashSet<Bullet>();
+		for (Entity entity : getEntityList())
+			if (entity instanceof Bullet)
+				bulletSet.add((Bullet) entity);
+		return bulletSet;
 	}
 	
 	
@@ -310,7 +335,7 @@ public class World {
 	* 		| getEntitySet().contains(entity)
 	*/
 	public boolean contains(Entity entity) {
-		 return getEntities().contains(entity);
+		 return getEntitySet().contains(entity);
 	}
 	
 	/**
@@ -503,10 +528,9 @@ public class World {
 							+ " - firstcollision time: " + firstCollision.getTime());
 		
 		if (firstCollision != null && firstCollision.getTime() <= time) {
-			
 			System.out.println("__COLLISION RESOLVING__");
 			System.out.println(firstCollision.getEntity());
-			
+				
 			// Advance all entities up to the point of the first collision
 			for(Entity entity : getEntityList())
 				entity.move(firstCollision.getTime());
