@@ -522,33 +522,38 @@ public class World {
 	public void advanceTime(double time) {
 		Collision firstCollision = getFirstCollision();
 		if (firstCollision != null && firstCollision.getTime() <= time) {
+			
+			// DELETE
+			if (firstCollision.getCollisionType() == CollisionType.entity) {
 			System.out.println();
 			System.out.println("__" + firstCollision.getCollisionType() + " COLLISION__");
 			System.out.println(firstCollision.getEntity());
 			System.out.println("firstcollision type: " + firstCollision.getCollisionType()
 			+ " - firstcollision time: " + firstCollision.getTime());
-				
+			}
+			
 			// Advance all entities up to the point of the first collision
 			for(Entity entity : getEntityList())
 				entity.move(firstCollision.getTime());
 			
 			// DELETE
+			if (firstCollision.getCollisionType() == CollisionType.entity) {
 			System.out.println("pre resolve vel: (" + firstCollision.getEntity().getXVelocity()
 								+ "," + firstCollision.getEntity().getYVelocity() + ")");
-			if (firstCollision.getCollisionType() == CollisionType.entity)
-				System.out.println("                 (" + firstCollision.getOther().getXVelocity()
+			System.out.println("                 (" + firstCollision.getOther().getXVelocity()
 								+ "," + firstCollision.getOther().getYVelocity() + ")");
-			
+			}
 			
 			// Resolve the collision
 			firstCollision.resolve();
 			
 			// DELETE
+			if (firstCollision.getCollisionType() == CollisionType.entity) {
 			System.out.println("post resolve vel: (" + firstCollision.getEntity().getXVelocity()
 					+ "," + firstCollision.getEntity().getYVelocity() + ")");
-			if (firstCollision.getCollisionType() == CollisionType.entity)
-				System.out.println("                 (" + firstCollision.getOther().getXVelocity()
+			System.out.println("                 (" + firstCollision.getOther().getXVelocity()
 								+ "," + firstCollision.getOther().getYVelocity() + ")");
+			}
 			
 			// Update velocities
 			for(Ship ship : getShipSet())

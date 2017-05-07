@@ -172,11 +172,9 @@ public class Collision {
 	public void resolve() {
 		// Entity - Wall
 		if (getCollisionType() == CollisionType.horizontalWall) {
-			System.out.println("bounce horizontal");
 			getEntity().bounce(CollisionType.horizontalWall);
 			return;
 		} else if (getCollisionType() == CollisionType.verticalWall) {
-			System.out.println("bounce vertical");
 			getEntity().bounce(CollisionType.verticalWall);
 			return;
 		}
@@ -209,12 +207,6 @@ public class Collision {
 		} 
 		if (getEntity() instanceof Bullet || getOther() instanceof Bullet) {
 			System.out.println("entity - bullet");
-			System.out.println("sourceship:");
-			if (getEntity() instanceof Bullet) System.out.println(
-					((Bullet) getEntity()).getSourceShip() == getOther());
-			if (getOther() instanceof Bullet) System.out.println(
-					((Bullet) getOther()).getSourceShip() == getEntity());
-			System.out.println();
 			getEntity().terminate();
 			getOther().terminate();
 			return;
@@ -234,11 +226,5 @@ public class Collision {
 		System.out.println("  radius:" + getOther().getRadius());
 		
 		getEntity().bounce(getOther());
-		try {
-			TimeUnit.SECONDS.sleep(1);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }

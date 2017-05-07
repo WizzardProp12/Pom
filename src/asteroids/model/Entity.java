@@ -1071,11 +1071,11 @@ public abstract class Entity {
 		double otherMass = other.getMass();
 		double totalMass = mass + otherMass;
 		
-		double deltaX = getXCoord() - other.getXCoord();
-		double deltaY = getYCoord() - other.getYCoord();
+		double deltaX = other.getXCoord() - getXCoord();
+		double deltaY = other.getYCoord() - getYCoord();
 		
-		double deltaVX = getXVelocity() - other.getXVelocity();
-		double deltaVY = getYVelocity() - other.getYVelocity();
+		double deltaVX = other.getXVelocity() - getXVelocity();
+		double deltaVY = other.getYVelocity() - getYVelocity();
 		
 		double totalRadii = getRadius() + other.getRadius();
 		
