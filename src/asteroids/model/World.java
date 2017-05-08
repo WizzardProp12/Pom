@@ -546,6 +546,8 @@ public class World {
 			
 			// Resolve the collision
 			firstCollision.resolve();
+	
+			
 			
 			// DELETE
 			if (firstCollision.getCollisionType() == CollisionType.entity) {

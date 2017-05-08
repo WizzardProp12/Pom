@@ -115,7 +115,7 @@ public class Facade implements asteroids.part2.facade.IFacade{
 
 	@Override
 	public double getShipMass(Ship ship) throws ModelException {
-		return ship.getTotalMass();
+		return ship.getMass();
 	}
 
 	@Override
