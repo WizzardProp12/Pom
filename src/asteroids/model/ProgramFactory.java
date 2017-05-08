@@ -5,7 +5,7 @@ import java.util.List;
 import asteroids.part3.programs.IProgramFactory;
 import asteroids.part3.programs.SourceLocation;
 
-public class ProgramFactory implements IProgramFactory<E, S, F, P>{
+public class ProgramFactory<E,S,F,P> implements IProgramFactory<E, S, F, P>{
 
 	@Override
 	public P createProgram(List<F> functions, S main) {
