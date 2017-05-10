@@ -10,7 +10,7 @@ public class ProgramFactory<E,S,F,P> implements IProgramFactory<E, S, F, P>{
 	@Override
 	public P createProgram(List<F> functions, S main) {
 		// TODO Auto-generated method stub
-		return null;
+		return new Program(functions,main);
 	}
 
 	@Override
