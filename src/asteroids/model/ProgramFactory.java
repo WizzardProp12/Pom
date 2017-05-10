@@ -5,12 +5,12 @@ import java.util.List;
 import asteroids.part3.programs.IProgramFactory;
 import asteroids.part3.programs.SourceLocation;
 
-public class ProgramFactory<E,S,F,P> implements IProgramFactory<E, S, F, P>{
+public class ProgramFactory implements IProgramFactory<Expression, Statement, Function, Program>{
 
 	@Override
-	public P createProgram(List<F> functions, S main) {
+	public Program createProgram(List<Function> functionList, Statement main) {
 		// TODO Auto-generated method stub
-		return new Program(functions,main);
+		return new Program(functionList,main);
 	}
 
 	@Override
@@ -176,27 +176,26 @@ public class ProgramFactory<E,S,F,P> implements IProgramFactory<E, S, F, P>{
 	}
 
 	@Override
-	public E createLessThanExpression(E e1, E e2, SourceLocation location) {
+	public E createLessThanExpression(Expression e1, Expression e2, SourceLocation location) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public E createEqualityExpression(E e1, E e2, SourceLocation location) {
+	public Expression createEqualityExpression(E e1, E e2, SourceLocation location) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public E createAdditionExpression(E e1, E e2, SourceLocation location) {
+	public Expression createAdditionExpression(Expression e1, Expression e2, SourceLocation location) {
 		// TODO Auto-generated method stub
-		return null;
+		return new AdditionExpression(e1,e2,location);
 	}
 
 	@Override
-	public E createMultiplicationExpression(E e1, E e2, SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression createMultiplicationExpression(Expression e1, Expression e2, SourceLocation location) {
+		return new MultiplicationExpression(e1, e2, location);
 	}
 
 	@Override
@@ -206,9 +205,9 @@ public class ProgramFactory<E,S,F,P> implements IProgramFactory<E, S, F, P>{
 	}
 
 	@Override
-	public E createGetDirectionExpression(SourceLocation location) {
+	public Expression createGetDirectionExpression(SourceLocation location) {
 		// TODO Auto-generated method stub
-		return null;
+		return new GetDirectionExpression(location);
 	}
 
 	@Override

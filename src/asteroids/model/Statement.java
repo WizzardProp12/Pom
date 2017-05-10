@@ -1,6 +1,7 @@
 package asteroids.model;
-
 import asteroids.part3.programs.SourceLocation;
+
+
 
 public abstract class Statement {
 	private SourceLocation sourceLocation;
