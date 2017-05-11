@@ -215,7 +215,7 @@ public interface IProgramFactory<E, S, F, P> {
 	 * ship that is executing the program.
 	 */
 	public E createShipExpression(SourceLocation location);
-
+		
 	/**
 	 * Creates an expression that evaluates to the asteroid that is closest to
 	 * the ship that is executing the program.

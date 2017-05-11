@@ -6,13 +6,13 @@ public class GetDirectionExpression extends Expression<Double>{
 	
 	private SourceLocation sourceLocation;
 
-	public GetDirectionExpression(Expression<? extends Entity> e , SourceLocation sourceLocation) {
+	public GetDirectionExpression(SourceLocation sourceLocation) {
 		super(sourceLocation);
 	}
 
 	@Override
 	public Double evaluate() {
-		return getProgram().getShip().getRadius();
+		return getProgram().getShip().getOrientation();
 		
 	}
 
