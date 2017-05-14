@@ -9,6 +9,7 @@ public class GetVxExpression extends Expression<Double>{
 
 	public GetVxExpression(Expression<? extends Entity> e,SourceLocation sourceLocation) {
 		super(sourceLocation);
+		this.e = e;
 	}
 
 	@Override

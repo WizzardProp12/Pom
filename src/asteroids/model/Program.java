@@ -7,6 +7,7 @@ public class Program {
 	private List<Function> functionList;
 	private Statement main;
 	private Ship ship;
+	private double timeLeft;
 
 	
 	public Program(List<Function> functions,Statement main){
@@ -26,6 +27,11 @@ public class Program {
 	//Gets the ship that runs this program.
 	public Ship getShip(){
 		return this.ship;
+		
+	}
+	
+	public void decreaseTimeLeft(double time){
+		timeLeft -= time;
 		
 	}
 	
