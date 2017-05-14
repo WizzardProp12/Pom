@@ -1,5 +1,6 @@
 package asteroids.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Program {
@@ -34,6 +35,17 @@ public class Program {
 		timeLeft -= time;
 		
 	}
+	
+	protected HashMap<String, Object> variableMap = new HashMap<String, Object>();
+	protected HashMap<Integer, Object> parameterMap = new HashMap<Integer, Object>();
+
+	
+	public HashMap<String,Object> getVariableMap(){
+		return variableMap;
+	}
+	
+	public HashMap<Integer,Object> getParameterMap(){
+		return parameterMap;
 	
 	
 	

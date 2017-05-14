@@ -11,10 +11,13 @@ public class Function {
 		this.functionName = functionName;
 		this.body = body;
 		this.sourceLocation = sourceLocation;
+	}
+		
+	public void evaluate(){
+		body.execute();
+	}
 		
 	
-		
-	}
 	
 	
 	

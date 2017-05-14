@@ -14,39 +14,33 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 	}
 
 	@Override
-	public F createFunctionDefinition(String functionName, S body, SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
+	public Function createFunctionDefinition(String functionName, Statement body, SourceLocation location) {
+		return new Function(functionName, body, location);
 	}
 
 	@Override
-	public S createAssignmentStatement(String variableName, E value, SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
+	public Statement createAssignmentStatement(String variableName, Expression value, SourceLocation location) {
+		return new AssignmentStatement(variableName, value, location);
 	}
 
 	@Override
-	public S createWhileStatement(E condition, S body, SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
+	public Statement createWhileStatement(Expression condition, Statement body, SourceLocation location) {
+		return new WhileStatement(condition, body, location);
 	}
 
 	@Override
-	public S createBreakStatement(SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
+	public Statement createBreakStatement(SourceLocation location) {
+		return new BreakStatement(location);
 	}
 
 	@Override
-	public S createReturnStatement(E value, SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
+	public Statement createReturnStatement(Expression value, SourceLocation location) {
+		return new ReturnStatement(value, location);
 	}
-
+	
 	@Override
-	public S createIfStatement(E condition, S ifBody, S elseBody, SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
+	public Statement createIfStatement(Expression condition, Statement ifBody, Statement elseBody, SourceLocation location) {
+		return new IfStatement(condition, ifBody, elseBody,location);
 	}
 
 	@Override
@@ -60,19 +54,18 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 	}
 
 	@Override
-	public E createReadVariableExpression(String variableName, SourceLocation location) {
+	public Expression createReadVariableExpression(String variableName, SourceLocation location) {
+		return new ReadVariableExpression(variableName, location);
+	}
+
+	@Override
+	public Expression createReadParameterExpression(String parameterName, SourceLocation location) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public E createReadParameterExpression(String parameterName, SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public E createFunctionCallExpression(String functionName, List<E> actualArgs, SourceLocation location) {
+	public Expression createFunctionCallExpression(String functionName, List<E> actualArgs, SourceLocation location) {
 		// TODO Auto-generated method stub
 		return null;
 	}
