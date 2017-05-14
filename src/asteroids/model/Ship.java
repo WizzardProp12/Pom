@@ -418,7 +418,7 @@ public class Ship extends Entity{
 	/**
 	 * The force of the thruster.
 	 */
-	public static final double THRUSTER_FORCE = 1.1*Math.pow(10, 18);
+	public static final double THRUSTER_FORCE = 1.1*Math.pow(10, 22);
 	
 	/**
 	 * Return the force of the thruster.
