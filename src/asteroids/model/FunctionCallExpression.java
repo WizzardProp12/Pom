@@ -1,24 +1,28 @@
 package asteroids.model;
 
-import java.util.List;
+import java.awt.List;
+import java.util.ArrayList; 
 
 import asteroids.part3.programs.SourceLocation;
 
 public class FunctionCallExpression extends Expression<Object>{
 	
 	private String functionName;
-	private SourceLocation sourceLocation;
+	private ArrayList<Expression> actualArgs;
 
-	public ReadParameterExpression(String functionName, List<Expression> actualArgs, SourceLocation sourceLocation) {
+	public FunctionCallExpression(String functionName, List<Expression> actualArgs, SourceLocation sourceLocation) {
 		super(sourceLocation);
-		this.parameterName = parameterName;
+		this.actualArgs = actualArgs;
+		this.functionName = functionName;
 		
 	}
-
+	// evaluates the function of the program with the specified functionname and the specified arguments(cfr. IProgramFactory)
 	@Override
 	public Object evaluate() {
-		return getProgram().getParameterMap().get(parameterName);
-		
+		for (Expression expression : actualArgs){
+			getProgram().getFunction(functionName).evaluate(actualArgs);
+		}
+		return null;
 	}
 
 }

@@ -9,6 +9,7 @@ public class Program {
 	private Statement main;
 	private Ship ship;
 	private double timeLeft;
+	private List<Function> functions;
 
 	
 	public Program(List<Function> functions,Statement main){
@@ -49,7 +50,14 @@ public class Program {
 	public HashMap<String,Object> getParameterMap(){
 		return parameterMap;
 	
+	}
 	
-	
+	public Function getFunction(String functionName){
+		for (Function function : functions){
+			if (function.getFunctionName() == functionName)
+				return function;
+		}
+		return null;
+	}
 	
 }

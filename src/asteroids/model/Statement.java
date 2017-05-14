@@ -1,4 +1,7 @@
 package asteroids.model;
+import java.util.ArrayList;
+import java.util.Optional;
+
 import asteroids.part3.programs.SourceLocation;
 
 
@@ -16,6 +19,8 @@ public abstract class Statement {
 	}
 	
 	public abstract void execute();
+	public abstract void execute(ArrayList<Expression> ArgumentList);
+	
 	//implementation of execution of the statement is dependent on the type of statement.
 
 }
