@@ -9,7 +9,7 @@ public class ReadVariableExpression extends Expression<Object>{
 
 	public ReadVariableExpression(String variableName, SourceLocation sourceLocation) {
 		super(sourceLocation);
-		
+		this.variableName = variableName;
 	}
 
 	@Override

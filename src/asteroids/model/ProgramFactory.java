@@ -60,8 +60,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 
 	@Override
 	public Expression createReadParameterExpression(String parameterName, SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ReadParameterExpression(parameterName, location);
 	}
 
 	@Override

@@ -37,14 +37,16 @@ public class Program {
 	}
 	
 	protected HashMap<String, Object> variableMap = new HashMap<String, Object>();
-	protected HashMap<Integer, Object> parameterMap = new HashMap<Integer, Object>();
 
 	
 	public HashMap<String,Object> getVariableMap(){
 		return variableMap;
 	}
 	
-	public HashMap<Integer,Object> getParameterMap(){
+	protected HashMap<String, Object> parameterMap = new HashMap<String, Object>();
+
+	
+	public HashMap<String,Object> getParameterMap(){
 		return parameterMap;
 	
 	
