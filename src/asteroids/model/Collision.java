@@ -186,44 +186,26 @@ public class Collision {
 			Entity other = getEntity() instanceof Ship ? getOther()
 														 : getEntity();
 			if (ship instanceof Ship && other instanceof Bullet)
-				System.out.println("one ship and one bullet");
 			// Ship - Bullet fired by Ship
 			if (other instanceof Bullet && ((Bullet) other).getSourceShip() == ship) {
-				System.out.println("load bullet on ship");
 				ship.load((Bullet) other);
 				return;
 			// Ship - Asteroid
 			} else if (other instanceof Asteroid) {
-				System.out.println("asteroid - ship");
 				ship.terminate();
 				return;
 			// Ship - Planetoid
 			} else if (other instanceof Planetoid) {
-				System.out.println("planetoid - ship");
 				ship.teleport();
 				return;
 			}
 		// Bullet - Entity
 		} 
 		if (getEntity() instanceof Bullet || getOther() instanceof Bullet) {
-			System.out.println("entity - bullet");
 			getEntity().terminate();
 			getOther().terminate();
 			return;
 		}
-		// all other combinations
-		System.out.println("else: bounce");
-		System.out.println("properties:");
-		System.out.println("  entity 1");
-		System.out.println("  x:" + getEntity().getXCoord() + " y:" + getEntity().getYCoord());
-		System.out.println("  vx:" + getEntity().getXVelocity() + " vy:" + getEntity().getYVelocity());
-		System.out.println("  mass:" + getEntity().getMass());
-		System.out.println("  radius:" + getEntity().getRadius());
-		System.out.println("  entity 2");
-		System.out.println("  x:" + getOther().getXCoord() + " y:" + getOther().getYCoord());
-		System.out.println("  vx:" + getOther().getXVelocity() + " vy:" + getOther().getYVelocity());
-		System.out.println("  mass:" + getOther().getMass());
-		System.out.println("  radius:" + getOther().getRadius());
 		
 		getEntity().bounce(getOther());
 	}
