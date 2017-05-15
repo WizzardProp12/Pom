@@ -6,8 +6,38 @@ public class Planetoid extends MinorPlanet {
 	
 	// CONSTRUCTORS
 	
-	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, double radius, World world) {
-		super(xCoord, yCoord, xVelocity, yVelocity, radius, world);
+	/**
+	 * Variable that keeps track of the total distance traveled by the planetoid.
+	 */
+	private double totalTraveledDistance;
+	
+	/**
+	 * Set the total distance traveled by the planetoid.
+	 * @param distance
+	 * The distance traveled by the planetoid.
+	 * @return see implementation...
+	 * 
+	 */
+	protected void setTotalTraveledDistance(double distance){
+		this.totalTraveledDistance = distance;
+	}
+	
+	/**
+	 * Get the total distance traveled by the planetoid.
+	 * @return see implementation...
+	 */
+	public double getTotalTraveledDistance(){
+		return totalTraveledDistance;
+	}
+	
+	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, double radius, double totalTraveledDistance, World world) {
+		super(xCoord, yCoord, xVelocity, yVelocity, radius,world);
+		setTotalTraveledDistance(totalTraveledDistance);
+	
+	}
+	
+	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, double totalTraveledDistance, double radius) {
+		this(xCoord, yCoord, xVelocity, yVelocity, radius, totalTraveledDistance, null);
 	
 	}
 	
@@ -15,6 +45,8 @@ public class Planetoid extends MinorPlanet {
 	public void move(double time) throws IllegalArgumentException {
 		super.move(time);
 		shrink(getSpeed() * time * getShrinkingPercentage());
+		
+		totalTraveledDistance += time*getAbsSpeed(xVel, yVel)
 	}
 	
 	
