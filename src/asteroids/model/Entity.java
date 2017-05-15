@@ -698,7 +698,7 @@ public abstract class Entity {
 	 *		   If the the entity is not referenced by the given world.
 	 *		 | world != null && ! world.contains(this)
 	 */
-	protected void setWorld(World world) throws IllegalArgumentException {
+	public void setWorld(World world) throws IllegalArgumentException {
 		if (! canChangeWorld()) throw new IllegalArgumentException(
 				"entity is still referenced by current world");
 		if (! canBePlacedIn(world)) throw new IllegalArgumentException(

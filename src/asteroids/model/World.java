@@ -291,8 +291,9 @@ public class World {
 	 * 		| for (Entity someEntity : getSomeEntityList())
 	 * 		|		world.contains(someEntity)
 	 */
-	public HashSet<Entity> getSomeEntitySet(Class<?> cls){
-		HashSet<Entity> someEntitySet = new HashSet<Entity>();
+	@Basic
+	public Set<? extends Entity> getSomeEntitySet(Class<?> cls){
+		Set<Entity> someEntitySet = new HashSet<Entity>();
 		for (Entity entity : getEntitySet()){
 			if (entity.getClass() == cls){
 				someEntitySet.add(entity);
@@ -307,6 +308,7 @@ public class World {
 	 * 		| for (Entity someEntity : getSomeEntityList())
 	 * 		|		world.contains(someEntity)
 	 */
+	@Basic
 	public ArrayList<Entity> getSomeEntityList(Class<?> cls){
 		ArrayList<Entity> someEntityList = new ArrayList<Entity>();
 		for (Entity entity : getEntitySet()){

@@ -392,37 +392,45 @@ public class Facade implements asteroids.part3.facade.IFacade{
 
 	@Override
 	public Set<? extends Asteroid> getWorldAsteroids(World world) throws ModelException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Set<? extends Asteroid>) world.getSomeEntitySet(Asteroid.class);
 	}
 
 	@Override
 	public void addAsteroidToWorld(World world, Asteroid asteroid) throws ModelException {
-		// TODO Auto-generated method stub
-		
+		try {
+			world.add(asteroid);
+		} catch (NullPointerException e) {
+			throw new ModelException(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			throw new ModelException(e.getMessage());
+		}
 	}
 
 	@Override
 	public void removeAsteroidFromWorld(World world, Asteroid asteroid) throws ModelException {
-		// TODO Auto-generated method stub
-		
+		try {
+			world.remove(asteroid);
+		} catch (IllegalArgumentException e) {
+			throw new ModelException(e.getMessage());
+		}
 	}
 
 	@Override
 	public Set<? extends Planetoid> getWorldPlanetoids(World world) throws ModelException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Set<? extends Planetoid>) world.getSomeEntitySet(Planetoid.class);
+
 	}
 
 	@Override
 	public void addPlanetoidToWorld(World world, Planetoid planetoid) throws ModelException {
-		// TODO Auto-generated method stub
+		planetoid.setWorld(world);
 		
 	}
 
 	@Override
 	public void removePlanetoidFromWorld(World world, Planetoid planetoid) throws ModelException {
-		// TODO Auto-generated method stub
+		planetoid.setWorld(null);
+		world.remove(planetoid);
 		
 	}
 
