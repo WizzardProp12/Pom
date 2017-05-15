@@ -676,4 +676,26 @@ public class Ship extends Entity{
 			bullet.terminate();
 		super.terminate();
 	}
+	/**
+	 * The program loaded on the ship, if any.
+	 */
+	private Program program;
+	
+	/**
+	 * Get the program loaded on the ship, if any.
+	 * @return see implementation...
+	 */
+	public Program getProgram(){
+		return program;
+	}
+	
+	/**
+	 * Load a program on the ship.
+	 * @return see implementation...
+	 */
+	public void setProgram(Program program){
+		this.program = program;
+	}
+	
+	
 }
