@@ -286,6 +286,38 @@ public class World {
 	}
 	
 	/**
+	 * Return a set of the specified subclass of entity.
+	 * @invar All the Entities of the specified class in the result are contained by the world.
+	 * 		| for (Entity someEntity : getSomeEntityList())
+	 * 		|		world.contains(someEntity)
+	 */
+	public HashSet<Entity> getSomeEntitySet(Class<?> cls){
+		HashSet<Entity> someEntitySet = new HashSet<Entity>();
+		for (Entity entity : getEntitySet()){
+			if (entity.getClass() == cls){
+				someEntitySet.add(entity);
+			}
+		}
+		return someEntitySet;
+	}
+	
+	/**
+	 * Return an arraylist of the specified subclass of entity.
+	 * @invar All the Entities of the specified class in the result are contained by the world.
+	 * 		| for (Entity someEntity : getSomeEntityList())
+	 * 		|		world.contains(someEntity)
+	 */
+	public ArrayList<Entity> getSomeEntityList(Class<?> cls){
+		ArrayList<Entity> someEntityList = new ArrayList<Entity>();
+		for (Entity entity : getEntitySet()){
+			if (entity.getClass() == cls){
+				someEntityList.add(entity);
+			}
+		}
+		return someEntityList;
+	}
+	
+	/**
 	 * Return a HashSet of the Entities contained by the prime object.
 	 * @invar All the entities in the result are contained by the world.
 	 * 		| for (Entity entity : getEntitySet())

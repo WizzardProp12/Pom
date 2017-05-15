@@ -7,6 +7,7 @@ import java.util.HashSet;
 import org.junit.Before;
 import org.junit.Test;
 
+import asteroids.model.Asteroid;
 import asteroids.model.Bullet;
 import asteroids.model.Collision;
 import asteroids.model.CollisionType;
@@ -1461,6 +1462,17 @@ public class asteroidsTests1 {
 		assertFalse(position1.equals(position2));
 		assertFalse(position2.equals(position3));
 		assertTrue(position1.equals(position4));	
+	}
+	
+	@Test
+	public void getSomeEntitySetTest(){
+		World world = new World();
+		Ship ship = new Ship(100,100,0,0,10,0,5E15,world);
+		Asteroid asteroid = new Asteroid(100,200,0,0,10,world);
+		HashSet someEntitySet = world.getSomeEntitySet(Ship.class);
+		System.out.println(someEntitySet);
+		System.out.println(someEntitySet.isEmpty());
+		assertTrue(someEntitySet.contains(ship));
 	}
 		
 	
