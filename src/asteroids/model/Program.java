@@ -16,9 +16,10 @@ public class Program {
 		this.main = main;
 		this.functionList = functionList;	
 }
-	
-	public void execute(double time){
+	//executing program returns list of objects?
+	public List<Object> execute(double time){
 		main.execute();
+		return null;
 	}
 	
 	//Sets the ship that runs this program.

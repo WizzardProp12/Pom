@@ -45,8 +45,9 @@ public class Planetoid extends MinorPlanet {
 	public void move(double time) throws IllegalArgumentException {
 		super.move(time);
 		shrink(getSpeed() * time * getShrinkingPercentage());
-		
-		totalTraveledDistance += time*getAbsSpeed(xVel, yVel)
+		double xVel = getXVelocity();
+		double yVel = getYVelocity();
+		totalTraveledDistance += time*getAbsSpeed(xVel, yVel);
 	}
 	
 	
