@@ -7,48 +7,25 @@ import asteroids.model.Ship;
 import asteroids.model.program.statements.Statement;
 
 public class Program {
-
-	private List<Function> functions;
-	private Statement main;
-	private Ship ship;
-	private double timeLeft;
-
 	
-	public Program(List<Function> functions,Statement main){
+	// CONSTRUCTORS
+	
+	public Program(List<Function> functions,Statement main, double time) {
 		this.functions = functions;	
 		this.main = main;
+		this.timeLeft = time;
 	}
 	
-	//executing program returns list of objects?
-	public List<Object> execute(double time){
-		main.execute();
-		return null;
+	public Program(List<Function> functions,Statement main) {
+		this(functions, main, 0);
 	}
 	
-	//Gets the ship that runs this program.
-	public Ship getShip(){
-		return this.ship;
-	}
+	// FUNCTIONS
 	
-	
-	public double getTimeLeft() { return this.timeLeft; }
-	public void addTime(double time) { timeLeft += time; }
-	public void decreaseTime(double time){ timeLeft -= time; }
-	
-	// method to pause the program if it doesn't have enough time left
-	public void hold() {
-		// TODO
-	}
-	
-	protected HashMap<String, Object> variableMap = new HashMap<String, Object>();
-
-	
-	public HashMap<String,Object> getVariableMap(){
-		return variableMap;
-	}
+	private List<Function> functions;
 	
 	protected HashMap<String, Object> parameterMap = new HashMap<String, Object>();
-	
+		
 	public HashMap<String,Object> getParameterMap(){
 		return parameterMap;
 	}
@@ -60,5 +37,51 @@ public class Program {
 		}
 		return null;
 	}
+	
+	// MAIN
+	
+	private Statement main;
+	
+	// SHIP
+	
+	private Ship ship;
+	
+	public Ship getShip(){ return this.ship; }
+	
+	// TIMELEFT
+	
+	private double timeLeft;
+	
+	public double getTimeLeft() { return this.timeLeft; }
+	
+	public void addTime(double time) { timeLeft += time; }
+	
+	public void decreaseTime(double time){ timeLeft -= time; }
+	
+	// GLOBAL VARIABLES
+	
+	public HashMap<String, Object> globalVariables = new HashMap<String, Object>();
+
+	public HashMap<String,Object> getGlobalVariables(){ return globalVariables;	}
+	
+	
+	// EXECUTE
+	
+	//executing program returns list of objects?
+	public List<Object> execute(double time){
+		main.execute();
+		return null;
+	}
+	
+	// HOLD
+	
+	// method to pause the program if it doesn't have enough time left
+	public void hold() {
+		// TODO
+	}
+	
+	
+	
+	
 	
 }
