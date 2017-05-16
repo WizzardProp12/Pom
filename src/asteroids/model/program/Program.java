@@ -10,20 +10,22 @@ public class Program {
 	
 	// CONSTRUCTORS
 	
-	public Program(List<Function> functions,Statement main, double time) {
+	public Program(List<Function> functions, Statement main, double time) {
 		this.functions = functions;	
 		this.main = main;
 		this.timeLeft = time;
 	}
 	
-	public Program(List<Function> functions,Statement main) {
+	public Program(List<Function> functions, Statement main) {
 		this(functions, main, 0);
 	}
+	
 	
 	// FUNCTIONS
 	
 	private List<Function> functions;
 	
+	/*
 	protected HashMap<String, Object> parameterMap = new HashMap<String, Object>();
 		
 	public HashMap<String,Object> getParameterMap(){
@@ -31,12 +33,13 @@ public class Program {
 	}
 	
 	public Function getFunction(String functionName){
-		for (Function function : functions){
+		for (F function : functions){
 			if (function.getFunctionName() == functionName)
 				return function;
 		}
 		return null;
 	}
+	*/
 	
 	// MAIN
 	
@@ -47,6 +50,8 @@ public class Program {
 	private Ship ship;
 	
 	public Ship getShip(){ return this.ship; }
+	
+	public void setShip(Ship ship) { this.ship = ship; }
 	
 	// TIMELEFT
 	
@@ -62,15 +67,13 @@ public class Program {
 	
 	public HashMap<String, Object> globalVariables = new HashMap<String, Object>();
 
-	public HashMap<String,Object> getGlobalVariables(){ return globalVariables;	}
+	public HashMap<String, Object> getGlobalVariables(){ return globalVariables; }
 	
 	
 	// EXECUTE
 	
-	//executing program returns list of objects?
-	public List<Object> execute(double time){
+	public void execute(double time){
 		main.execute();
-		return null;
 	}
 	
 	// HOLD
@@ -79,8 +82,6 @@ public class Program {
 	public void hold() {
 		// TODO
 	}
-	
-	
 	
 	
 	

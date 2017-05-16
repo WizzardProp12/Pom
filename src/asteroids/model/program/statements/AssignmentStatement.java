@@ -15,9 +15,17 @@ public class AssignmentStatement extends Statement{
 		this.variableName = variableName;
 		this.value = value;
 	}
-	
+
 	@Override
-	public void execute(ArrayList<Expression>... ArgumentList) {
-		getProgram().variableMap.put(variableName,value.evaluate());
+	public void execute() {
+		// TODO Auto-generated method stub
+		
 	}
+
+	@Override
+	public double getDuration() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 }

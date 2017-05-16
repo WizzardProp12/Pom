@@ -88,7 +88,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 
 	@Override
 	public Statement createSequenceStatement(List<Statement> statements, SourceLocation location) {
-		return new SequenceStatement(statements, location);
+		return new SequenceStatement(location, statements);
 	}
 
 	@Override

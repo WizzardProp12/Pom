@@ -3,7 +3,7 @@ package asteroids.model.program.statements;
 import asteroids.part3.programs.SourceLocation;
 
 
-public class FireStatement extends Statement{
+public class FireStatement extends ActionStatement{
 	
 	private double timeToExecute = 0.2;
 	
@@ -16,6 +16,12 @@ public class FireStatement extends Statement{
 		getProgram().getShip().fireBullet();
 		getProgram().decreaseTimeLeft(timeToExecute);
 		
+	}
+
+	@Override
+	public double getDuration() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	

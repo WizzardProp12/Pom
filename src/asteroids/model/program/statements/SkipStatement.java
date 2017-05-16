@@ -4,7 +4,7 @@ import asteroids.model.program.expressions.Expression;
 import asteroids.part3.programs.SourceLocation;
 
 
-public class SkipStatement extends Statement{
+public class SkipStatement extends ActionStatement {
 	private Expression<? extends Double> e;
 	private double timeToExecute = 0.2;
 	
@@ -17,6 +17,7 @@ public class SkipStatement extends Statement{
 		getProgram().decreaseTimeLeft(timeToExecute);
 		
 	}
+
 	
 	
 

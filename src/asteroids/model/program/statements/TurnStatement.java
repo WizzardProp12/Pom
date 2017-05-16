@@ -4,7 +4,7 @@ import asteroids.model.program.expressions.Expression;
 import asteroids.part3.programs.SourceLocation;
 
 
-public class TurnStatement extends Statement{
+public class TurnStatement extends ActionStatement {
 	private Expression<? extends Double> angle;
 	
 	public TurnStatement(SourceLocation sourceLocation, Expression<? extends Double> angle){

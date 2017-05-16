@@ -8,22 +8,26 @@ import asteroids.part3.programs.SourceLocation;
 
 public abstract class Statement {
 	
-	private SourceLocation sourceLocation;
-	private Program program;
-	
-	public Statement(SourceLocation sourcelocation){
+	public Statement(SourceLocation sourceLocation){
 		this.sourceLocation = sourceLocation;
 	}
+
+	// SOURCELOCATION
+
+	private SourceLocation sourceLocation;
 	
-	public SourceLocation getSourceLocation() {
-		return this.sourceLocation;
-	}
+	public SourceLocation getSourceLocation() { return this.sourceLocation; }
 	
-	public abstract void execute(ArrayList<Expression>... ArgumentList);
+	// PROGRAM
+
+	private Program program;
 	
-	public Program getProgram(){
-		return this.program;
-	}
+	public Program getProgram(){ return this.program; }
 	
-	public abstract double getDuration();
+	public void setProgram(Program program) { this.program = program; }
+	
+	// EXECUTE
+	
+	public abstract void execute();
+	
 }

@@ -3,7 +3,7 @@ package asteroids.model.program.statements;
 import asteroids.part3.programs.SourceLocation;
 
 
-public class ThrustOnStatement extends Statement{
+public class ThrustOnStatement extends ActionStatement {
 	
 	public ThrustOnStatement(SourceLocation sourceLocation){
 		super(sourceLocation);
