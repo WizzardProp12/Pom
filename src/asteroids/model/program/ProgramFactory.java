@@ -2,6 +2,44 @@ package asteroids.model.program;
 
 import java.util.List;
 
+import asteroids.model.program.expressions.AdditionExpression;
+import asteroids.model.program.expressions.AnyExpression;
+import asteroids.model.program.expressions.AsteroidExpression;
+import asteroids.model.program.expressions.BulletExpression;
+import asteroids.model.program.expressions.ChangeSignExpression;
+import asteroids.model.program.expressions.DoubleLiteralExpression;
+import asteroids.model.program.expressions.EqualityExpression;
+import asteroids.model.program.expressions.Expression;
+import asteroids.model.program.expressions.GetDirectionExpression;
+import asteroids.model.program.expressions.GetRadiusExpression;
+import asteroids.model.program.expressions.GetVxExpression;
+import asteroids.model.program.expressions.GetVyExpression;
+import asteroids.model.program.expressions.GetXExpression;
+import asteroids.model.program.expressions.GetYExpression;
+import asteroids.model.program.expressions.LessThanExpression;
+import asteroids.model.program.expressions.MultiplicationExpression;
+import asteroids.model.program.expressions.NotExpression;
+import asteroids.model.program.expressions.NullExpression;
+import asteroids.model.program.expressions.PlanetExpression;
+import asteroids.model.program.expressions.PlanetoidExpression;
+import asteroids.model.program.expressions.ReadParameterExpression;
+import asteroids.model.program.expressions.ReadVariableExpression;
+import asteroids.model.program.expressions.SelfExpression;
+import asteroids.model.program.expressions.ShipExpression;
+import asteroids.model.program.expressions.SqrtExpression;
+import asteroids.model.program.statements.AssignmentStatement;
+import asteroids.model.program.statements.BreakStatement;
+import asteroids.model.program.statements.FireStatement;
+import asteroids.model.program.statements.IfStatement;
+import asteroids.model.program.statements.PrintStatement;
+import asteroids.model.program.statements.ReturnStatement;
+import asteroids.model.program.statements.SequenceStatement;
+import asteroids.model.program.statements.SkipStatement;
+import asteroids.model.program.statements.Statement;
+import asteroids.model.program.statements.ThrustOffStatement;
+import asteroids.model.program.statements.ThrustOnStatement;
+import asteroids.model.program.statements.TurnStatement;
+import asteroids.model.program.statements.WhileStatement;
 import asteroids.part3.programs.IProgramFactory;
 import asteroids.part3.programs.SourceLocation;
 
@@ -10,7 +48,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 	@Override
 	public Program createProgram(List<Function> functionList, Statement main) {
 		// TODO Auto-generated method stub
-		return new Program(functionList,main);
+		return new Program(functionList, main);
 	}
 
 	@Override
@@ -64,7 +102,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 	}
 
 	@Override
-	public Expression createFunctionCallExpression(String functionName, List<E> actualArgs, SourceLocation location) {
+	public Expression createFunctionCallExpression(String functionName, List<E> actualArgs, SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -202,6 +240,64 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 	@Override
 	public Statement createSkipStatement(SourceLocation location) {
 		return new SkipStatement(location);
+	}
+
+	@Override
+	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs,
+			SourceLocation sourceLocation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Expression createNullExpression(SourceLocation location) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Statement createTurnStatement(Expression angle, SourceLocation location) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs,
+			SourceLocation sourceLocation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Expression createNullExpression(SourceLocation location) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs,
+			SourceLocation sourceLocation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Expression createNullExpression(SourceLocation location) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs,
+			SourceLocation sourceLocation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Expression createNullExpression(SourceLocation location) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

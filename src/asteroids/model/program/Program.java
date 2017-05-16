@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import asteroids.model.Ship;
+import asteroids.model.program.statements.Statement;
 
 public class Program {
 
@@ -29,13 +30,10 @@ public class Program {
 		return this.ship;
 	}
 	
-	public double getTimeLeft() {
-		return this.timeLeft;
-	}
 	
-	public void decreaseTimeLeft(double time){
-		timeLeft -= time;
-	}
+	public double getTimeLeft() { return this.timeLeft; }
+	public void addTime(double time) { timeLeft += time; }
+	public void decreaseTime(double time){ timeLeft -= time; }
 	
 	// method to pause the program if it doesn't have enough time left
 	public void hold() {

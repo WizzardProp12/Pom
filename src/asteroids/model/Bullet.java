@@ -343,4 +343,13 @@ public class Bullet extends Entity {
 			countBounce();
 		}
 	}
+	
+	// TERMINATE
+	
+	public void terminate() {
+		if (getShip() != null) {
+			getShip().removeBullet(this);
+		}
+		super.terminate();
+	}
 }

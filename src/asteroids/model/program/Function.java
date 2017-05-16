@@ -4,6 +4,8 @@ import java.awt.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import asteroids.model.program.expressions.Expression;
+import asteroids.model.program.statements.Statement;
 import asteroids.part3.programs.SourceLocation;
 
 public class Function {

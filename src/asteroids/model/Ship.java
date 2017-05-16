@@ -585,8 +585,10 @@ public class Ship extends Entity{
 		if (bullet.getShip() != this)
 			throw new IllegalArgumentException(
 					"the bullet given bullet is not loaded on the ship");
-		else
+		else {
 			bulletList.remove(bullet);
+			bullet.setShip(null);
+		}
 	}
 	
 	/**
@@ -602,7 +604,9 @@ public class Ship extends Entity{
 	 * 		 | (index < 0 || index >= getBullets().size())
 	 */
 	public void removeBulletAt(int index) throws IndexOutOfBoundsException {
+		Bullet bullet = getBulletAtIndex(index);
 		bulletList.remove(index);
+		bullet.setShip(null);
 	}
 	
 	// FIRING (total)
