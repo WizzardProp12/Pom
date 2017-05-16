@@ -1,6 +1,7 @@
 package asteroids.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -275,6 +276,30 @@ public class World {
 	private Set<Entity> entitySet = new HashSet<Entity>();
 	
 	/**
+	 * Return a HashSet of the Entities contained by the prime object.
+	 * @invar All the entities in the result are contained by the world.
+	 * 		| for (Entity entity : getEntitySet())
+	 * 		|		world.contains(entity)
+	 */
+	@Basic
+	public HashSet<Entity> getEntitySet() {
+		return new HashSet<Entity>(entitySet);
+	}
+	
+	
+	
+	public HashSet<? extends Entity> getSetOfClassObjects(Class<? extends Entity> cls) {
+		Set<? extends Entity> result = new HashSet<>();
+		for (Entity entity : getEntitySet()) {
+			if (cls.isInstance(entity))
+				result.add(entity);
+		}
+		return result;
+	}
+	
+	
+	
+	/**
 	 * Return an ArrayList of the Entities contained by the prime object.
 	 * @invar All the entities in the result are contained by the world.
 	 * 		| for (Entity entity : getEntityList())
@@ -319,16 +344,7 @@ public class World {
 		return someEntityList;
 	}
 	
-	/**
-	 * Return a HashSet of the Entities contained by the prime object.
-	 * @invar All the entities in the result are contained by the world.
-	 * 		| for (Entity entity : getEntitySet())
-	 * 		|		world.contains(entity)
-	 */
-	@Basic
-	public HashSet<Entity> getEntitySet() {
-		return new HashSet<Entity>(entitySet);
-	}
+	
 	
 	/**
 	 * Return a HashSet of the Ships contained by the prime object.
