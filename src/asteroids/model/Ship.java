@@ -3,6 +3,8 @@ package asteroids.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+
+import asteroids.model.program.Program;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
