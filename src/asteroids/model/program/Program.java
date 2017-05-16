@@ -11,7 +11,7 @@ public class Program {
 	// CONSTRUCTORS
 	
 	public Program(List<Function> functions, Statement main, double time) {
-		this.functions = functions;	
+		this.functions = functions;
 		this.main = main;
 		this.timeLeft = time;
 	}
@@ -69,6 +69,25 @@ public class Program {
 
 	public HashMap<String, Object> getGlobalVariables(){ return globalVariables; }
 	
+	public Object getVariable(String name) {
+		return globalVariables.get(name);
+	}
+	
+	public void setVariable(String name, Object value) {
+		globalVariables.put(name, value);
+	}
+	
+	public void deleteVariable(String name) {
+		globalVariables.remove(name);
+	}
+	
+	// PRINT OUTPUT
+	
+	private String printOutput;
+	
+	public String getPrintOutput() { return this.printOutput; }
+	
+	public void addNewOutputLine(String string) { printOutput += "\n" + string; }
 	
 	// EXECUTE
 	

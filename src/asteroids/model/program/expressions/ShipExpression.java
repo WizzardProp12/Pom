@@ -4,7 +4,6 @@ import asteroids.part3.programs.SourceLocation;
 
 public class ShipExpression extends Expression<Ship> {
 	
-	private SourceLocation sourceLocation;
 	private Ship closestShip;
 	private Ship thisShip = getProgram().getShip();
 	private double closestDistanceSoFar = Double.POSITIVE_INFINITY;

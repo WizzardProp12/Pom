@@ -7,13 +7,10 @@ public class ThrustOnStatement extends ActionStatement {
 	
 	public ThrustOnStatement(SourceLocation sourceLocation){
 		super(sourceLocation);
-		}
+	}
 
 	@Override
 	public void execute() {
 		getProgram().getShip().thrustOn();
 	}
-	
-	
-
 }

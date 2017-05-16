@@ -4,8 +4,6 @@ import asteroids.part3.programs.SourceLocation;
 
 public class SelfExpression extends Expression<Ship> {
 	
-	private SourceLocation sourceLocation;
-	
 	public SelfExpression(SourceLocation sourceLocation){
 		super(sourceLocation);
 	}

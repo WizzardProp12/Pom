@@ -1,9 +1,5 @@
 package asteroids.model.program.statements;
-import java.util.ArrayList;
-import java.util.Optional;
-
 import asteroids.model.program.Program;
-import asteroids.model.program.expressions.Expression;
 import asteroids.part3.programs.SourceLocation;
 
 public abstract class Statement {

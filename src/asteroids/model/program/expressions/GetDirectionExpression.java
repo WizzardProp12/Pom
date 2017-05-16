@@ -4,8 +4,6 @@ import asteroids.part3.programs.SourceLocation;
 
 public class GetDirectionExpression extends Expression<Double>{
 	
-	private SourceLocation sourceLocation;
-
 	public GetDirectionExpression(SourceLocation sourceLocation) {
 		super(sourceLocation);
 	}
@@ -13,7 +11,6 @@ public class GetDirectionExpression extends Expression<Double>{
 	@Override
 	public Double evaluate() {
 		return getProgram().getShip().getOrientation();
-		
 	}
 
 }

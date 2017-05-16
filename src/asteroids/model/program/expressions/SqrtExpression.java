@@ -4,14 +4,14 @@ import asteroids.part3.programs.SourceLocation;
 
 public class SqrtExpression extends Expression<Double>{
 	
-	private Expression<? extends Double> e;
-	private SourceLocation sourceLocation;
 
-	public SqrtExpression(Expression<? extends Double > e , SourceLocation sourceLocation) {
+	public SqrtExpression(Expression<? extends Double > e, SourceLocation sourceLocation) {
 		super(sourceLocation);
 		this.e = e;
 	}
 
+	private Expression<? extends Double> e;
+	
 	@Override
 	public Double evaluate() {
 		return Math.sqrt(e.evaluate());

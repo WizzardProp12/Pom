@@ -2,15 +2,13 @@ package asteroids.model.program.expressions;
 
 import asteroids.part3.programs.SourceLocation;
 
-public class NotExpression extends Expression<Boolean>{
+public class NotExpression extends Expression<Boolean> {
+
+	public NotExpression(Expression<? extends Boolean> e , SourceLocation sourceLocation) {
+		super(sourceLocation);
+	}
 	
 	private Expression<? extends Boolean> e;
-	private SourceLocation sourceLocation;
-
-	public NotExpression(Expression<? extends Boolean > e , SourceLocation sourceLocation) {
-		super(sourceLocation);
-		
-	}
 
 	@Override
 	public Boolean evaluate() {

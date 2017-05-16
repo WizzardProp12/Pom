@@ -5,13 +5,12 @@ import asteroids.part3.programs.SourceLocation;
 
 public class GetVxExpression extends Expression<Double>{
 	
-	private SourceLocation sourceLocation;
-	private Expression<? extends Entity> e;
-
-	public GetVxExpression(Expression<? extends Entity> e,SourceLocation sourceLocation) {
+	public GetVxExpression(Expression<? extends Entity> e, SourceLocation sourceLocation) {
 		super(sourceLocation);
 		this.e = e;
 	}
+
+	private Expression<? extends Entity> e;
 
 	@Override
 	public Double evaluate() {

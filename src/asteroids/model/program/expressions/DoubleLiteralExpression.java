@@ -4,14 +4,14 @@ import asteroids.part3.programs.SourceLocation;
 
 public class DoubleLiteralExpression extends Expression<Double>{
 	
-	private SourceLocation sourceLocation;
-	private double value;
 
-	public DoubleLiteralExpression(double value,SourceLocation sourceLocation) {
+	public DoubleLiteralExpression(double value, SourceLocation sourceLocation) {
 		super(sourceLocation);
 		this.value = value;
 	}
 
+	private double value;
+	
 	@Override
 	public Double evaluate() {
 		return value;

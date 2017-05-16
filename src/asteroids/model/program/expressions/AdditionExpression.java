@@ -6,7 +6,6 @@ public class AdditionExpression extends Expression<Double> {
 
 	private Expression<? extends Double> e1;
 	private Expression<? extends Double> e2;
-	private SourceLocation sourceLocation;
 
 	public AdditionExpression(Expression<? extends Double > e1 , Expression<? extends Double> e2, SourceLocation sourceLocation) {
 		super(sourceLocation);

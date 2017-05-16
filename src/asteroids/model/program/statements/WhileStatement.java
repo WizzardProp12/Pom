@@ -9,7 +9,8 @@ public class WhileStatement extends Statement{
 	private Statement body;
 	
 	
-	public WhileStatement(Expression<Boolean> condition, Statement body, SourceLocation sourcelocation) {
+	public WhileStatement(Expression<Boolean> condition, Statement body, 
+													SourceLocation sourcelocation) {
 		super(sourcelocation);
 		this.condition = condition;
 		this.body = body;
@@ -21,7 +22,6 @@ public class WhileStatement extends Statement{
 	public void execute(){
 		while (condition.evaluate() == true){
 			body.execute();
-			
 		}
 	}
 
