@@ -286,19 +286,6 @@ public class World {
 		return new HashSet<Entity>(entitySet);
 	}
 	
-	
-	
-	public HashSet<? extends Entity> getSetOfClassObjects(Class<? extends Entity> cls) {
-		Set<? extends Entity> result = new HashSet<>();
-		for (Entity entity : getEntitySet()) {
-			if (cls.isInstance(entity))
-				result.add(entity);
-		}
-		return result;
-	}
-	
-	
-	
 	/**
 	 * Return an ArrayList of the Entities contained by the prime object.
 	 * @invar All the entities in the result are contained by the world.
@@ -342,38 +329,6 @@ public class World {
 			}
 		}
 		return someEntityList;
-	}
-	
-	
-	
-	/**
-	 * Return a HashSet of the Ships contained by the prime object.
-	 * @invar All the ships in the result are contained by the world.
-	 * 		| for (Ship ship : getShipSet())
-	 * 		|		world.contains(ship)
-	 */
-	@Basic
-	public HashSet<Ship> getShipSet() {
-		HashSet<Ship> shipSet = new HashSet<Ship>();
-		for (Entity entity : getEntityList())
-			if (entity instanceof Ship)
-				shipSet.add((Ship) entity);
-		return shipSet;
-	}
-	
-	/**
-	 * Return a HashSet of the Bullets contained by the prime object.
-	 * @invar All the bullets in the result are contained by the world.
-	 * 		| for (Bullet bullet : getBulletSet())
-	 * 		|		world.contains(ship)
-	 */
-	@Basic
-	public HashSet<Bullet> getBulletSet() {
-		HashSet<Bullet> bulletSet = new HashSet<Bullet>();
-		for (Entity entity : getEntityList())
-			if (entity instanceof Bullet)
-				bulletSet.add((Bullet) entity);
-		return bulletSet;
 	}
 	
 	
