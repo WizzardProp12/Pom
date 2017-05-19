@@ -749,7 +749,7 @@ public abstract class Entity {
 	 */
 	@Basic @Immutable @Raw
 	public double getMinimumMass() {
-		return (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
+		return (4/3.)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
 	}
 	
 	/**

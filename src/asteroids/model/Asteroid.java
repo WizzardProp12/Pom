@@ -39,7 +39,7 @@ public class Asteroid extends MinorPlanet{
 	 */
 	@Override @Basic @Raw
 	public double getMass() {
-		return (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
+		return (4/3.)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
 	}
 	
 	

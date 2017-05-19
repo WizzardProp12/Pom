@@ -87,7 +87,7 @@ public class Ship extends Entity{
 			double radius, double orientation, double mass, World world) {
 		super(xCoord, yCoord, xVelocity, yVelocity, radius, world);
 		setOrientation(orientation);
-		if (getMinimumMass() < mass)
+		if (getMinimumMass() < mass && Double.isFinite(mass))
 			setShipMass(mass);
 	}
 	
@@ -634,9 +634,9 @@ public class Ship extends Entity{
 		}
 		
 		// get the position offset of the fired bullet
-		double xOffset = (getRadius()+bullet.getRadius())
+		double xOffset = (getRadius() + bullet.getRadius())
 							* Math.cos(getOrientation());
-		double yOffset = (getRadius()+bullet.getRadius())
+		double yOffset = (getRadius() + bullet.getRadius())
 							* Math.sin(getOrientation());
 		
 		// get the position of the fired bullet
