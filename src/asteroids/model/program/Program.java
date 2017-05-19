@@ -12,6 +12,7 @@ public class Program {
 	
 	public Program(List<Function> functions, Statement main, double time) {
 		this.functions = functions;
+		
 		this.main = main;
 		this.timeLeft = time;
 	}
@@ -43,7 +44,13 @@ public class Program {
 	
 	// MAIN
 	
-	private Statement main;
+	private List<Statement> main;
+	
+	private int index = 0;
+	
+	public Statement getCurrentStatement() {
+		return this.main.get(index);
+	}
 	
 	// SHIP
 	
@@ -82,25 +89,24 @@ public class Program {
 	}
 	
 	// PRINT OUTPUT
+
+	private List<Object> printOutput;
 	
-	private String printOutput;
+	public List<Object> getPrintOutput() { return this.printOutput; }
 	
-	public String getPrintOutput() { return this.printOutput; }
-	
-	public void addNewOutputLine(String string) { printOutput += "\n" + string; }
+	public void addNewOutputLine(Object e) { this.printOutput.add(e); }
 	
 	// EXECUTE
+	
+	public void executeOneCommand() {
+		
+	}
 	
 	public void execute(double time){
 		main.execute();
 	}
 	
 	// HOLD
-	
-	// method to pause the program if it doesn't have enough time left
-	public void hold() {
-		// TODO
-	}
 	
 	
 	

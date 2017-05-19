@@ -1,7 +1,5 @@
 package asteroids.model;
 
-import java.util.concurrent.TimeUnit;
-
 import be.kuleuven.cs.som.annotate.*;
 
 /**

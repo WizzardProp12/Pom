@@ -1,7 +1,6 @@
 package asteroids.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -536,8 +535,8 @@ public class World {
 			firstCollision.resolve();
 			
 			// Update velocities
-			for(Ship ship : getShipSet())
-				ship.thrust(firstCollision.getTime());
+			for(Entity ship : getSomeEntitySet(Ship.class))
+				((Ship) ship).thrust(firstCollision.getTime());
 			
 			// Advance time for the remaining time
 			advanceTime(time - firstCollision.getTime());
@@ -548,8 +547,8 @@ public class World {
 				entity.move(time);
 			
 			// Update velocities
-			for(Ship ship : getShipSet())
-				ship.thrust(time);
+			for(Entity ship : getSomeEntitySet(Ship.class))
+				((Ship) ship).thrust(time);
 		}
 	}
 	
