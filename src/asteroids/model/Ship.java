@@ -21,12 +21,11 @@ import be.kuleuven.cs.som.annotate.*;
  * A link to the GitHub code repository:
  * https://github.com/WizzardProp12/Pom
  * 
- * A class of ships in an unbounded two dimensional space, 
- * involving coordinates, velocities, a radius and an 
- * orientation. 
+ * A class of ships in an unbounded two dimensional space.
  * 
- * @invar  The orientation of each ship must be a valid.
- *         | isValidOrientation(getOrientation())
+ * @invar This is a subclass of Entity and inherits all its invariants
+ * @invar The orientation of each ship must be a valid.
+ *        | isValidOrientation(getOrientation())
  */
 public class Ship extends Entity{
 	
@@ -38,11 +37,11 @@ public class Ship extends Entity{
 	 * @param xCoord
 	 * 		  The x-coordinate of this new ship.
 	 * @param yCoord
-	 * 	      The x-coordinate of this new ship.
+	 * 	      The y-coordinate of this new ship.
 	 * @param xVelocity
 	 *        The velocity along the x-axis of this new ship.
 	 * @param yVelocity
-	 * 	      The velocity along the x-axis of this new ship.
+	 * 	      The velocity along the y-axis of this new ship.
 	 * @param radius
 	 * 		  The radius of this new ship.
 	 * @param orientation

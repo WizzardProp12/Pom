@@ -1346,7 +1346,7 @@ public class Part3TestFull {
     assertNull(facade.getBulletWorld(bullet1));
     score += 7;
   }
-/*
+
   // Assignment Statement
 
   @Test
@@ -2896,5 +2896,5 @@ public class Part3TestFull {
       score += 5;
     }
   }
-*/
+
 }

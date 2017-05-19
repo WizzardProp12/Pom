@@ -6,6 +6,60 @@ public class Planetoid extends MinorPlanet {
 	
 	// CONSTRUCTORS
 	
+	/**
+	 * Initialise a new planetoid with given coordinates, velocity, radius,
+	 * travelled distance and world.
+	 * @param xCoord
+	 * 		  The x-coordinate of the planetoid.
+	 * 		| getXCoord() == xCoord
+	 * @param yCoord
+	 * 		  The y-coordinate of the planetoid.
+	 * 		| getYCoord() == yCoord
+	 * @param xVelocity
+	 * 		  The velocity along the x-axis
+	 * 		| getXVelocity() == xVelocity
+	 * @param yVelocity
+	 * 		  The velocity along the y-axis
+	 * 		| getYVelocity() == yVelocity
+	 * @param radius
+	 * 		  The radius of the planetoid.
+	 * 		| getRadius() == radius
+	 * @param travelledDistance
+	 * 		  The distance the planetoid has travelled.
+	 * 		| getTravelledDistance() == travelledDistance
+	 * @param world
+	 * 		  The world in which the planetoid is located.
+	 * 		| getWorld() == world
+	 * @pre   The given coordinates must be valid.
+	 * 		| isValidXCoord(xCoord) && isValidYCoord(yCoord)
+	 * @pre   The given radius must be valid.
+	 * 		| canHaveAsRadius(radius)
+	 * @pre   The given world must be valid.
+	 * 		| canBePlacedIn(world)
+	 * @post ...
+	 * 		| new.getPosition() == [xCoord, yCoord]
+	 * @post ...
+	 * 		| if getAbsSpeed(xVelocity, yVelocity) <= Entity.SPEED_LIMIT
+	 * 		| 	then new getXVelocity == xVelocity and new getYVelocity == yVelocity
+	 * @post ...
+	 * 		| getSpeed() <= Entity.SPEED_LIMIT
+	 * @post ...
+	 * 		| new getRadius() >= getMinRadius()
+	 * @post ...
+	 * 		| new getWorld() == world
+	 * @throws IllegalArgumentException
+	 * 		   If the given coordinates are not legal.
+	 * 		 | ! canHaveAsXCoordinate(xCoord) || ! canHaveAsYCoordinate(yCoord)
+	 * @throws IllegalArgumentException
+	 * 		   If the planetoid cannot be assigned to its position.
+	 * 		 |  ! isValidPosition(position)
+	 * @throws IllegalArgumentException
+	 * 		   If the given radius is not valid
+	 * 		 | ! canHaveAsRadius(radius)
+	 * @throws IllegalArgumentException
+	 * 		   If the planetoid cannot be added to the world.
+	 * 		 | ! canBePlacedIn(world)
+	 */
 	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius, double travelledDistance, World world) {
 		super(xCoord, yCoord, xVelocity, yVelocity, radius, world);
@@ -14,11 +68,18 @@ public class Planetoid extends MinorPlanet {
 		updateCurrentRadius();
 	}
 	
+	/**
+	 * Initialise a new planetoid with given coordinates, velocity, radius
+	 * and travelled distance.
+	 */
 	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius, double travelledDistance) {
 		this(xCoord, yCoord, xVelocity, yVelocity, radius, travelledDistance, null);
 	}
 	
+	/**
+	 * Initialise a new planetoid with given coordinates, velocity and radius.
+	 */
 	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius) {
 		this(xCoord, yCoord, xVelocity, yVelocity, radius, 0, null);
