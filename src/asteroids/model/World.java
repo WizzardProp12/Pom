@@ -303,11 +303,11 @@ public class World {
 	 * 		|		world.contains(someEntity)
 	 */
 	@Basic
-	public Set<? extends Entity> getSomeEntitySet(Class<?> cls){
-		Set<Entity> someEntitySet = new HashSet<Entity>();
+	public <T> Set<T> getSomeEntitySet(Class<T> cls){
+		Set<T> someEntitySet = new HashSet<>();
 		for (Entity entity : getEntitySet()){
-			if (entity.getClass() == cls){
-				someEntitySet.add(entity);
+			if (cls.isInstance(entity)){
+				someEntitySet.add(cls.cast(entity));
 			}
 		}
 		return someEntitySet;
