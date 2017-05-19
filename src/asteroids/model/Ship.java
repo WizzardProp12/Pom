@@ -66,7 +66,7 @@ public class Ship extends Entity{
 	 * @post ...
 	 * 	  |  new.getYVelocity() == yVelocity
 	 * @post ...
-	 * 	  |  new.getRadius() == MIN_RADIUS
+	 * 	  |  new.getRadius() >= MIN_RADIUS
 	 * @post ...
 	 * 	  |  new.getOrientation() == orientation
 	 * @post ...
@@ -419,7 +419,7 @@ public class Ship extends Entity{
 	/**
 	 * The force of the thruster.
 	 */
-	public static final double THRUSTER_FORCE = 1.1*Math.pow(10, 20);
+	public static final double THRUSTER_FORCE = 1.1*Math.pow(10, 18);
 	
 	/**
 	 * Return the force of the thruster.
@@ -617,8 +617,8 @@ public class Ship extends Entity{
 	 * 	   | new getNbBullets() = old getNbBullets() - 1
 	 */
 	public void fireBullet() {
-		// does nothing if the ship has no bullets
-		if (getNbBullets() <= 0)
+		// does nothing if the ship has no bullets or is not located in a world
+		if (getNbBullets() <= 0 || getWorld() == null)
 			return;
 		
 		// get and remove the bullet from the bullet list.

@@ -422,9 +422,9 @@ public class World {
 	 */
 	@Basic
 	public Entity getEntityAt(Position position) {
-		for (Entity entity : getEntityList()) 
-			if (entity.getPosition() == position)
-				return entity;
+		for (Entity entity : getEntityList()) {
+			if (entity.getPosition().equals(position))
+				return entity;}
 		return null;
 	}
 	
@@ -479,10 +479,10 @@ public class World {
 	 * 		 |        || result.getCollisionType() == topWall
 	 * 		 |        || result.getCollisionType() == bottomWall)
 	 */
-	public Collision getFirstWallCollision() {
+	public Collision getFirstBorderCollision() {
 		Collision firstCollision = null;
 		for(Entity entity : getEntityList()) {
-			Collision currentCollision = entity.getCollision(this);
+			Collision currentCollision = entity.getBorderCollision(this);
 			if (firstCollision == null || firstCollision.getTime() > currentCollision.getTime())
 				firstCollision = currentCollision;
 		}
@@ -496,7 +496,7 @@ public class World {
 	 */
 	public Collision getFirstCollision() {
 		Collision entityCollision = getFirstEntityCollision();
-		Collision wallCollision = getFirstWallCollision();
+		Collision wallCollision = getFirstBorderCollision();
 		if (entityCollision == null) return wallCollision;
 		if (wallCollision == null) return entityCollision;
 		if (entityCollision.getTime() < wallCollision.getTime())

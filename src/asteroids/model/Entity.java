@@ -69,7 +69,7 @@ public abstract class Entity {
 	 * 		  The world in which the entity is located.
 	 * 		| getWorld() == world
 	 * @pre   The given coordinates must be valid.
-	 * 		| canHaveAsXCoordinate(xCoord) && canHaveAsYCoordinate(yCoord)
+	 * 		| isValidXCoord(xCoord) && isValidYCoord(yCoord)
 	 * @pre   The given radius must be valid.
 	 * 		| canHaveAsRadius(radius)
 	 * @pre   The given world must be valid.
@@ -214,6 +214,27 @@ public abstract class Entity {
 		return getPosition().getYCoord();
 	}
 	
+	/**
+	 * Return whether the given xCoord is valid
+	 * @see implementation...
+	 */
+	@Basic @Raw @Model
+	public boolean isValidXCoord(double xCoord) {
+		return Double.isFinite(xCoord) 
+				&& ! Double.isNaN(xCoord) 
+				&& 0 < xCoord;
+	}
+	
+	/**
+	 * Return whether the given yCoord is valid
+	 * @see implementation...
+	 */
+	@Basic @Raw @Model
+	public boolean isValidYCoord(double yCoord) {
+		return Double.isFinite(yCoord) 
+				&& ! Double.isNaN(yCoord) 
+				&& 0 < yCoord;
+	}
 	
 	/**
 	 * Return whether the given position would be valid for the prime object.
@@ -262,14 +283,16 @@ public abstract class Entity {
 	 * 		  to the given x-coordinate.
 	 * 	    | new.getXCoord() = newXCoord
 	 * @throws IllegalArgumentException
-	 * 		   If the given x-coordinate is NaN.
-	 * 	    |  newXCoord == Double.NaN
+	 * 		   If the given x-coordinate is not valid.
+	 * 	    |  ! isValidXCoord(xCoord)
 	 * @throws IllegalArgumentException
 	 * 		   If the given x-coordinate would result in a position the entity cannot take
 	 * 		|  ! canTakePosition(new Position(xCoord, getYCoord())
 	 */
 	@Model @Raw
 	protected void setXCoord(double xCoord) throws IllegalArgumentException {
+		if (! isValidXCoord(xCoord)) throw new IllegalArgumentException(
+				"given xCoord is invalid, see isValidXCoord()");
 		if (! canTakePosition(new Position(xCoord, getYCoord()))) throw new 
 		IllegalArgumentException("given xCoord would result in an illegal position, "
 								+ "see canTakePosition()");
@@ -284,14 +307,16 @@ public abstract class Entity {
 	 * 		  to the given y-coordinate.
 	 * 	    | new.getYCoord() = newYCoord
 	 * @throws IllegalArgumentException
-	 * 		   If the given y-coordinate is NaN.
-	 * 	    |  newYCoord == Double.NaN
+	 * 		   If the given y-coordinate is not valid.
+	 * 	    |  ! isValidYCoord(yCoord)
 	 * @throws IllegalArgumentException
 	 * 		   If the given y-coordinate would result in a position the entity cannot take
 	 * 		|  ! canTakePosition(new Position(getXCoord(), yCoord)
 	 */
 	@Model @Raw
 	protected void setYCoord(double yCoord) throws IllegalArgumentException {
+		if (! isValidYCoord(yCoord)) throw new IllegalArgumentException(
+				"given yCoord is invalid, see isValidYCoord()");
 		if (! canTakePosition(new Position(getXCoord(), yCoord))) throw new 
 		IllegalArgumentException("given yCoord would result in an illegal position, "
 								+ "see canTakePosition()");
@@ -759,7 +784,7 @@ public abstract class Entity {
 	abstract double getMass();
 	
 	
-	// COLLISION PREDICTION (defensive)
+	// COLLISION PREDICTION (total)
 	
 	/**
 	 * Return the distance between the centres of two entities.
@@ -886,18 +911,22 @@ public abstract class Entity {
 	
 	/**
 	 * Return how long it will take before the entity collides with
-	 * one of the world boundaries.
-	 * @throws NullPointerException
-	 * 		   If the given argument references the null pointer
-	 * 		 | world == null
+	 * one of the given world boundaries.
 	 */
-	public double getTimeToCollision(World world) throws NullPointerException {
-		if (world == null) throw new NullPointerException(
-				"given argument references the null pointer");
-		if (getSpeed() == 0) return Double.POSITIVE_INFINITY;
+	public double getTimeToBorderCollision(World world) {
+		if (world == null || getSpeed() == 0) return Double.POSITIVE_INFINITY;
 		
 		return Math.min(getTimeToHorizontalCollision(world), 
 						getTimeToVerticalCollision(world));
+	}
+	
+	/**
+	 * Return how long it will take before the entity collides with
+	 * one of its world boundaries.
+	 */
+	public double getTimeToBorderCollision() {
+		World world = getWorld();
+		return getTimeToBorderCollision(world);
 	}
 	
 	public double getTimeToHorizontalCollision(World world) 
@@ -950,13 +979,8 @@ public abstract class Entity {
 	 * 		   If the given argument references the null pointer (thrown by .overlaps())
 	 * 		 | world == null
 	 */
-	public Collision getCollision(World world) throws NullPointerException {
-		// world references the null pointer
-		if (world == null) throw new NullPointerException(
-				"the given argument references the null pointer");
-
-		// entity is not moving
-		if (getSpeed() == 0) return null;
+	public Collision getBorderCollision(World world) {
+		if (world == null || getSpeed() == 0) return null;
 		
 		double horizontal_time = getTimeToHorizontalCollision(world);
 		double vertical_time = getTimeToVerticalCollision(world);
@@ -1009,9 +1033,10 @@ public abstract class Entity {
 	 * 		   The given argument references a null pointer.
 	 *       | world == null
 	 */
-	public Position getCollisionPosition(World world) throws  NullPointerException {
+	public Position getBorderCollisionPosition(World world) {
 		
-		Collision collision = getCollision(world);
+		Collision collision = getBorderCollision(world);
+		
 		if (collision == null) return null;
 		
 		double[] futurePosition = getFutureCoordinates(collision.getTime());
@@ -1032,6 +1057,19 @@ public abstract class Entity {
 			default:
 				return null;
 		}
+	}
+	
+	/**
+	 * Return the position where the entity will hit the world boundary
+	 * as an array
+	 * @throws NullPointerException
+	 * 		   The given argument references a null pointer.
+	 *       | world == null
+	 */
+	public double[] getBorderCollisionPositionArray(World world) {
+		Position position = getBorderCollisionPosition(world);
+		if (position == null) return null;
+		else return position.toArray();
 	}
 	
 	
@@ -1064,7 +1102,7 @@ public abstract class Entity {
 		if (world == null) return null;
 		else {
 			Collision entityCollision = getFirstCollision(world.getEntityList());
-			Collision worldCollision = getCollision(world);
+			Collision worldCollision = getBorderCollision(world);
 			if (entityCollision.getTime() < worldCollision.getTime()) return entityCollision;
 			else return worldCollision;
 		}

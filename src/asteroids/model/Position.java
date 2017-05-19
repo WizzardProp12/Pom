@@ -106,7 +106,8 @@ public class Position {
 	public boolean equals(Object other){
 		if (! (other instanceof Position))
 			return false;
-		else return hashCode() == other.hashCode();
+		else return getXCoord() == ((Position) other).getXCoord()
+				&& getYCoord() == ((Position) other).getYCoord();
 	}
 	
 	/**

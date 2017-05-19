@@ -158,7 +158,7 @@ public class Collision {
 		if (getCollisionType() == CollisionType.entity)
 			return getEntity().getCollisionPosition(getOther());
 		else
-			return getEntity().getCollisionPosition(getEntity().getWorld());
+			return getEntity().getBorderCollisionPosition(getEntity().getWorld());
 	}
 	
 	
