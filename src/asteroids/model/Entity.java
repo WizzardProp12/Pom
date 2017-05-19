@@ -983,15 +983,15 @@ public abstract class Entity {
 		if (deltaT == Double.POSITIVE_INFINITY) return null;
 		
 		double[] coords = getFutureCoordinates(deltaT);
-		double[] otherCoords = getFutureCoordinates(deltaT);
+		double[] otherCoords = other.getFutureCoordinates(deltaT);
 		
 		double deltaX = otherCoords[0] - coords[0];
 		double deltaY = otherCoords[1] - coords[1];
 		
 		double sigma = this.getRadius() + other.getRadius();
 		
-		double collisionX = otherCoords[0] + deltaX * (other.getRadius()/sigma);
-		double collisionY = otherCoords[1] + deltaY * (other.getRadius()/sigma);
+		double collisionX = coords[0] + deltaX * (getRadius()/sigma);
+		double collisionY = coords[1] + deltaY * (getRadius()/sigma);
 		
 		return new Position(collisionX, collisionY);
 	}

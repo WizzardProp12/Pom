@@ -788,8 +788,6 @@ public class Part3TestFull {
       usedBullet = bullet1;
     assertEquals(1, facade.getWorldBullets(world).size());
     assertEquals(1, facade.getNbBulletsOnShip(ship));
-    System.out.println(650 + facade.getBulletRadius(usedBullet));
-    System.out.println(facade.getBulletPosition(usedBullet)[0]);
     assertEquals(650 + facade.getBulletRadius(usedBullet), facade.getBulletPosition(usedBullet)[0], 10.0);
     assertEquals(200, facade.getBulletPosition(usedBullet)[1], 10.0);
     assertEquals(250, facade.getBulletVelocity(usedBullet)[0], EPSILON);

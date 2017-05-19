@@ -183,7 +183,7 @@ public class Collision {
 													: (Ship) getOther();
 			Entity other = getEntity() instanceof Ship ? getOther()
 														 : getEntity();
-			if (ship instanceof Ship && other instanceof Bullet)
+			
 			// Ship - Bullet fired by Ship
 			if (other instanceof Bullet && ((Bullet) other).getSourceShip() == ship) {
 				ship.load((Bullet) other);
