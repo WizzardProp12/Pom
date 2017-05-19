@@ -634,10 +634,10 @@ public class Ship extends Entity{
 		}
 		
 		// get the position offset of the fired bullet
-		double xOffset = 1.5 * (getRadius()+bullet.getRadius())
-							 * Math.cos(getOrientation());
-		double yOffset = 1.5 * (getRadius()+bullet.getRadius())
-							 * Math.sin(getOrientation());
+		double xOffset = (getRadius()+bullet.getRadius())
+							* Math.cos(getOrientation());
+		double yOffset = (getRadius()+bullet.getRadius())
+							* Math.sin(getOrientation());
 		
 		// get the position of the fired bullet
 		double xCoord = getXCoord() + xOffset;

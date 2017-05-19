@@ -1129,6 +1129,13 @@ public abstract class Entity {
 	
 	// TERMINATION
 	
+	/**
+	 * When an entity is killed it dies
+	 */
+	public void die() {
+		this.terminate();
+	}
+	
 	/** 
 	 * A private variable storing whether the entity is terminated.
 	 */

@@ -6,86 +6,77 @@ public class Planetoid extends MinorPlanet {
 	
 	// CONSTRUCTORS
 	
-	/**
-	 * Variable that keeps track of the total distance traveled by the planetoid.
-	 */
-	private double totalTraveledDistance;
+	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, 
+			double radius, double travelledDistance, World world) {
+		super(xCoord, yCoord, xVelocity, yVelocity, radius, world);
+		this.originalRadius = radius;
+		setTravelledDistance(travelledDistance);
+		updateCurrentRadius();
+	}
+	
+	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, 
+			double radius, double travelledDistance) {
+		this(xCoord, yCoord, xVelocity, yVelocity, radius, travelledDistance, null);
+	}
+	
+	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, 
+			double radius) {
+		this(xCoord, yCoord, xVelocity, yVelocity, radius, 0, null);
+	}
+	
+	
+	// TRAVELLED DISTANCE
 	
 	/**
-	 * Set the total distance traveled by the planetoid.
-	 * @param distance
-	 * The distance traveled by the planetoid.
+	 * Variable that keeps track of the total distance travelled by the planetoid.
+	 */
+	private double travelledDistance;
+	
+	/**
+	 * Get the total distance travelled by the planetoid.
+	 * @return see implementation...
+	 */
+	@Basic @Raw
+	public double getTravelledDistance(){
+		return travelledDistance;
+	}
+	
+	/**
+	 * Set the total distance travelled by the planetoid.
 	 * @return see implementation...
 	 * 
 	 */
-	protected void setTotalTraveledDistance(double distance){
-		this.totalTraveledDistance = distance;
+	protected void setTravelledDistance(double distance) {
+		this.travelledDistance = distance;
 	}
 	
 	/**
-	 * Get the total distance traveled by the planetoid.
-	 * @return see implementation...
+	 * Increase the travelled distance by the given amount.
 	 */
-	public double getTotalTraveledDistance(){
-		return totalTraveledDistance;
+	protected void increaseTravelledDistance(double distance) {
+		setTravelledDistance(getTravelledDistance() + distance);
 	}
 	
-	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, double radius, double totalTraveledDistance, World world) {
-		super(xCoord, yCoord, xVelocity, yVelocity, radius,world);
-		setTotalTraveledDistance(totalTraveledDistance);
-	
-	}
-	
-	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, double totalTraveledDistance, double radius) {
-		this(xCoord, yCoord, xVelocity, yVelocity, radius, totalTraveledDistance, null);
-	
-	}
-	
-	@Override
-	public void move(double time) throws IllegalArgumentException {
-		super.move(time);
-		shrink(getSpeed() * time * getShrinkingPercentage());
-		double xVel = getXVelocity();
-		double yVel = getYVelocity();
-		totalTraveledDistance += time*getAbsSpeed(xVel, yVel);
-	}
-	
-	
-	
-	// MASS (total)
-	
-	private final double density = 0.917 * Math.pow(10, 12);
-	
-	@Basic @Immutable @Raw
-	public double getDensity() {
-		return this.density;
-	}
-	
-	@Basic @Raw
-	public double getMass() {
-		return (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
-	}
-
 	
 	// SHRINKING AND DISSOLVING
 	
 	public static double SHRINKING_PERCENTAGE = 0.0001;
 	
+	/**
+	 * Return how much percentage the planetoid shrinks per travelled km.
+	 */
+	@Basic @Raw @Immutable
 	public static double getShrinkingPercentage() {
 		return SHRINKING_PERCENTAGE;
 	}
 	
-	public void shrink(double percentage) {
-		double newRadius = getRadius() * 0.01 * percentage;
-		if (newRadius < getMinRadius()) {
-			terminate();
-		} else {
-			setRadius(newRadius);
-		}
-	}
-	
-	public void dissolve() {
-		terminate();
+	/**
+	 * Overwritten function of the Entity.die() function to implement the
+	 * spawning of 2 asteroids if the radius of the planetoid is >= 30.
+	 */
+	@Override
+	public void die() {
+		super.die();
 		
 		if (getRadius() >= 30 && getWorld() != null) { // spawn two asteroids
 			double radius = getRadius() / 2;
@@ -104,5 +95,104 @@ public class Planetoid extends MinorPlanet {
 			if ( a2.canBePlacedIn(getWorld()) ) getWorld().add(a2);
 		}
 	}
+		
 	
+	
+	// RADIUS (defensive)
+	/**
+	 * The minimum radius of a planetoid.
+	 */
+	public final static double MIN_RADIUS = 5;
+	
+	/**
+	 * Return the minimum radius of a planetoid.
+	 * @see implementation...
+	 */
+	@Basic @Raw @Immutable
+	public static double GET_MIN_RADIUS() { return MIN_RADIUS; }
+	
+	/**
+	 * Check whether the planetoid can have the given radius.
+	 */
+	@Basic @Raw
+	public boolean canHaveAsRadius(double radius) {
+		return radius >= Planetoid.GET_MIN_RADIUS();
+	}
+	
+	
+	/**
+	 * The original radius with which the planetoid was initialised.
+	 */
+	private final double originalRadius;
+	
+	/**
+	 * Return the original radius with which the planetoid was initialised.
+	 */
+	@Basic @Raw @Immutable
+	public double getOriginalRadius() { return this.originalRadius; }
+	
+	/**
+	 * Return the current radius of the planetoid.
+	 * This is the original radius, shrunk by an amount depending on the
+	 * shrinking percentage and travelled distance
+	 * @see implementation...
+	 */
+	@Basic @Raw
+	public double getCurrentRadius() {
+		return getOriginalRadius() 
+				- getShrinkingPercentage() * 0.01 * getTravelledDistance();
+	}
+	
+	/**
+	 * Update the radius of the planetoid depending on how much it has
+	 * shrunk. If the planetoid has shrunk below its minimum radius, it dies.
+	 */
+	public void updateCurrentRadius() {
+		double currentRadius = getCurrentRadius();
+		if (currentRadius < GET_MIN_RADIUS())
+			die();
+		else
+			setRadius(currentRadius);
+	}
+	
+	
+	// MASS (total)
+	
+	/**
+	 * The density of a planetoid.
+	 */
+	private final double density = 0.917 * Math.pow(10, 12);
+	
+	/**
+	 * Returns the density of a planetoid
+	 * @return see implementation....
+	 */
+	@Basic @Raw @Immutable
+	public double getDensity() {
+		return this.density;
+	}
+	
+	/**
+	 * Returns the mass of a planetoid.
+	 * @return see implementation...
+	 */
+	@Basic @Raw
+	public double getMass() {
+		return (4/3)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
+	}
+	
+	
+	// MOVING
+	
+	/**
+	 * Move the planetoid for the given amount of time and update its
+	 * radius afterwards.
+	 */
+	@Override
+	public void move(double time) throws IllegalArgumentException {
+		super.move(time);
+		double travelledDistance = time * getSpeed();
+		increaseTravelledDistance(travelledDistance);
+		updateCurrentRadius();
+	}
 }

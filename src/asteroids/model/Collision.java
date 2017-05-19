@@ -190,7 +190,7 @@ public class Collision {
 				return;
 			// Ship - Asteroid
 			} else if (other instanceof Asteroid) {
-				ship.terminate();
+				ship.die();
 				return;
 			// Ship - Planetoid
 			} else if (other instanceof Planetoid) {
@@ -200,8 +200,8 @@ public class Collision {
 		// Bullet - Entity
 		} 
 		if (getEntity() instanceof Bullet || getOther() instanceof Bullet) {
-			getEntity().terminate();
-			getOther().terminate();
+			getEntity().die();
+			getOther().die();
 			return;
 		}
 		
