@@ -219,12 +219,12 @@ public class Facade implements asteroids.part3.facade.IFacade{
 
 	@Override
 	public Set<? extends Ship> getWorldShips(World world) throws ModelException {
-		return world.getShipSet();
+		return world.getSomeEntitySet(Ship.class);
 	}
 
 	@Override
 	public Set<? extends Bullet> getWorldBullets(World world) throws ModelException {
-		return world.getEntitiesOfType();
+		return world.getSomeEntitySet(Bullet.class);
 	}
 
 	@Override
