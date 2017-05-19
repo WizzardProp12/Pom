@@ -90,13 +90,16 @@ public abstract class Entity {
 	 * 		 | ! canHaveAsXCoordinate(xCoord) || ! canHaveAsYCoordinate(yCoord)
 	 * @throws IllegalArgumentException
 	 * 		   If the entity cannot be assigned to its position.
-	 * 		 || ! isValidPosition(position)
+	 * 		 |  ! isValidPosition(position)
+	 * @throws IllegalArgumentException
+	 * 		   If the given radius is not valid
+	 * 		 | ! canHaveAsRadius(radius)
 	 * @throws IllegalArgumentException
 	 * 		   If the entity cannot be added to the world.
 	 * 		 | ! canBePlacedIn(world)
 	 */
 	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity, 
-			double radius, World world) throws IllegalArgumentException{
+			double radius, World world) throws IllegalArgumentException {
 		
 		// velocities (total)
 		double[] velocities = limitSpeed(xVelocity, yVelocity);
@@ -111,7 +114,7 @@ public abstract class Entity {
 		if (canHaveAsRadius(radius))
 			this.radius = radius;
 		else
-			this.radius = getDefaultRadius();
+			throw new IllegalArgumentException("invalid radius");
 		
 		
 		if (world == null)
@@ -975,7 +978,7 @@ public abstract class Entity {
 	 * 		   The given argument references a null pointer.
 	 *       | other == null
 	 */
-	public Position getCollisionPosition(Entity other) throws  NullPointerException {
+	public Position getCollisionPosition(Entity other) throws NullPointerException {
 		double deltaT = getTimeToCollision(other);
 		if (deltaT == Double.POSITIVE_INFINITY) return null;
 		
@@ -991,6 +994,13 @@ public abstract class Entity {
 		double collisionY = otherCoords[1] + deltaY * (other.getRadius()/sigma);
 		
 		return new Position(collisionX, collisionY);
+	}
+	
+	public double[] getCollisionPositionArray(Entity other) 
+								throws NullPointerException {
+		Position pos = getCollisionPosition(other);
+		if (pos == null) return null;
+		else return pos.toArray();
 	}
 	
 	/**

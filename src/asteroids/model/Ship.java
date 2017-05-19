@@ -183,7 +183,6 @@ public class Ship extends Entity{
 			return false;
 		else if (super.equals(other)
 				&& getOrientation() == ((Ship) other).getOrientation()
-				&& getBullets() == ((Ship) other).getBullets()
 				&& getNbBullets() == ((Ship) other).getNbBullets()
 				&& getThrusterState() == ((Ship) other).getThrusterState())
 			return true;

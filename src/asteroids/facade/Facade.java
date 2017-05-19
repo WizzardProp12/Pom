@@ -224,7 +224,7 @@ public class Facade implements asteroids.part3.facade.IFacade{
 
 	@Override
 	public Set<? extends Bullet> getWorldBullets(World world) throws ModelException {
-		return world.getBulletSet();
+		return world.getEntitiesOfType();
 	}
 
 	@Override
@@ -349,7 +349,7 @@ public class Facade implements asteroids.part3.facade.IFacade{
 	public double[] getPositionCollisionEntity(Object entity1, Object entity2) throws ModelException {
 		try {
 			if ((entity1 instanceof Entity) && (entity2 instanceof Entity))
-				return ((Entity) entity1).getCollisionPosition((Entity) entity2).toArray();
+				return ((Entity) entity1).getCollisionPositionArray((Entity) entity2);
 			else
 				throw new ModelException("argument must be an Entity subclass");
 		} catch (NullPointerException e) {
