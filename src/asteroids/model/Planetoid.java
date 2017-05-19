@@ -113,6 +113,8 @@ public class Planetoid extends MinorPlanet {
 	
 	/**
 	 * Increase the travelled distance by the given amount.
+	 * @post ...
+	 * 	   | new getTravelledDistance() == old getTravelledDistance() + distance
 	 */
 	protected void increaseTravelledDistance(double distance) {
 		setTravelledDistance(getTravelledDistance() + distance);
@@ -121,7 +123,10 @@ public class Planetoid extends MinorPlanet {
 	
 	// SHRINKING AND DISSOLVING
 	
-	public static double SHRINKING_PERCENTAGE = 0.0001;
+	/**
+	 * How much percentage the planetoid shrinks per travelled km.
+	 */
+	public static final double SHRINKING_PERCENTAGE = 0.0001;
 	
 	/**
 	 * Return how much percentage the planetoid shrinks per travelled km.
@@ -134,6 +139,8 @@ public class Planetoid extends MinorPlanet {
 	/**
 	 * Overwritten function of the Entity.die() function to implement the
 	 * spawning of 2 asteroids if the radius of the planetoid is >= 30.
+	 * @post The planetoid will be terminated
+	 * 	   | isTerminated() == True
 	 */
 	@Override
 	public void die() {
@@ -196,7 +203,10 @@ public class Planetoid extends MinorPlanet {
 	 * Return the current radius of the planetoid.
 	 * This is the original radius, shrunk by an amount depending on the
 	 * shrinking percentage and travelled distance
-	 * @see implementation...
+	 * @invar  The current radius is always smaller than or equal to the original radius
+	 * 		 | getCurrentRadius() <= getOriginalRadius()
+	 * @return The current radius
+	 * 		 | see implementation...
 	 */
 	@Basic @Raw
 	public double getCurrentRadius() {
