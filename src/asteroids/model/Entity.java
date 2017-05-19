@@ -818,19 +818,27 @@ public abstract class Entity {
 		return getDistanceBetweenCentres(other) - getRadius() - other.getRadius();
 	}
 	
+	/**
+	 * Returns whether this entity fully overlaps with the other entity
+	 * @param other
+	 * @return True if the entities completely overlap.
+	 * 		 | getDistanceBetweenCentres(other) <= Math.abs(getRadius() - other.getRadius())
+	 */
+	public boolean completelyOverlaps(Entity other) {
+		if (other == null) return false;
+		return getDistanceBetweenCentres(other) 
+				<= Math.abs(getRadius() - other.getRadius());
+	}
 	
 	/**
 	 * Return whether this entity significantly overlaps with the other entity.
 	 * Important: this function ignores the entities worlds.
 	 * @param other
 	 * 		  The other entity.
-	 * @throws NullPointerException
-	 * 		   The given argument references a null pointer.
-	 *       | other == null
 	 * @return True if the entities overlap
 	 * 		 | getDistanceBetweenCentres(other) <= 0.99*(getRadius() + other.getRadius())
 	 */
-	public boolean overlaps(Entity other) throws NullPointerException {
+	public boolean overlaps(Entity other) {
 		if (other == null) return false;
 		double totalRadii = getRadius() + other.getRadius();
 		return getDistanceBetweenCentres(other) <= 0.99*totalRadii;

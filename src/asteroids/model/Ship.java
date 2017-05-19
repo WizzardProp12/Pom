@@ -529,7 +529,10 @@ public class Ship extends Entity{
 	 * 		 | bullet != null && bullet.getRadius() < getRadius()
 	 */
 	public boolean canHaveAsBullet(Bullet bullet) {
-		return (bullet != null && bullet.getRadius() < getRadius());
+		return bullet != null 
+				&& bullet.getRadius() < getRadius()
+				&& (completelyOverlaps(bullet)
+					 || this == bullet.getSourceShip());
 	}
 	
 	/**
