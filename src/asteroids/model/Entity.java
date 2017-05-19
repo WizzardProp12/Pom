@@ -220,9 +220,7 @@ public abstract class Entity {
 	 */
 	@Basic @Raw @Model
 	public boolean isValidXCoord(double xCoord) {
-		return Double.isFinite(xCoord) 
-				&& ! Double.isNaN(xCoord) 
-				&& 0 < xCoord;
+		return ! Double.isNaN(xCoord);
 	}
 	
 	/**
@@ -231,9 +229,7 @@ public abstract class Entity {
 	 */
 	@Basic @Raw @Model
 	public boolean isValidYCoord(double yCoord) {
-		return Double.isFinite(yCoord) 
-				&& ! Double.isNaN(yCoord) 
-				&& 0 < yCoord;
+		return ! Double.isNaN(yCoord);
 	}
 	
 	/**
@@ -568,6 +564,8 @@ public abstract class Entity {
 	 * @return An array of the scaled down velocities.
 	 */
 	public double[] limitSpeed(double xVelocity, double yVelocity) {
+		if (Double.isNaN(xVelocity)) return limitSpeed(0,yVelocity);
+		if (Double.isNaN(yVelocity)) return limitSpeed(xVelocity,0);
 		double newVelocities[] = new double[2];
 		double absVelocity = Entity.getAbsSpeed(xVelocity, yVelocity);
 		if (absVelocity > this.getSpeedLimit()) {
