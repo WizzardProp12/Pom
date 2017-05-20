@@ -58,8 +58,8 @@ public class Bullet extends Entity {
 	 * 		   If the given coordinates are not legal.
 	 * 		 | ! canHaveAsXCoordinate(xCoord) || ! canHaveAsYCoordinate(yCoord)
 	 * @throws IllegalArgumentException
-	 * 		   If the entity cannot be assigned to its position.
-	 * 		 || ! isValidPosition(position)
+	 * 		   If the given radius is not valid
+	 * 		 | ! canHaveAsRadius(radius)
 	 * @throws IllegalArgumentException
 	 * 		   If the given bullet can't be loaded on the ship
 	 * 		 | ! ship.canHaveAsBullet(this)

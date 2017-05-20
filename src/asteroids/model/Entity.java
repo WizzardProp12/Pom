@@ -89,9 +89,6 @@ public abstract class Entity {
 	 * 		   If the given coordinates are not legal.
 	 * 		 | ! canHaveAsXCoordinate(xCoord) || ! canHaveAsYCoordinate(yCoord)
 	 * @throws IllegalArgumentException
-	 * 		   If the entity cannot be assigned to its position.
-	 * 		 |  ! isValidPosition(position)
-	 * @throws IllegalArgumentException
 	 * 		   If the given radius is not valid
 	 * 		 | ! canHaveAsRadius(radius)
 	 * @throws IllegalArgumentException
@@ -110,20 +107,13 @@ public abstract class Entity {
 		setXCoord(xCoord);
 		setYCoord(yCoord);
 		
-		// defensive
-		if (canHaveAsRadius(radius))
-			this.radius = radius;
-		else
-			throw new IllegalArgumentException("invalid radius");
+		// radius (defensive)
+		if (canHaveAsRadius(radius)) this.radius = radius;
+		else throw new IllegalArgumentException("invalid radius");
 		
-		
-		if (world == null)
-			this.setWorld(world);
-		else
-			world.add(this);
-		
-		nr = nr+1;
-		this.nr_ = nr;
+		// world
+		if (world == null) this.setWorld(world);
+		else world.add(this);
 	}
 	
 	/**
@@ -159,21 +149,6 @@ public abstract class Entity {
 	}
 	
 	
-	// tostring
-	
-	public static int nr = 0;
-	
-	private int nr_ = 0;
-	
-	public String toString() {
-		String output = "Entity nr " + nr_ + " at (" 
-						+ ((Integer) ((Double) getXCoord()).intValue()).toString() 
-						+ "," + ((Integer) ((Double) getYCoord()).intValue()).toString() + ")"
-						+ "(" + this.getClass() + ")";
-		return output;
-	}
-	
-	
 	// POSITION (defensive)
 	
 	/**
@@ -186,9 +161,7 @@ public abstract class Entity {
 	 * @invar The returned position is always valid
 	 * 		| isValidPosition(getPosition())
 	 */
-	public Position getPosition() {
-		return position;
-	}
+	public Position getPosition() { return position; }
 	
 	/**
 	 * Returns the x-coordinate of the prime entity.
@@ -198,9 +171,7 @@ public abstract class Entity {
 	 * 		|  result == getPosition().getXCoord()
 	 */
 	@Basic @Raw
-	public double getXCoord() {
-		return getPosition().getXCoord();
-	}
+	public double getXCoord() {	return getPosition().getXCoord(); }
 	
 	/**
 	 * Returns the y-coordinate of the prime entity.
@@ -210,27 +181,21 @@ public abstract class Entity {
 	 * 		|  result == getPosition().getYCoord();
 	 */
 	@Basic @Raw
-	public double getYCoord() {
-		return getPosition().getYCoord();
-	}
+	public double getYCoord() { return getPosition().getYCoord(); }
 	
 	/**
 	 * Return whether the given xCoord is valid
 	 * @see implementation...
 	 */
 	@Basic @Raw @Model
-	public boolean isValidXCoord(double xCoord) {
-		return ! Double.isNaN(xCoord);
-	}
+	public boolean isValidXCoord(double xCoord) { return ! Double.isNaN(xCoord); }
 	
 	/**
 	 * Return whether the given yCoord is valid
 	 * @see implementation...
 	 */
 	@Basic @Raw @Model
-	public boolean isValidYCoord(double yCoord) {
-		return ! Double.isNaN(yCoord);
-	}
+	public boolean isValidYCoord(double yCoord) { return ! Double.isNaN(yCoord); }
 	
 	/**
 	 * Return whether the given position would be valid for the prime object.
@@ -239,7 +204,9 @@ public abstract class Entity {
 	@Raw
 	public boolean isValidPosition(Position position) {
 		if (getWorld() == null) return true;
-		else return isWithinBoundariesOf(getWorld(), position);
+		else return isValidXCoord(position.getXCoord())
+				&& isValidYCoord(position.getYCoord())
+				&& isWithinBoundariesOf(getWorld(), position);
 	}
 	
 	/**
@@ -250,11 +217,10 @@ public abstract class Entity {
 	 */
 	@Raw
 	public boolean canTakePosition(Position position) {
-		if (! isValidPosition(position))
-			return false;
-		return (getWorld() == null || ! wouldOverLapAt(position, getWorld().getEntityList()));
+		if (! isValidPosition(position)) return false;
+		else return getWorld() == null 
+					|| ! wouldOverLapAt(position, getWorld().getEntityList());
 	}
-	
 	
 	/**
 	 * Set the position of the entity.
@@ -285,7 +251,7 @@ public abstract class Entity {
 	 * 		   If the given x-coordinate would result in a position the entity cannot take
 	 * 		|  ! canTakePosition(new Position(xCoord, getYCoord())
 	 */
-	@Model @Raw
+	@Raw
 	protected void setXCoord(double xCoord) throws IllegalArgumentException {
 		if (! isValidXCoord(xCoord)) throw new IllegalArgumentException(
 				"given xCoord is invalid, see isValidXCoord()");
@@ -309,7 +275,7 @@ public abstract class Entity {
 	 * 		   If the given y-coordinate would result in a position the entity cannot take
 	 * 		|  ! canTakePosition(new Position(getXCoord(), yCoord)
 	 */
-	@Model @Raw
+	@Raw
 	protected void setYCoord(double yCoord) throws IllegalArgumentException {
 		if (! isValidYCoord(yCoord)) throw new IllegalArgumentException(
 				"given yCoord is invalid, see isValidYCoord()");
@@ -345,9 +311,7 @@ public abstract class Entity {
 	 * @return see implementation...
 	 */
 	public boolean isWithinBoundariesOf(World world) {
-		double x = getXCoord();
-		double y = getYCoord();
-		return isWithinBoundariesOf(world, new Position(x, y));
+		return isWithinBoundariesOf(world, new Position(getXCoord(), getYCoord()));
 	}
 	
 	/**
@@ -382,7 +346,7 @@ public abstract class Entity {
 	 * Check whether the given time is valid.
 	 * @see implementation...
 	 */
-	@Basic @Immutable @Raw
+	@Basic @Raw
 	public static boolean isValidTime(double time) {
 		return (0 <= time && !Double.isNaN(time) && !Double.isInfinite(time));
 	}
@@ -394,6 +358,7 @@ public abstract class Entity {
 	 * 		   The given duration time is invalid.
 	 * 		 | ! isValidTime(time)
 	 */
+	@Raw
 	public double[] getFutureCoordinates(double time) throws IllegalArgumentException {
 		if (!Entity.isValidTime(time))
 			throw new IllegalArgumentException("the given time ("+ time +") is invalid");
@@ -410,6 +375,7 @@ public abstract class Entity {
 	 * 		   The given duration time is invalid.
 	 * 		 | ! isValidTime(time)
 	 */
+	@Raw
 	public Position getFuturePosition(double time) throws IllegalArgumentException {
 		double[] newCoords = getFutureCoordinates(time);
 		return new Position(newCoords[0], newCoords[1]);
@@ -935,8 +901,16 @@ public abstract class Entity {
 		return getTimeToBorderCollision(world);
 	}
 	
+	/**
+	 * Return how long it will take before the entity collides with a
+	 * horizontal border.
+	 * @return The time it will take to collide with a horizontal border.
+	 * @throws IllegalArgumentException
+	 * 		   If the entity is not within the given worlds boundaries
+	 * 		 | ! isWithinBoundariesOf(world)
+	 */
 	public double getTimeToHorizontalCollision(World world) 
-			throws NullPointerException, IllegalArgumentException {
+			throws IllegalArgumentException {
 		if (! isWithinBoundariesOf(world)) throw new IllegalArgumentException(
 				"the entity is not within the world boundaries");
 		
@@ -949,8 +923,16 @@ public abstract class Entity {
 		} else { return Double.POSITIVE_INFINITY; }
 	}
 	
+	/**
+	 * Return how long it will take before the entity collides with a
+	 * horizontal border.
+	 * @return The time it will take to collide with a vertical border.
+	 * @throws IllegalArgumentException
+	 * 		   If the entity is not within the given worlds boundaries
+	 * 		 | ! isWithinBoundariesOf(world)
+	 */
 	public double getTimeToVerticalCollision(World world) 
-			throws NullPointerException, IllegalArgumentException {
+			throws IllegalArgumentException {
 		if (! isWithinBoundariesOf(world)) throw new IllegalArgumentException(
 				"the entity is not within the world boundaries");
 		if (getYVelocity() > 0) {
@@ -1026,6 +1008,15 @@ public abstract class Entity {
 		return new Position(collisionX, collisionY);
 	}
 	
+	/**
+	 * Return the position where the entities will collide as an array.
+	 * @param  other
+	 * 		   The other entity.
+	 * @return The coordinates where the entities will collide if they collide.
+	 * @throws NullPointerException
+	 * 		   The given argument references a null pointer.
+	 *       | other == null
+	 */
 	public double[] getCollisionPositionArray(Entity other) 
 								throws NullPointerException {
 		Position pos = getCollisionPosition(other);
@@ -1039,7 +1030,8 @@ public abstract class Entity {
 	 * 		   The given argument references a null pointer.
 	 *       | world == null
 	 */
-	public Position getBorderCollisionPosition(World world) {
+	public Position getBorderCollisionPosition(World world) 
+			throws NullPointerException {
 		
 		Collision collision = getBorderCollision(world);
 		
@@ -1072,7 +1064,8 @@ public abstract class Entity {
 	 * 		   The given argument references a null pointer.
 	 *       | world == null
 	 */
-	public double[] getBorderCollisionPositionArray(World world) {
+	public double[] getBorderCollisionPositionArray(World world) 
+			throws NullPointerException {
 		Position position = getBorderCollisionPosition(world);
 		if (position == null) return null;
 		else return position.toArray();
@@ -1175,7 +1168,10 @@ public abstract class Entity {
 	
 	/**
 	 * When an entity is killed it dies
+	 * @post The entity is terminated.
+	 * 	   | new isTerminated()
 	 */
+	@Raw
 	public void die() {
 		this.terminate();
 	}
@@ -1196,7 +1192,9 @@ public abstract class Entity {
 	/**
 	 * Terminate the entity by removing it from its current world.
 	 * @post The entity isn't located in any world
-	 * 	   | getWorld() == null
+	 * 	   | new getWorld() == null
+	 * @post The entity is terminated.
+	 * 	   | new isTerminated()
 	 */
 	@Raw
 	public void terminate() {

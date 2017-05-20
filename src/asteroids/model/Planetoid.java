@@ -51,9 +51,6 @@ public class Planetoid extends MinorPlanet {
 	 * 		   If the given coordinates are not legal.
 	 * 		 | ! canHaveAsXCoordinate(xCoord) || ! canHaveAsYCoordinate(yCoord)
 	 * @throws IllegalArgumentException
-	 * 		   If the planetoid cannot be assigned to its position.
-	 * 		 |  ! isValidPosition(position)
-	 * @throws IllegalArgumentException
 	 * 		   If the given radius is not valid
 	 * 		 | ! canHaveAsRadius(radius)
 	 * @throws IllegalArgumentException

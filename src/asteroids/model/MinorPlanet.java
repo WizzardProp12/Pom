@@ -65,8 +65,8 @@ public abstract class MinorPlanet extends Entity {
 	 * 		   If the given coordinates are not legal.
 	 * 		 | ! canHaveAsXCoordinate(xCoord) || ! canHaveAsYCoordinate(yCoord)
 	 * @throws IllegalArgumentException
-	 * 		   If the minor planet cannot be assigned to its position.
-	 * 		 | ! isValidPosition(position)
+	 * 		   If the given radius is not valid
+	 * 		 | ! canHaveAsRadius(radius)
 	 * @throws IllegalArgumentException
 	 * 		   If the minor planet cannot be added to the world.
 	 * 		 | ! canBePlacedIn(world)

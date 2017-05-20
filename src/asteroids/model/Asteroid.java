@@ -4,7 +4,25 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 
-public class Asteroid extends MinorPlanet{
+/**
+ * @author Wouter Cams and Stijn Bruggeman
+ * 
+ * Studies:
+ * Wouter Cams: 2e Bachelor Ingenieurswetenschappen
+ * Hoofdrichting Elektrotechniek, nevenrichting computerwetenschappen
+ * Stijn Bruggeman: 2e Bachelor Ingenieurswetenschappen
+ * Hoofdrichting computerwetenschappen, nevenrichting elektrotechniek
+ * 
+ * @version  0.2
+ * 
+ * A link to the GitHub code repository:
+ * https://github.com/WizzardProp12/Pom
+ * 
+ * A class of asteroids in an unbounded two dimensional space.
+ * 
+ * @invar This is a subclass of MinorPlanet and inherits all its invariants
+ */
+public class Asteroid extends MinorPlanet {
 	
 	// CONSTRUCTORS
 	
@@ -48,9 +66,6 @@ public class Asteroid extends MinorPlanet{
 	 * @throws IllegalArgumentException
 	 * 		   If the given coordinates are not legal.
 	 * 		 | ! canHaveAsXCoordinate(xCoord) || ! canHaveAsYCoordinate(yCoord)
-	 * @throws IllegalArgumentException
-	 * 		   If the asteroid cannot be assigned to its position.
-	 * 		 |  ! isValidPosition(position)
 	 * @throws IllegalArgumentException
 	 * 		   If the given radius is not valid
 	 * 		 | ! canHaveAsRadius(radius)
