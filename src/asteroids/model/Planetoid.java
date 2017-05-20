@@ -92,7 +92,7 @@ public class Planetoid extends MinorPlanet {
 	
 	/**
 	 * Get the total distance travelled by the planetoid.
-	 * @return see implementation...
+	 * @return The distance travelled by the planetoid.
 	 */
 	@Basic @Raw
 	public double getTravelledDistance(){
@@ -101,8 +101,8 @@ public class Planetoid extends MinorPlanet {
 	
 	/**
 	 * Set the total distance travelled by the planetoid.
-	 * @return see implementation...
-	 * 
+	 * @param distance
+	 * 		  The travelled distance to be set.
 	 */
 	protected void setTravelledDistance(double distance) {
 		this.travelledDistance = distance;
@@ -110,8 +110,10 @@ public class Planetoid extends MinorPlanet {
 	
 	/**
 	 * Increase the travelled distance by the given amount.
-	 * @post ...
-	 * 	   | new getTravelledDistance() == old getTravelledDistance() + distance
+	 * @param distance
+	 * 		  The distance that the travelled distance has to be increased.
+	 * @post  The travelled distance is increased by the given distance.
+	 * 	    | new getTravelledDistance() == old getTravelledDistance() + distance
 	 */
 	protected void increaseTravelledDistance(double distance) {
 		setTravelledDistance(getTravelledDistance() + distance);
@@ -127,6 +129,7 @@ public class Planetoid extends MinorPlanet {
 	
 	/**
 	 * Return how much percentage the planetoid shrinks per travelled km.
+	 * @return How much percentage the planetoid shrinks per travelled km.
 	 */
 	@Basic @Raw @Immutable
 	public static double getShrinkingPercentage() {
@@ -138,6 +141,8 @@ public class Planetoid extends MinorPlanet {
 	 * spawning of 2 asteroids if the radius of the planetoid is >= 30.
 	 * @post The planetoid will be terminated
 	 * 	   | isTerminated() == True
+	 * @post If the radius was bigger than or equal to 30km, 2 asteroids are spawned.
+	 * 	   | see implementation...
 	 */
 	@Override
 	public void die() {
@@ -171,13 +176,17 @@ public class Planetoid extends MinorPlanet {
 	
 	/**
 	 * Return the minimum radius of a planetoid.
-	 * @see implementation...
+	 * @return The minimum radius of a planetoid.
 	 */
 	@Basic @Raw @Immutable
 	public static double GET_MIN_RADIUS() { return MIN_RADIUS; }
 	
 	/**
 	 * Check whether the planetoid can have the given radius.
+	 * @param  radius
+	 * 		   The radius to be checked.
+	 * @return True if the given radius is big enough
+	 * 		 | radius >= Planetoid.GET_MIN_RADIUS()
 	 */
 	@Basic @Raw
 	public boolean canHaveAsRadius(double radius) {
@@ -192,6 +201,7 @@ public class Planetoid extends MinorPlanet {
 	
 	/**
 	 * Return the original radius with which the planetoid was initialised.
+	 * @return The original radius with which the planetoid was initialised.
 	 */
 	@Basic @Raw @Immutable
 	public double getOriginalRadius() { return this.originalRadius; }
@@ -214,6 +224,9 @@ public class Planetoid extends MinorPlanet {
 	/**
 	 * Update the radius of the planetoid depending on how much it has
 	 * shrunk. If the planetoid has shrunk below its minimum radius, it dies.
+	 * @effect The current radius is shrunk, if it would be shrunk below the
+	 * 		   minimum radius, the planetoid dies.
+	 * 		 | see implementation...
 	 */
 	public void updateCurrentRadius() {
 		double currentRadius = getCurrentRadius();
@@ -232,8 +245,8 @@ public class Planetoid extends MinorPlanet {
 	private final double density = 0.917 * Math.pow(10, 12);
 	
 	/**
-	 * Returns the density of a planetoid
-	 * @return see implementation....
+	 * Returns the density of a planetoid.
+	 * @return The density of a planetoid.
 	 */
 	@Basic @Raw @Immutable
 	public double getDensity() {
@@ -241,12 +254,13 @@ public class Planetoid extends MinorPlanet {
 	}
 	
 	/**
-	 * Returns the mass of a planetoid.
-	 * @return see implementation...
+	 * Returns the mass of the planetoid.
+	 * @return The mass of the planetoid.
+	 * 		 | (4/3.) * Math.PI * Math.pow(getRadius(), 3) * getDensity()
 	 */
 	@Basic @Raw
 	public double getMass() {
-		return (4/3.)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
+		return (4/3.) * Math.PI * Math.pow(getRadius(), 3) * getDensity();
 	}
 	
 	
@@ -255,6 +269,10 @@ public class Planetoid extends MinorPlanet {
 	/**
 	 * Move the planetoid for the given amount of time and update its
 	 * radius afterwards.
+	 * @param time
+	 * 		  The amount of time the planetoid has to be moved
+	 * @post  The planetoid is shrunk according to the distance it travelled.
+	 * 		| see implementation...
 	 */
 	@Override
 	public void move(double time) throws IllegalArgumentException {
