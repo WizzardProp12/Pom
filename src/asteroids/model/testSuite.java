@@ -14,10 +14,8 @@ import asteroids.model.*;
 public class testSuite {
 	
 	// margin of error
-	
 	private static final double EPSILON = 0.0001;
 	
-	// Ship tests (these tests also handle entity tests because this is an abstract class)
 	
 	@Test
 	public void testCreateShip() throws IllegalArgumentException {
@@ -215,6 +213,19 @@ public class testSuite {
 	}
 	
 	@Test
+	public void testLimitSpeedKeepsOrientation() throws IllegalArgumentException {
+		double[] result = new Ship().limitSpeed(10E10, 20E10);
+		assertEquals(20E10 / 10E10, result[1] / result[0], EPSILON);
+	}
+	
+	@Test
+	public void testGetFuturePosition(){
+		Ship ship = new Ship(10,10,20,10);
+		assertEquals(210,ship.getFuturePosition(10).getXCoord(),EPSILON);
+		assertEquals(110,ship.getFuturePosition(10).getYCoord(),EPSILON);
+	}
+	
+	@Test
 	public void testShipMove() throws IllegalArgumentException {
 		Ship ship = new Ship(0,0,10,0);
 		ship.move(10);
@@ -319,8 +330,6 @@ public class testSuite {
 	assertEquals(ship.getBullets().size(), 2);
 	}
 	
-	// Bullet tests
-	
 	@Test
 	public void testCreateBullet() throws IllegalArgumentException {
 		Bullet bullet = new Bullet(10,20,30,40,15);
@@ -342,7 +351,20 @@ public class testSuite {
 	}
 	
 	@Test
-	public void testBulletBounces() throws IllegalArgumentException {
+	public void testShipBounce() throws IllegalArgumentException {
+		Ship ship = new Ship(0,0,10,10);
+		ship.bounce(CollisionType.verticalWall);
+		ship.bounce(CollisionType.horizontalWall);
+		assertEquals(-10,ship.getXVelocity(),EPSILON);
+		assertEquals(-10,ship.getYVelocity(),EPSILON);
+		ship.bounce(CollisionType.verticalWall);
+		ship.bounce(CollisionType.horizontalWall);
+		assertEquals(10,ship.getXVelocity(),EPSILON);
+		assertEquals(10,ship.getYVelocity(),EPSILON);
+	}
+	
+	@Test
+	public void testBulletBounce() throws IllegalArgumentException {
 		Bullet bullet = new Bullet(0,0,10,5);
 		bullet.bounce(CollisionType.horizontalWall);
 		assertEquals(bullet.getYVelocity(), -5, EPSILON);
@@ -351,6 +373,177 @@ public class testSuite {
 		bullet.bounce(CollisionType.horizontalWall);
 		assertTrue(bullet.isTerminated());
 	}
+	
+	@Test
+	public void testOverlap() throws IllegalArgumentException {
+		Ship ship = new Ship(0,0,0,0,10);
+		Ship ship0 = new Ship(20,0,0,0,10);
+		Ship ship1 = new Ship(19.5,0,0,0,10);
+		Ship ship2 = new Ship(20,0,0,0,10.5);
+		assertFalse(ship.overlaps(ship0));
+		assertTrue(ship.overlaps(ship1));
+		assertTrue(ship.overlaps(ship2));
+	}
+	
+	@Test
+	public void testCompleteOverlap() throws IllegalArgumentException {
+		Ship ship = new Ship(0,0,0,0,15);
+		Ship ship0 = new Ship(0,0,0,0,15);
+		Ship ship1 = new Ship(0,0,0,0,14.9999);
+		assertFalse(ship.completelyOverlaps(ship0));
+		assertTrue(ship.completelyOverlaps(ship1));
+	}
+	
+	@Test
+	public void testGetTimeToWallCollision() throws IllegalArgumentException {
+		World world = new World(1000,1000);
+		Ship ship1 = new Ship(20,20,10,0,10,0,5E15,world);
+		Ship ship2 = new Ship(20,120,-10,0,10,0,5E15,world);
+		Ship ship3 = new Ship(120,20,0,10,10,0,5E15,world);
+		Ship ship4 = new Ship(220,20,0,-10,10,0,5E15,world);
+		Ship ship5 = new Ship(220,20,0,-10,10,0,5E15,null);
+		Ship ship6 = new Ship(320,20,0,0,10,0,5E15,world);
+		assertEquals(ship1.getTimeToBorderCollision(),97,EPSILON);
+		assertEquals(ship2.getTimeToBorderCollision(),1,EPSILON);
+		assertEquals(ship3.getTimeToBorderCollision(),97,EPSILON);
+		assertEquals(ship4.getTimeToBorderCollision(),1,EPSILON);
+		assertEquals(ship5.getTimeToBorderCollision(),Double.POSITIVE_INFINITY,EPSILON);
+		assertEquals(ship6.getTimeToBorderCollision(),Double.POSITIVE_INFINITY,EPSILON);	
+	}
+	
+	@Test
+	public void testGetTimeToEntityCollision() throws IllegalArgumentException, NullPointerException {
+		Ship ship1 = new Ship(0,0,0,0,10,0);
+		Ship ship2 = new Ship(30,0,-1,0,10,0);
+		Ship ship3 = new Ship(0,25,0,-0.5,10,0);
+		Ship ship4 = new Ship(0,300,0,1,10,0);
+		assertEquals(ship1.getTimeToCollision(ship2),10,EPSILON);
+		assertEquals(ship2.getTimeToCollision(ship3),18,EPSILON);
+		assertEquals(ship3.getTimeToCollision(ship1),10,EPSILON);
+		assertEquals(ship3.getTimeToCollision(ship4),Double.POSITIVE_INFINITY,EPSILON);
+	}
+	
+	@Test 
+	public void testShipTerminate() throws IllegalArgumentException {
+		World world = new World(1000,1000);
+		Ship ship1 = new Ship();
+		Ship ship2 = new Ship();
+		Ship ship3 = new Ship(20,20,0,0,10,0,5E15,world);
+		ship2.terminate();
+		ship3.terminate();
+		assertFalse(ship1.isTerminated());
+		assertTrue(ship2.isTerminated());
+		assertFalse(world.getEntityList().contains(ship3));
+		assertNull(ship3.getWorld());
+	} 
+	
+	@Test
+	public void testWorldIsValidXCoord() throws IllegalArgumentException {
+		World world1 = new World(100,100);
+		World world2 = new World(50,50);
+		assertTrue(world1.isValidXCoord(100));
+		assertFalse(world1.isValidXCoord(101));
+		assertTrue(world2.isValidXCoord(25));
+		assertFalse(world2.isValidXCoord(75));
+	}
+	
+	@Test
+	public void testWorldIsValidYCoord() throws IllegalArgumentException {
+		World world1 = new World(100,100);
+		World world2 = new World(50,50);
+		assertTrue(world1.isValidYCoord(100));
+		assertFalse(world1.isValidYCoord(101));
+		assertTrue(world2.isValidYCoord(25));
+		assertFalse(world2.isValidYCoord(75));
+	}
+	
+	@Test
+	public void testWorldGetSomeEntitySet() throws IllegalArgumentException {
+		World world = new World(1000,1000);
+		Ship ship = new Ship(20,20,0,0,10,0,0,world);
+		Bullet bullet = new Bullet(80,80,0,0,10);
+		world.add(bullet);
+		assertTrue(world.getSomeEntitySet(Ship.class).contains(ship));
+		assertFalse(world.getSomeEntitySet(Ship.class).contains(bullet));
+		assertTrue(world.getSomeEntitySet(Bullet.class).contains(bullet));
+		assertFalse(world.getSomeEntitySet(Bullet.class).contains(ship));
+		assertTrue(world.getSomeEntitySet(Entity.class).contains(ship));
+		assertTrue(world.getSomeEntitySet(Entity.class).contains(bullet));
+	}
+
+	@Test
+	public void testWorldContains() throws IllegalArgumentException {
+		World world = new World(100,100);
+		Ship ship1 = new Ship(20,20);
+		Bullet bullet1 = new Bullet(40,40);
+		Ship ship2 = new Ship(60,60);
+		Bullet bullet2 = new Bullet(80,80);
+		world.add(ship1);
+		world.add(bullet1);
+		assertTrue(world.contains(ship1));
+		assertFalse(world.contains(ship2));
+		assertTrue(world.contains(bullet1));
+		assertFalse(world.contains(bullet2));
+	}
+	
+	@Test
+	public void testWorldAdd() throws IllegalArgumentException {
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20,0,0,10,0);
+		assertFalse(world.contains(ship));
+		assertFalse(ship.getWorld() == world);
+		world.add(ship);
+		assertTrue(world.contains(ship));
+		assertTrue(ship.getWorld() == world);
+	}
+	
+	@Test
+	public void testAddEntityToMultipleWorld() throws IllegalArgumentException {
+		World world1 = new World(200,200);
+		World world2 = new World(200,200);
+		Ship ship = new Ship(50,50);
+		world1.add(ship);
+		try {
+			world2.add(ship);
+			fail();
+		} catch (IllegalArgumentException e) {
+			return;
+		}
+	}
+	
+	@Test
+	public void testWorldTerminate(){
+		World world = new World(100,100);
+		Ship ship = new Ship(20,20);
+		Bullet bullet  = new Bullet(40,40);
+		world.add(ship);
+		world.add(bullet);
+		assertTrue(world.contains(ship));
+		assertTrue(world.contains(bullet));
+		assertTrue(ship.getWorld() == world);
+		assertTrue(bullet.getWorld() == world);
+		world.terminate();
+		assertFalse(world.contains(ship));
+		assertFalse(world.contains(bullet));
+		assertNull(ship.getWorld());
+		assertNull(bullet.getWorld());
+		assertTrue(world.isTerminated());
+		assertFalse(ship.isTerminated());
+		assertFalse(bullet.isTerminated());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

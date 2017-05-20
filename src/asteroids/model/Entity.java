@@ -841,7 +841,7 @@ public abstract class Entity {
 	public boolean completelyOverlaps(Entity other) {
 		if (other == null) return false;
 		return getDistanceBetweenCentres(other) 
-				<= Math.abs(getRadius() - other.getRadius());
+				< Math.abs(getRadius() - other.getRadius());
 	}
 	
 	/**
