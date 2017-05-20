@@ -184,21 +184,27 @@ public abstract class Entity {
 	public double getYCoord() { return getPosition().getYCoord(); }
 	
 	/**
-	 * Return whether the given xCoord is valid
-	 * @see implementation...
+	 * Return whether the given xCoord is valid.
+	 * @param  xCoord
+	 * 		   The x-coordinate to check.
+	 * @return see implementation...
 	 */
 	@Basic @Raw @Model
 	public boolean isValidXCoord(double xCoord) { return ! Double.isNaN(xCoord); }
 	
 	/**
-	 * Return whether the given yCoord is valid
-	 * @see implementation...
+	 * Return whether the given yCoord is valid.
+	 * @param  yCoord
+	 * 		   The y-coordinate to check.
+	 * @return see implementation...
 	 */
 	@Basic @Raw @Model
 	public boolean isValidYCoord(double yCoord) { return ! Double.isNaN(yCoord); }
 	
 	/**
 	 * Return whether the given position would be valid for the prime object.
+	 * @param  position
+	 * 		   The position to check.
 	 * @return see implementation...
 	 */
 	@Raw
@@ -213,6 +219,8 @@ public abstract class Entity {
 	 * Return whether the prime object can take the given position.
 	 * This method is like isValidPosition() but also takes in account
 	 * other entities.
+	 * @param  position
+	 * 		   The position to check.
 	 * @return see implementation...
 	 */
 	@Raw
@@ -224,8 +232,10 @@ public abstract class Entity {
 	
 	/**
 	 * Set the position of the entity.
-	 * @post The new position is valid.
-	 * 	   | isValidPosition(position)
+	 * @param  position
+	 * 		   The new position
+	 * @post   The new position is valid.
+	 * 	     | isValidPosition(position)
 	 * @throws IllegalArgumentException
 	 * 		   If the given position is not valid
 	 * 		 | ! isValidPosition(position)
@@ -239,17 +249,17 @@ public abstract class Entity {
 	
 	/**
 	 * Set the x-coordinate of the entity.
-	 * @param newXCoord
-	 * 		  The new x-coordinate of the entity.
-	 * @post  The x-coordinate of this entity is equal 
-	 * 		  to the given x-coordinate.
-	 * 	    | new.getXCoord() = newXCoord
+	 * @param  newXCoord
+	 * 		   The new x-coordinate of the entity.
+	 * @post   The x-coordinate of this entity is equal 
+	 * 		   to the given x-coordinate.
+	 * 	     | new.getXCoord() = newXCoord
 	 * @throws IllegalArgumentException
 	 * 		   If the given x-coordinate is not valid.
-	 * 	    |  ! isValidXCoord(xCoord)
+	 * 	     | ! isValidXCoord(xCoord)
 	 * @throws IllegalArgumentException
 	 * 		   If the given x-coordinate would result in a position the entity cannot take
-	 * 		|  ! canTakePosition(new Position(xCoord, getYCoord())
+	 * 		 | ! canTakePosition(new Position(xCoord, getYCoord())
 	 */
 	@Raw
 	protected void setXCoord(double xCoord) throws IllegalArgumentException {
@@ -263,17 +273,17 @@ public abstract class Entity {
 	
 	/**
 	 * Set the y-coordinate of the entity.
-	 * @param newYCoord
-	 * 		  The new y-coordinate of the entity.
-	 * @post  The y-coordinate of this entity is equal 
-	 * 		  to the given y-coordinate.
-	 * 	    | new.getYCoord() = newYCoord
+	 * @param  newYCoord
+	 * 		   The new y-coordinate of the entity.
+	 * @post   The y-coordinate of this entity is equal 
+	 * 		   to the given y-coordinate.
+	 * 	     | new.getYCoord() = newYCoord
 	 * @throws IllegalArgumentException
 	 * 		   If the given y-coordinate is not valid.
-	 * 	    |  ! isValidYCoord(yCoord)
+	 * 	     | ! isValidYCoord(yCoord)
 	 * @throws IllegalArgumentException
 	 * 		   If the given y-coordinate would result in a position the entity cannot take
-	 * 		|  ! canTakePosition(new Position(getXCoord(), yCoord)
+	 * 		 | ! canTakePosition(new Position(getXCoord(), yCoord)
 	 */
 	@Raw
 	protected void setYCoord(double yCoord) throws IllegalArgumentException {
@@ -289,6 +299,10 @@ public abstract class Entity {
 	/**
 	 * Return whether the prime object would be within the given worlds 
 	 * boundaries if it would be at the given position in that world.
+	 * @param  world
+	 * 		   The world for which to check the given position.
+	 * @param  position
+	 * 		   The position to check.
 	 * @return see implementation...
 	 */
 	public boolean isWithinBoundariesOf(World world, Position position) {
@@ -308,6 +322,8 @@ public abstract class Entity {
 	/**
 	 * Return whether the prime object would be within the given worlds 
 	 * boundaries if it would be at its current position in that world.
+	 * @param  world
+	 * 		   The world for which to check the entities position.
 	 * @return see implementation...
 	 */
 	public boolean isWithinBoundariesOf(World world) {
@@ -316,11 +332,13 @@ public abstract class Entity {
 	
 	/**
 	 * Return with which border the entity is currently overlapping
-	 * @result == 0 (if none)
-	 * 			  1 (if left)
-	 * 			  2 (if top)
-	 * 			  3 (if right)
-	 * 			  4 (if bottom)
+	 * @param  world
+	 * 		   The world which borders have to be checked.
+	 * @return 0 (if none)
+	 * 		   1 (if left)
+	 * 		   2 (if top)
+	 * 		   3 (if right)
+	 * 		   4 (if bottom)
 	 */
 	public int getOverLappingBorder(World world) {
 		double left   = getXCoord();
@@ -344,7 +362,10 @@ public abstract class Entity {
 	
 	/**
 	 * Check whether the given time is valid.
-	 * @see implementation...
+	 * @param  time
+	 * 		   The time to be checked for validity.
+	 * @return Whether the given time is valid
+	 * 		 | see implementation...
 	 */
 	@Basic @Raw
 	public static boolean isValidTime(double time) {
@@ -354,6 +375,8 @@ public abstract class Entity {
 	/**
 	 * Return the coordinates the entity would be at after moving forward for
 	 * the given amount of seconds.
+	 * @param  time
+	 * 		   For how much seconds in the future the coordinates have to be calculated.
 	 * @throws IllegalArgumentException
 	 * 		   The given duration time is invalid.
 	 * 		 | ! isValidTime(time)
@@ -371,6 +394,8 @@ public abstract class Entity {
 	/**
 	 * Return the position the entity would be at after moving forward for
 	 * the given amount of seconds.
+	 * @param  time
+	 * 		   For how much seconds in the future the position has to be calculated.
 	 * @throws IllegalArgumentException
 	 * 		   The given duration time is invalid.
 	 * 		 | ! isValidTime(time)
@@ -385,7 +410,7 @@ public abstract class Entity {
 	 * Change the position of the entity based on the current position, 
 	 * velocity and a given time duration.
 	 * @param  time
-	 * 		   The time for which the entity must be moved.
+	 * 		   For how much seconds the entity has to be moved.
 	 * @effect The entity is moved to it's future position
 	 * 		 | new.getPosition() == old.getFuturePosition(time)
 	 * @throws IllegalArgumentException
@@ -422,10 +447,10 @@ public abstract class Entity {
 	
 	/**
 	 * Return the velocity of the prime object along the x-axis.
-	 * @post The x velocity of the prime object is under the speed limit.
+	 * @post   The x velocity of the prime object is under the speed limit.
 	 * 	     | getAbsVelocity(getXVelocity(), 0) <= SPEED_LIMIT
 	 * @return The velocity of the prime object along the x-axis.
-	 * 		|  result == this.xVelocity
+	 * 		 | result == this.xVelocity
 	 */
 	@Basic @Raw
 	public double getXVelocity() {
@@ -434,7 +459,7 @@ public abstract class Entity {
 	
 	/**
 	 * Return the velocity of the prime object along the y-axis.
-	 * @post The y velocity of the prime object is under the speed limit.
+	 * @post   The y velocity of the prime object is under the speed limit.
 	 * 	     | getAbsVelocity(0, getYVelocity()) <= SPEED_LIMIT
 	 * @return The velocity of the prime object along the y-axis.
 	 * 		 | result == this.yVelocity
@@ -448,9 +473,9 @@ public abstract class Entity {
 	 * Set the x velocity, limiting the speed if it would exceed the speed limit.
 	 * @param xVelocity
 	 * 		  The xVelocity to be set.
-	 * @post The absolute speed of the prime object will be kept under
-	 * 		 the speed limit.
-	 * 	     | getAbsVelocity(new xVelocity, new yVelocity) <= SPEED_LIMIT
+	 * @post  The absolute speed of the prime object will be kept under
+	 * 		  the speed limit.
+	 * 	    | getAbsVelocity(new getXVelocity(), new getYVelocity()) <= SPEED_LIMIT
 	 */
 	protected void setXVelocity(double xVelocity) {
 		yVelocity = getYVelocity();
@@ -463,9 +488,9 @@ public abstract class Entity {
 	 * Set the y velocity, limiting the speed if it would exceed the speed limit.
 	 * @param yVelocity
 	 * 		  The yVelocity to be set.
-	 * @post The absolute speed of the prime object will be kept under
-	 * 		 the speed limit.
-	 * 	     | getAbsVelocity(new xVelocity, new yVelocity) <= SPEED_LIMIT
+	 * @post  The absolute speed of the prime object will be kept under
+	 * 		  the speed limit.
+	 * 	    | getAbsVelocity(new getXVelocity(), new getYVelocity()) <= SPEED_LIMIT
 	 */
 	protected void setYVelocity(double yVelocity) {
 		xVelocity = getXVelocity();
@@ -479,8 +504,7 @@ public abstract class Entity {
 	
 	/**
 	 * Return an array of the x and y velocities of the entity.
-	 * @post The absolute speed of the prime object will be kept under
-	 * 		 the speed limit.
+	 * @invar  The absolute speed is kept under the speed limit.
 	 * 	     | getAbsVelocity(result[0], result[1]) <= SPEED_LIMIT
 	 * @return An array of the x and y velocity
 	 * 		 | result[0] == getXVelocity()
@@ -494,12 +518,12 @@ public abstract class Entity {
 	/**
 	 * Returns the absolute velocity using the formula of the vector length
 	 * on the (xVelocity, yVelocity) vector.
-	 * @param xVelocity
-	 * 		  The x velocity
-	 * @param yVelocity
-	 * 		  The y velocity
+	 * @param  xVelocity
+	 * 		   The x velocity
+	 * @param  yVelocity
+	 * 		   The y velocity
 	 * @return The absolute velocity
-	 * 		  | result == Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(xVelocity, 2)
+	 * 		 | result == Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(xVelocity, 2)
 	 */
 	public static double getAbsSpeed(double xVelocity, double yVelocity) {
 		return Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(yVelocity, 2));
@@ -521,13 +545,14 @@ public abstract class Entity {
 	/**
 	 * Return the x and y velocities that respect the speed limit but
 	 * also maintain the direction of the entity.
-	 * @param xVelocity
-	 * 		  The x velocity of the entity.
-	 * @param yVelocity
-	 * 		  The y velocity of the entity.
-	 * @post  ...
-	 * 		| getAbsVelocity(result[0], result[1]) <= getSpeedLimiet
+	 * @param  xVelocity
+	 * 		   The x-velocity to limit.
+	 * @param  yVelocity
+	 * 		   The y-velocity to limit.
+	 * @post   The absolute speed of the result does not exceed the speed limit
+	 * 		 | getAbsVelocity(result[0], result[1]) <= getSpeedLimit()
 	 * @return An array of the scaled down velocities.
+	 * 		 | see implementation...
 	 */
 	public double[] limitSpeed(double xVelocity, double yVelocity) {
 		if (Double.isNaN(xVelocity)) return limitSpeed(0,yVelocity);
@@ -576,18 +601,22 @@ public abstract class Entity {
 	
 	/**
 	 * Check whether the given speed limit is valid.
+	 * @param  speedLimit
+	 * 		   The speed limit to check for validity.
 	 * @return true if the speed limit is smaller than the speed of light.
-	 * 		 | (0 < speedLimit || speedLimit <= Entity.getLightSpeed())
+	 * 		 | 0 < speedLimit || speedLimit <= Entity.getLightSpeed()
 	 */
 	@Raw
 	public boolean canHaveAsSpeedLimit(double speedLimit) {
-		return (0 < speedLimit || speedLimit <= Entity.getLightSpeed());
+		return 0 < speedLimit || speedLimit <= Entity.getLightSpeed();
 	}
 	
 	/**
 	 * Set the speed limit of the prime object if the given speed limit is valid.
-	 * @post The speed limit is valid
-	 * 	   | canHaveAsSpeedLimit(speedLimit)
+	 * @param speedLimit
+	 * 		  The speed limit to be set.
+	 * @post  The speed limit is valid
+	 * 	    | canHaveAsSpeedLimit(speedLimit)
 	 */
 	public void setSpeedLimit(double speedLimit) {
 		if (canHaveAsSpeedLimit(speedLimit))
@@ -604,8 +633,9 @@ public abstract class Entity {
 	
 	/**
 	 * Return the radius of the prime object.
-	 * @invar The radius is valid.
-	 * 		| canHaveAsRadius(getRadius()) == true
+	 * @invar  The returned radius is valid.
+	 * 		 | canHaveAsRadius(getRadius()) == true
+	 * @return The radius of the entity
 	 */
 	@Basic @Immutable @Raw
 	public double getRadius() {
@@ -614,18 +644,27 @@ public abstract class Entity {
 	
 	/**
 	 * Check if the given radius suits the prime object.
-	 * @return see implementation...
+	 * @param  radius
+	 * 		   The radius to check.
+	 * @return see implementation in subclasses...
 	 */
 	@Raw
 	public abstract boolean canHaveAsRadius(double radius);
 	
 	/**
 	 * Set the given radius.
+	 * @param  radius
+	 * 		   The radius to be set
+	 * @post   The given radius is the new radius of the entity.
+	 * 		 | new getRadius() == radius
+	 * @throws IllegalArgumentException
+	 * 		   If the given radius is not valid for the entity.
+	 * 		 | ! canHaveAsRadius(radius)
 	 */
 	@Raw
 	public void setRadius(double radius) throws IllegalArgumentException {
 		if (! canHaveAsRadius(radius)) throw new IllegalArgumentException(
-				"The given radius is not valid");
+				"The given radius is not valid, see canHaveAsRadius()");
 		this.radius = radius;
 	}
 	
@@ -639,7 +678,6 @@ public abstract class Entity {
 	
 	// WORLD - ADDING AND REMOVING (defensively)
 	
-
 	/**
 	 * The world in which the entity is located.
 	 */
@@ -647,10 +685,11 @@ public abstract class Entity {
 	
 	/**
 	 * Return the world in which the entity is located.
-	 * @invar The world contains the entity
-	 * 		 | getWorld().contains()
-	 * @invar The entity is located within the world boundaries.
+	 * @invar  The world contains the entity or is null.
+	 * 		 | getWorld() == null|| getWorld().contains()
+	 * @invar  The entity is located within the world boundaries.
 	 * 		 | isWithinBoundaries(getWorld())
+	 * @return The world in which the entity is located.
 	 */
 	@Basic
 	public World getWorld() {
@@ -659,17 +698,20 @@ public abstract class Entity {
 	
 	/**
 	 * Returns whether the entity can change world.
+	 * @return Whether the entity can change world.
+	 * 		 | getWorld() == null || ! getWorld().contains(this)
 	 */
 	@Basic
 	public boolean canChangeWorld() {
-		if (getWorld() == null) return true;
-		else return ! getWorld().contains(this);
+		return getWorld() == null || ! getWorld().contains(this);
 	}
 	
 	/**
 	 * Returns whether the entity can be placed in the given world.
-	 * @return ...
-	 * 		 | (isWithinBoundariesOf(world) && ! overlaps(world.getEntitySet()) )
+	 * @param  world
+	 * 		   The world to check.
+	 * @return Whether the entity can be placed in the given world.
+	 * 		 | isWithinBoundariesOf(world) && ! overlaps(world.getEntitySet())
 	 */
 	public boolean canBePlacedIn(World world) {
 		if (world == null) return true;
@@ -678,6 +720,8 @@ public abstract class Entity {
 	
 	/**
 	 * Set the container of the entity.
+	 * @param  world
+	 * 		   The world to set as container for the entity.
 	 * @post   ...
 	 * 	     | getWorld() == world
 	 * @throws IllegalArgumentException
@@ -703,12 +747,12 @@ public abstract class Entity {
 	
 	// WORLD - SEARCHING (total)
 	
-	
 	/**
 	 * Return whether the prime object equals the argument.
-	 * @param other
-	 * 		  The other entity.
-	 * @return see implementation...
+	 * @param  other
+	 * 		   The entity to check for equality.
+	 * @return Whether the given object is equal to the prime object.
+	 * 		 | see implementation...
 	 */
 	@Override @Basic
 	public boolean equals(Object other){
@@ -735,10 +779,12 @@ public abstract class Entity {
 	
 	/**
 	 * Return the minimum mass of the entity.
+	 * @return The minimum mass of the entity.
+	 * 		 | (4/3.) * Math.PI * Math.pow(getRadius(), 3) * getDensity()
 	 */
 	@Basic @Immutable @Raw
 	public double getMinimumMass() {
-		return (4/3.)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
+		return (4/3.) * Math.PI * Math.pow(getRadius(), 3) * getDensity();
 	}
 	
 	/**
@@ -752,8 +798,8 @@ public abstract class Entity {
 	
 	/**
 	 * Return the distance between the centres of two entities.
-	 * @param other
-	 * 		  The other entity.
+	 * @param  other
+	 * 		   The entity for which to check the distance.
 	 * @return The distance between the centres of two entities.
 	 * 		 | see implementation...
 	 * @throws NullPointerException
@@ -770,8 +816,8 @@ public abstract class Entity {
 	
 	/**
 	 * Return the distance between this entity and the other entity.
-	 * @param other
-	 * 		  The other entity.
+	 * @param  other
+	 * 		   The entity for which to check the distance.
 	 * @return The distance between this entity and the other entity.
 	 * 		 | see implementation...
 	 * @throws NullPointerException
@@ -786,7 +832,8 @@ public abstract class Entity {
 	
 	/**
 	 * Returns whether this entity fully overlaps with the other entity
-	 * @param other
+	 * @param  other
+	 * 		   The entity for which to check whether it completely overlaps.
 	 * @return True if the entities completely overlap.
 	 * 		 | getDistanceBetweenCentres(other) <= Math.abs(getRadius() - other.getRadius())
 	 */
@@ -800,7 +847,7 @@ public abstract class Entity {
 	 * Return whether this entity significantly overlaps with the other entity.
 	 * Important: this function ignores the entities worlds.
 	 * @param other
-	 * 		  The other entity.
+	 * 		   The entity for which to check whether it overlaps.
 	 * @return True if the entities overlap
 	 * 		 | getDistanceBetweenCentres(other) <= 0.99*(getRadius() + other.getRadius())
 	 */
@@ -813,6 +860,8 @@ public abstract class Entity {
 	/**
 	 * Return whether the entity overlaps with one or more of the
 	 * entities in the given array.
+	 * @param otherEntities
+	 * 		  An ArrayList of entities.
 	 */
 	public boolean overlaps(ArrayList<Entity> otherEntities) {
 		for (Entity other : otherEntities){
@@ -823,8 +872,12 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Return whether this entity would overlap the given entity
-	 * if it was placed at the given position.
+	 * Return whether this entity, if placed at the given position, 
+	 * would overlap the given entity.
+	 * @param position
+	 * 		  The position at which the prime entity would be placed.
+	 * @param other
+	 * 		  The other entity.
 	 */
 	public boolean wouldOverLapAt(Position position, Entity other) {
 		if (position == null || other == null) return false;
@@ -835,8 +888,12 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Return whether this entity would overlap any of the given entities
-	 * if it was placed at the given position.
+	 * Return whether this entity, if placed at the given position,
+	 * would overlap any of the entities of the given ArrayList.
+	 * @param position
+	 * 		  The position at which the prime entity would be placed.
+	 * @param otherEntities
+	 * 		  The other entities.
 	 */
 	public boolean wouldOverLapAt(Position position, ArrayList<Entity> otherEntities) {
 		for (Entity other : otherEntities){
@@ -849,8 +906,8 @@ public abstract class Entity {
 	
 	/**
 	 * Return the time it will take for this entity to collide with the other entity.
-	 * @param other
-	 * 		  The other entity.
+	 * @param  other
+	 * 		   The other entity.
 	 * @return The time it will take before the entities collide,
 	 * 		   if and only if the entities collide.
 	 * 		   Else, infinity is returned.
@@ -884,6 +941,8 @@ public abstract class Entity {
 	/**
 	 * Return how long it will take before the entity collides with
 	 * one of the given world boundaries.
+	 * @param world
+	 * 		  The world which borders are checked.
 	 */
 	public double getTimeToBorderCollision(World world) {
 		if (world == null || getSpeed() == 0) return Double.POSITIVE_INFINITY;
@@ -895,15 +954,18 @@ public abstract class Entity {
 	/**
 	 * Return how long it will take before the entity collides with
 	 * one of its world boundaries.
+	 * @return ...
+	 * 		 | getTimeToBorderCollision(getWorld())
 	 */
 	public double getTimeToBorderCollision() {
-		World world = getWorld();
-		return getTimeToBorderCollision(world);
+		return getTimeToBorderCollision(getWorld());
 	}
 	
 	/**
 	 * Return how long it will take before the entity collides with a
 	 * horizontal border.
+	 * @param  world
+	 * 		   The world which horizontal boundaries are checked.
 	 * @return The time it will take to collide with a horizontal border.
 	 * @throws IllegalArgumentException
 	 * 		   If the entity is not within the given worlds boundaries
@@ -926,6 +988,8 @@ public abstract class Entity {
 	/**
 	 * Return how long it will take before the entity collides with a
 	 * horizontal border.
+	 * @param  world
+	 * 		   The world which vertical boundaries are checked.
 	 * @return The time it will take to collide with a vertical border.
 	 * @throws IllegalArgumentException
 	 * 		   If the entity is not within the given worlds boundaries
@@ -963,6 +1027,8 @@ public abstract class Entity {
 	/**
 	 * Return the first collision the entity will have with the boundaries of 
 	 * the given world. Returns the null pointer if no collision occurs.
+	 * @param  world
+	 * 		   The world where to border collision has to be calculated.
 	 * @throws NullPointerException
 	 * 		   If the given argument references the null pointer (thrown by .overlaps())
 	 * 		 | world == null
@@ -1026,6 +1092,8 @@ public abstract class Entity {
 	
 	/**
 	 * Return the position where the entity will hit the world boundary.
+	 * @param  world
+	 * 		   The world where to border collision position has to be calculated.
 	 * @throws NullPointerException
 	 * 		   The given argument references a null pointer.
 	 *       | world == null
@@ -1060,6 +1128,8 @@ public abstract class Entity {
 	/**
 	 * Return the position where the entity will hit the world boundary
 	 * as an array
+	 * @param  world
+	 * 		   The world where to border collision position array has to be calculated.
 	 * @throws NullPointerException
 	 * 		   The given argument references a null pointer.
 	 *       | world == null
@@ -1075,6 +1145,8 @@ public abstract class Entity {
 	/**
 	 * Return the first collision that will occur between the prime
 	 * object and one of the entities of the given ArrayList.
+	 * @param entities
+	 * 		  A list of other entities
 	 */
 	public Collision getFirstCollision(ArrayList<Entity> entities) {
 		Collision firstCollision = null;
@@ -1096,6 +1168,8 @@ public abstract class Entity {
 	/**
 	 * Return the first collision the entity will experience in the given world.
 	 * The collision can be with a border or any other entity in the given world.
+	 * @param  world
+	 * 		   The world where the first collision (border or entity) has to be calculated.
 	 */
 	public Collision getFirstCollision(World world) {
 		if (world == null) return null;
@@ -1112,6 +1186,8 @@ public abstract class Entity {
 	
 	/**
 	 * Collide the entity with another entity.
+	 * @param other
+	 * 		  The other entity.
 	 */
 	public void bounce(Entity other) {
 		double mass = getMass();
@@ -1147,6 +1223,8 @@ public abstract class Entity {
 	
 	/**
 	 * Bounce the entity of a horizontal or vertical wall.
+	 * @param  type
+	 * 		   The type of border collision.
 	 * @effect If the entity bounces with a vertical wall, negate the x velocity
 	 * 		 | new getXVelocity() == -getXVelocity()
 	 * @effect If the entity bounces with a horizontal wall, negate the y velocity
