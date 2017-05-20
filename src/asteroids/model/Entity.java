@@ -762,7 +762,8 @@ public abstract class Entity {
 				&& getYCoord() == ((Entity) other).getYCoord()
 				&& getXVelocity() == ((Entity) other).getXVelocity() 
 				&& getYVelocity() == ((Entity) other).getYVelocity()
-				&& getRadius() == ((Entity) other).getRadius())
+				&& getRadius() == ((Entity) other).getRadius()
+				&& getWorld() == ((Entity) other).getWorld())
 			return true;
 		else
 			return false;

@@ -183,7 +183,9 @@ public class Ship extends Entity{
 		else if (super.equals(other)
 				&& getOrientation() == ((Ship) other).getOrientation()
 				&& getNbBullets() == ((Ship) other).getNbBullets()
-				&& getThrusterState() == ((Ship) other).getThrusterState())
+				&& getThrusterState() == ((Ship) other).getThrusterState()
+				&& getMass() == ((Ship) other).getMass()
+				&& getBullets().equals(((Ship) other).getBullets()))
 			return true;
 		else
 			return false;
@@ -653,12 +655,6 @@ public class Ship extends Entity{
 		removeBulletAt(0);
 		bullet.setSourceShip(this);
 		bullet.setShip(null);
-		
-		// if the ship isn't in a world, the bullet is destroyed
-		if (getWorld() == null) {
-			bullet.terminate();
-			return;
-		}
 		
 		// get the position offset of the fired bullet
 		double xOffset = (getRadius() + bullet.getRadius()) * Math.cos(getOrientation());

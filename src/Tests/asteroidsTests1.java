@@ -7,14 +7,7 @@ import java.util.HashSet;
 import org.junit.Before;
 import org.junit.Test;
 
-import asteroids.model.Asteroid;
-import asteroids.model.Bullet;
-import asteroids.model.Collision;
-import asteroids.model.CollisionType;
-import asteroids.model.Entity;
-import asteroids.model.Position;
-import asteroids.model.Ship;
-import asteroids.model.World;
+import asteroids.model.*;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 
@@ -22,11 +15,13 @@ public class asteroidsTests1 {
 	private static final double EPSILON = 0.0001;
 	
 //------------SHIP TESTS-----------------
+	
 	@Before
 	public void setUp() {
-		Ship ship = new Ship();
+		return;
 	}
-
+	
+	// create ship with normal values
 	
 	@Test
 	public void shipConstructor1Test() throws IllegalArgumentException{
@@ -41,8 +36,6 @@ public class asteroidsTests1 {
 		assertEquals(5E15,ship.getMass(),EPSILON);
 		assert ship.getWorld() == world;
 		assert ship.getNbBullets() == 0; 
-		
-		
 	}
 	
 	@Test
@@ -57,8 +50,6 @@ public class asteroidsTests1 {
 		assertEquals(5E15,ship.getMass(),EPSILON);
 		assert ship.getWorld() == null;
 		assert ship.getNbBullets() == 0;
-		
-		
 	}
 	
 	@Test
@@ -72,7 +63,6 @@ public class asteroidsTests1 {
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == null;
 		assert ship.getNbBullets() == 0;
-		
 	}
 	
 	@Test
@@ -86,8 +76,6 @@ public class asteroidsTests1 {
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == null;
 		assert ship.getNbBullets() == 0;
-
-
 	}
 	
 	@Test
@@ -101,8 +89,6 @@ public class asteroidsTests1 {
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == null;
 		assert ship.getNbBullets() == 0;
-
-
 	}
 	
 	@Test
@@ -130,6 +116,19 @@ public class asteroidsTests1 {
 		assertEquals(0, ship.getOrientation(),EPSILON);
 		assert ship.getWorld() == null;
 		assert ship.getNbBullets() == 0;
+	}
+	
+	// create ship with abnormal values
+	
+	@Test
+	public void testCreateShipOverlappingWorldBorders() throws Exception {
+		World world = new World(100,100);
+		try {
+			new Ship(95,95,0,0,50,0,5E15,world);
+			fail();
+		} catch (IllegalArgumentException e) {
+			return;
+		}
 	}
 	
 	
@@ -312,7 +311,6 @@ public class asteroidsTests1 {
 		ship.load(bigBullet);
 	    assertFalse(ship.getBullets().isEmpty());
 	    assertTrue(ship.getBullets().contains(bigBullet));
-
 	}
 	
 	@Test
@@ -511,12 +509,7 @@ public class asteroidsTests1 {
 		Ship ship2 = new Ship(20,20);
 		assertTrue(ship1.isValidPosition(pos));
 		assertTrue(ship2.isValidPosition(pos));
-
-	
 	}
-	
-	
-
 	
 	@Test
 	public void withinBoundariesOfTest() throws IllegalArgumentException{

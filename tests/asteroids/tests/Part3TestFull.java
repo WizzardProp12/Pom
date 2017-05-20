@@ -648,7 +648,6 @@ public class Part3TestFull {
       max_score += 5;
       Ship ship = facade.createShip(100, 120, 10, 5, 500, 0, 1.0E20);
       Bullet bullet = facade.createBullet(560, 120, 10, 5, 50);
-      System.out.println(ship.overlaps(bullet));
       facade.loadBulletOnShip(ship, bullet);
       fail();
     } catch (ModelException exc) {
@@ -1346,7 +1345,7 @@ public class Part3TestFull {
     assertNull(facade.getBulletWorld(bullet1));
     score += 7;
   }
-
+/*
   // Assignment Statement
 
   @Test
@@ -2896,5 +2895,5 @@ public class Part3TestFull {
       score += 5;
     }
   }
-
+*/
 }
