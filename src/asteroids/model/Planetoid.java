@@ -146,9 +146,9 @@ public class Planetoid extends MinorPlanet {
 	 */
 	@Override
 	public void die() {
+		World world = getWorld();
 		super.die();
-		
-		if (getRadius() >= 30 && getWorld() != null) { // spawn two asteroids
+		if (getRadius() >= 30 && world != null) { // spawn two asteroids
 			double radius = getRadius() / 2;
 			double direction = Math.random() * 2 * Math.PI;
 			double xVelocity = Math.cos(direction) * 1.5 * getSpeed();
@@ -161,8 +161,8 @@ public class Planetoid extends MinorPlanet {
 
 			Asteroid a1 = new Asteroid(x + deltaX, y + deltaY, velocities[0], velocities[1], radius);
 			Asteroid a2 = new Asteroid(x - deltaX, y - deltaY, -velocities[0], -velocities[1], radius);
-			if ( a1.canBePlacedIn(getWorld()) ) getWorld().add(a1);
-			if ( a2.canBePlacedIn(getWorld()) ) getWorld().add(a2);
+			if ( a1.canBePlacedIn(world) ) world.add(a1);
+			if ( a2.canBePlacedIn(world) ) world.add(a2);
 		}
 	}
 		

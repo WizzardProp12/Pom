@@ -524,6 +524,8 @@ public class World {
 	 * Advance the time.
 	 */
 	public void advanceTime(double time) {
+		
+		
 		Collision firstCollision = getFirstCollision();
 		if (firstCollision != null && firstCollision.getTime() <= time) {
 			
