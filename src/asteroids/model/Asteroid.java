@@ -95,8 +95,8 @@ public class Asteroid extends MinorPlanet {
 	private final double density = 2.65*Math.pow(10, 12);
 	
 	/**
-	 * Return the density of the Minor Planet.
-	 * @return see implementation...
+	 * Return the density of the Asteroid.
+	 * @return The density of the Asteroid.
 	 */
 	@Basic @Immutable @Raw
 	public double getDensity() {
@@ -105,10 +105,11 @@ public class Asteroid extends MinorPlanet {
 	
 	/**
 	 * Return the mass of the Asteroid.
-	 * @return see implementation...
+	 * @return The mass of the Asteroid.
+	 * 		 | (4/3.) * Math.PI * Math.pow(getRadius(), 3) * getDensity()
 	 */
 	@Override @Basic @Raw
 	public double getMass() {
-		return (4/3.)*Math.PI*Math.pow(getRadius(), 3)*getDensity();
+		return (4/3.) * Math.PI * Math.pow(getRadius(), 3) * getDensity();
 	}
 }
