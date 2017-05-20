@@ -183,16 +183,19 @@ public class World {
 	 * @invar The height of the world is valid
 	 * 		| canHaveAsHeight(getHeight())
 	 */
-	@Basic  @Immutable @Raw
+	@Basic @Immutable @Raw
 	public double getHeight(){
 		return this.height;
 	}
 	
 	/**
 	 * Return whether the given width suits the world.
+	 * @param  width
+	 * 		   The width to check
 	 * @return ...
 	 * 		 | World.getMinWidth() <= width <= World.getMaxWidth()
 	 */
+	@Raw @Model
 	public boolean canHaveAsWidth(double width) {
 		return ((!Double.isNaN(width)) 
 				&& World.getMinWidth() <= width && width <= World.getMaxWidth());
@@ -200,9 +203,12 @@ public class World {
 	
 	/**
 	 * Return whether the given height suits the world.
+	 * @param  height
+	 * 		   The height to check
 	 * @return ...
 	 * 		 | World.getMinHeight() <= height <= World.getMaxHeight()
 	 */
+	@Raw @Model
 	public boolean canHaveAsHeight(double height) {
 		return ((!Double.isNaN(height)) 
 				&& World.getMinHeight() <= height && height <= World.getMaxHeight());
@@ -213,6 +219,7 @@ public class World {
 	 * @invar The size of the world is valid
 	 * 	    | canHaveAsWidth(result[0]) && canHaveAsHeight(result[1])
 	 */
+	@Raw @Model @Basic @Immutable
 	public double[] getSize() {
 		double[] size = {getWidth(), getHeight()};
 		return size;
@@ -223,24 +230,26 @@ public class World {
 	
 	/**
 	 * Return if the given x coordinate is valid and within the world borders.
-	 * @see implementation...
+	 * @param  xCoord
+	 * 		   The x-coordinate to check
+	 * @return Whether the given coordinate is a number and within boundaries.
+	 * 		 | ! Double.isNaN(xCoord) && 0 <= xCoord && xCoord <= getWidth()
 	 */
+	@Raw
 	public boolean isValidXCoord(double xCoord) {
-		if (Double.isNaN(xCoord))
-			return false;
-		else
-			return (0 <= xCoord && xCoord <= getWidth());
+		return ! Double.isNaN(xCoord) && 0 <= xCoord && xCoord <= getWidth();
 	}
 	
 	/**
 	 * Return if the given y coordinate is valid and within the world borders.
-	 * @see implementation...
+	 * @param  yCoord
+	 * 		   The y-coordinate to check
+	 * @return Whether the given coordinate is a number and within boundaries.
+	 * 		   Double.isNaN(yCoord) && 0 <= yCoord && yCoord <= getHeight()
 	 */
+	@Raw
 	public boolean isValidYCoord(double yCoord) {
-		if (Double.isNaN(yCoord))
-			return false;
-		else
-			return (0 <= yCoord && yCoord <= getHeight());
+		return Double.isNaN(yCoord) && 0 <= yCoord && yCoord <= getHeight();
 	}
 	
 	/** 
@@ -249,9 +258,10 @@ public class World {
 	 * 		  The x coordinate of the position.
 	 * @param yCoord
 	 * 		  The y coordinate of the position.
-	 * @return ...
+	 * @return Whether the given position is valid.
 	 * 		 | isValidXCoord(position[0]) && isValidYCoord(position[1]
 	 */
+	@Raw
 	public boolean isValidPosition(double[] position) {
 		return (isValidXCoord(position[0]) && isValidYCoord(position[1]));
 	}
@@ -263,6 +273,7 @@ public class World {
 	 * @return ...
 	 * 		 | isValidPosition(position.toArray())
 	 */
+	@Raw
 	public boolean isValidPosition(Position position) {
 		return isValidPosition(position.toArray());
 	}
@@ -298,6 +309,8 @@ public class World {
 	
 	/**
 	 * Return a set of the specified subclass of entity.
+	 * @param cls
+	 * 		  The class type of entities to return (e.g. Ship.class)
 	 * @invar All the Entities of the specified class in the result are contained by the world.
 	 * 		| for (Entity someEntity : getSomeEntityList())
 	 * 		|		world.contains(someEntity)
@@ -306,36 +319,19 @@ public class World {
 	public <T> Set<T> getSomeEntitySet(Class<T> cls){
 		Set<T> someEntitySet = new HashSet<>();
 		for (Entity entity : getEntitySet()){
-			if (cls.isInstance(entity)){
+			if (cls.isInstance(entity))
 				someEntitySet.add(cls.cast(entity));
-			}
 		}
 		return someEntitySet;
 	}
-	
-	/**
-	 * Return an arraylist of the specified subclass of entity.
-	 * @invar All the Entities of the specified class in the result are contained by the world.
-	 * 		| for (Entity someEntity : getSomeEntityList())
-	 * 		|		world.contains(someEntity)
-	 */
-	@Basic
-	public ArrayList<Entity> getSomeEntityList(Class<?> cls){
-		ArrayList<Entity> someEntityList = new ArrayList<Entity>();
-		for (Entity entity : getEntitySet()){
-			if (entity.getClass() == cls){
-				someEntityList.add(entity);
-			}
-		}
-		return someEntityList;
-	}
-	
 	
 	// ENTITIES - ADDING AND REMOVING (defensively)
 	
 	/**
 	* Return whether the given Entity is present in the prime object.
-	* @return ...
+	* @param  entity
+	* 		  The entity.
+	* @return Whether the world contains the given entity.
 	* 		| getEntitySet().contains(entity)
 	*/
 	public boolean contains(Entity entity) {
@@ -344,7 +340,9 @@ public class World {
 	
 	/**
 	 * Return whether the prime object can contain the given entity.
-	 * @return ...
+	 * @param  entity
+	 * 		   The entity.
+	 * @return Whether the given entity is within the boundaries of this world.
 	 * 		 | entity.isWithinBoundariesOf(this)
 	 */
 	public boolean canContain(Entity entity) {
@@ -392,6 +390,8 @@ public class World {
 	
 	/**
 	 * Remove the given entity from the world.
+	 * @param  entity
+	 * 		   The entity to be removed from the world.
 	 * @pre    The world must contain the given entity
 	 * 		 | contains(entity)
 	 * @post   The world doesn't contain the given entity
@@ -405,7 +405,7 @@ public class World {
 	@Raw
 	public void remove(Entity entity) throws IllegalArgumentException {
 		if (! contains(entity)) throw new IllegalArgumentException(
-				"given entity is not in world.");
+				"given entity is not in this world.");
 		entitySet.remove(entity);
 		entity.setWorld(null);
 	}
@@ -416,9 +416,9 @@ public class World {
 	 * Return the Entity at the given position. If there
 	 * is no Entity, the null pointer is returned.
 	 * @param  position
-	 * 		   The position to be checked
-	 * @return ...
-	 * 		| (result == null || result.getPosition() == position)
+	 * 		   The position to be checked.
+	 * @return The entity at the given position or if there is none, the null pointer.
+	 * 		 | result == null || result.getPosition() == position
 	 */
 	@Basic
 	public Entity getEntityAt(Position position) {
@@ -435,7 +435,7 @@ public class World {
 	 * 		  The x coordinate to be checked
 	 * @param yCoord
 	 * 		  The y coordinate to be checked
-	 * @return ...
+	 * @return The entity at the given coordinates or if there is none, the null pointer.
 	 * 		| (result == null || result.getPosition() == new Position(xCoord, yCoord))
 	 */
 	@Basic
@@ -462,22 +462,20 @@ public class World {
 			Entity currentEntity = iterator.next();
 			iterator.remove(); // remove Entity from the set (to avoid double collision checks)
 			Collision currentCollision = currentEntity.getFirstCollision(entities);
-			if (firstCollision == null 
-					|| (currentCollision != null 
-						&& firstCollision.getTime() > currentCollision.getTime()))
+			if (firstCollision == null || firstCollision.getTime() > currentCollision.getTime())
 				firstCollision = currentCollision;
 		}
 		return firstCollision;
 	}
 	
 	/**
-	 * Return the wall collision that is going to occur first.
-	 * @return The first wall collision that occurs
+	 * Return the border collision that is going to occur first.
+	 * @return The first border collision that occurs
 	 *       | result == null
-	 *       |   || (    result.getCollisionType() == leftWall
-	 * 		 | 	      || result.getCollisionType() == rightWall
-	 * 		 |        || result.getCollisionType() == topWall
-	 * 		 |        || result.getCollisionType() == bottomWall)
+	 *       |   || result.getCollisionType() == leftWall
+	 * 		 | 	 || result.getCollisionType() == rightWall
+	 * 		 |   || result.getCollisionType() == topWall
+	 * 		 |   || result.getCollisionType() == bottomWall
 	 */
 	public Collision getFirstBorderCollision() {
 		Collision firstCollision = null;
