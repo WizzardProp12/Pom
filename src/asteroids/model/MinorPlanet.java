@@ -112,7 +112,10 @@ public abstract class MinorPlanet extends Entity {
 
 	/**
 	 * Check if the given radius suits the prime object.
-	 * @return see implementation...
+	 * @param  radius
+	 * 		   The radius to check.
+	 * @return Whether the given radius is big enough.
+	 * 		 | radius >= getMinRadius()
 	 */
 	@Raw
 	public boolean canHaveAsRadius(double radius) {
