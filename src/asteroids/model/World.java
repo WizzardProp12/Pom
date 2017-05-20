@@ -249,7 +249,7 @@ public class World {
 	 */
 	@Raw
 	public boolean isValidYCoord(double yCoord) {
-		return Double.isNaN(yCoord) && 0 <= yCoord && yCoord <= getHeight();
+		return ! Double.isNaN(yCoord) && 0 <= yCoord && yCoord <= getHeight();
 	}
 	
 	/** 
@@ -424,7 +424,8 @@ public class World {
 	public Entity getEntityAt(Position position) {
 		for (Entity entity : getEntityList()) {
 			if (entity.getPosition().equals(position))
-				return entity;}
+				return entity;
+		}
 		return null;
 	}
 	
@@ -462,7 +463,8 @@ public class World {
 			Entity currentEntity = iterator.next();
 			iterator.remove(); // remove Entity from the set (to avoid double collision checks)
 			Collision currentCollision = currentEntity.getFirstCollision(entities);
-			if (firstCollision == null || firstCollision.getTime() > currentCollision.getTime())
+			if (firstCollision == null || 
+					(currentCollision != null && firstCollision.getTime() > currentCollision.getTime()))
 				firstCollision = currentCollision;
 		}
 		return firstCollision;

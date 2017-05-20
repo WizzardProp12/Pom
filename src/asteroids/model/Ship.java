@@ -172,8 +172,8 @@ public class Ship extends Entity{
 	
 	/**
 	 * Return whether the prime object equals the argument.
-	 * @param other
-	 * 		  The other ship.
+	 * @param  other
+	 * 		   The other ship.
 	 * @return see implementation...
 	 */
 	@Override
@@ -216,7 +216,9 @@ public class Ship extends Entity{
 	
 	/**
 	 * Returns whether the given radius suits the prime object.
-	 * @return ...
+	 * @param  radius
+	 * 		   The radius to be checked.
+	 * @return Whether the given radius is big enough.
 	 * 		 | getMinRadius() <= radius
 	 */
 	@Raw
@@ -272,24 +274,24 @@ public class Ship extends Entity{
 	
 	/**
 	 * Returns whether the given orientation suits the prime object.
-	 * @return Whether the given orientation is between the 
-	 * 		   minimum and maximum orientation.
+	 * @param  orientation
+	 * 		   The orientation to be checked.
+	 * @return Whether the given orientation is between the minimum and maximum orientation.
 	 * 		 | getMinOrientation() <= getOrientation() <= getMaxOrientation()
 	 */
 	@Raw
 	public boolean canHaveAsOrientation(double orientation) {
-		return (getMinOrientation() <= orientation && orientation <= getMaxOrientation());
+		return getMinOrientation() <= orientation && orientation <= getMaxOrientation();
 	}
 	
 	/**
 	 * Set the new orientation of the ship.
 	 * @param newOrientation
 	 * 		  The new orientation of the ship.
-	 * @pre The given orientation must be valid
-	 * 	  | canHaveAsOrientation(orientation)
-	 * @post The new orientation of this ship is equal to the given 
-	 * 		 orientation.
-	 * 	   | new.getOrientation() = orientation
+	 * @pre   The given orientation must be valid
+	 * 	    | canHaveAsOrientation(orientation)
+	 * @post  The new orientation of this ship is equal to the given orientation.
+	 * 	    | new.getOrientation() = orientation
 	 */
 	public void setOrientation(double orientation) {
 		assert canHaveAsOrientation(orientation);
@@ -300,11 +302,10 @@ public class Ship extends Entity{
 	 * Turn the ship a given amount of radians.
 	 * @param radians
 	 * 		  The radians to turn.
-	 * @post  The new orientation is equal to the old orientation 
-	 * 		  plus the given turnorientation.
-	 *		| new.getOrientation() == getOrientation() + turnOrientation
-	 * @invar The orientation is valid.
-	 * 	    | canHaveAsOrientation(getOrientation())
+	 * @post  The given radians are added to the previous orientation.
+	 *		| new getOrientation() == old getOrientation() + turnOrientation
+	 * @invar The new orientation is valid.
+	 * 	    | new canHaveAsOrientation(new getOrientation())
 	 */	  
 	public void turn(double radians) {
 		double newOrientation = getOrientation() + radians;
@@ -345,9 +346,11 @@ public class Ship extends Entity{
 	
 	/**
 	 * Set the mass of the ship.
-	 * @pre The given mass must be bigger than or equal to the minimum mass.
-	 *    | getMinimumMass() <= mass
-	 * @post The new mass is bigger than or equal to the minimum mass.
+	 * @param mass
+	 * 		  The mass to set.
+	 * @pre   The given mass must be bigger than or equal to the minimum mass.
+	 *      | getMinimumMass() <= mass
+	 * @post  The new mass is bigger than or equal to the minimum mass.
 	 * 		| getMinimumMass() <= new getMass()
 	 */
 	public void setShipMass(double mass) {
@@ -356,7 +359,8 @@ public class Ship extends Entity{
 	
 	/**
 	 * Return the total mass of the ship and all its bullets.
-	 * @see implementation...
+	 * @return The mass of the ship and its bullets.
+	 * 		 | see implementation...
 	 */
 	@Basic @Raw
 	public double getMass() {
@@ -448,7 +452,7 @@ public class Ship extends Entity{
 	 * Accelerate the ship depending on
 	 * the duration and the acceleration.
 	 * @param time
-	 * 		  How long to accelerate for.
+	 * 		  For how long the ship has to accelerate.
 	 * @param acceleration
 	 * 		  The acceleration of the ship.
 	 * @post  The absolute velocity of the ship will stay below the limit.
@@ -523,7 +527,8 @@ public class Ship extends Entity{
 	
 	/**
 	 * Return true if the ship can use the bullet as ammunition.
-	 * @param bullet
+	 * @param  bullet
+	 * 		   The bullet to check.
 	 * @return Whether the ship can use the bullet as ammunition.
 	 * 		 | bullet != null && bullet.getRadius() < getRadius()
 	 */
@@ -537,36 +542,54 @@ public class Ship extends Entity{
 	/**
 	 * Load the given bullet on the ship if it fits the ship.
 	 * A bullet can be loaded multiple times on a ship
-	 * @param bullet
-	 * 	      The bullet to be loaded on the ship.
+	 * @param  bullet
+	 * 	       The bullet to be loaded on the ship.
+	 * @post   The bullet is loaded on the ship
+	 * 		 | new bullet.getShip() == this 
+	 * 		 | && new this.getBulletSet().contains(bullet)
 	 * @throws IllegalArgumentException
-	 * 		   If the given bullet is already loaded on the ship
+	 * 		   If the ship cannot load the given bullet.
+	 * 		 | ! canHaveAsBullet(bullet)
+	 * @throws IllegalArgumentException
+	 * 		   If the bullet cannot be loaded on the ship.
+	 * 		 | ! bullet.canHaveAsShip(this)
+	 * @throws IllegalArgumentException
+	 * 		   If the given bullet is already loaded on the ship.
 	 * 		 | bullet.getShip() == this
 	 * @throws IllegalArgumentException
-	 * 		   If the given bullet can't be loaded on the ship
-	 * 		 | ! canHaveAsBullet(bullet)
+	 * 		   If the bullet is already loaded on another ship.
+	 * 		 | bullet.getShip() != null
 	 */
 	public void load(Bullet bullet) throws IllegalArgumentException {
-		if (canHaveAsBullet(bullet) && bullet.canHaveAsShip(this)) {
-			if (bullet.getShip() == this) throw new IllegalArgumentException(
-											"the bullet is already loaded on this ship");
-			else if (bullet.getShip() != null) throw new IllegalArgumentException(
-											"the bullet is already loaded on another ship");
-			if (bullet.getWorld() != null)
-				bullet.getWorld().remove(bullet);
-			bulletList.add(bullet);
-			bullet.setShip(this);
-		} else
-			throw new IllegalArgumentException(
-					"the given bullet can't be loaded on the ship");
+		if (! canHaveAsBullet(bullet)) throw new IllegalArgumentException(
+				"the ship cannot load the given bullet, see canHaveAsBullet()");
+		if (! bullet.canHaveAsShip(this)) throw new IllegalArgumentException(
+				"the bullet cannot be loaded on the ship, see Bullet.canHaveAsShip()");
+		if (bullet.getShip() == this) throw new IllegalArgumentException(
+				"the bullet is already loaded on this ship");
+		if (bullet.getShip() != null) throw new IllegalArgumentException(
+				"the bullet is already loaded on another ship");
+		if (bullet.getWorld() != null) bullet.getWorld().remove(bullet);
+		bulletList.add(bullet);
+		bullet.setShip(this);
 	}
 	
-	
 	/**
-	 * Load the given bullets on the ship
+	 * Loads the Collection of bullets on the ship
+	 * @param  bullets
+	 * 		   The bullets to be loaded on the ship.
 	 * @throws IllegalArgumentException
-	 * 		   If the given bullet can't be loaded on the ship
-	 * 		 | !canHaveAsBullet(bullet)
+	 * 		   If the ship cannot load one of the given bullets.
+	 * 		 | ! canHaveAsBullet(bullet)
+	 * @throws IllegalArgumentException
+	 * 		   If one of the bullets cannot be loaded on the ship.
+	 * 		 | ! bullet.canHaveAsShip(this)
+	 * @throws IllegalArgumentException
+	 * 		   If one of the given bullets is already loaded on the ship.
+	 * 		 | bullet.getShip() == this
+	 * @throws IllegalArgumentException
+	 * 		   If one of the bullets is already loaded on another ship.
+	 * 		 | bullet.getShip() != null
 	 */
 	public void load(Collection<Bullet> bullets) {
 		for (Bullet bullet : bullets)
@@ -575,34 +598,32 @@ public class Ship extends Entity{
 	
 	/**
 	 * Remove the given bullet from the ship.
+	 * @param  bullet
+	 * 		   The bullet to be removed from the ship.
 	 * @pre    The given bullet must be on the ship.
 	 * 		 | bullet.getShip() == this
 	 * @post   The given bullet is no longer on the ship
 	 *       | bullet.getShip() != this
 	 * @throws IllegalArgumentException
 	 * 		   If the given bullet is not loaded on the ship.
+	 * 		 | bullet.getShip() != this
 	 */
 	public void removeBullet(Bullet bullet) throws IllegalArgumentException {
-		if (bullet.getShip() != this)
-			throw new IllegalArgumentException(
+		if (bullet.getShip() != this) throw new IllegalArgumentException(
 					"the bullet given bullet is not loaded on the ship");
-		else {
-			bulletList.remove(bullet);
-			bullet.setShip(null);
-		}
+		bulletList.remove(bullet);
+		bullet.setShip(null);
 	}
 	
 	/**
 	 * Remove the bullet at the given index.
 	 * @param  index
-	 * 		   The index of the to be removed bullet
-	 * @pre    The given index must be in range of the bullet list.
-	 * 		 | (index >= 0 || index < getBullets().size())
+	 * 		   The index of the to be removed bullet.
 	 * @effect Removes the bullet at the given index from the ship
 	 * 		 | bulletList.remove(getBulletAtIndex(index))
 	 * @throws IndexOutOfBoundsException 
 	 * 		   If the index out is of range
-	 * 		 | (index < 0 || index >= getBullets().size())
+	 * 		 | index < 0 || index >= getBullets().size()
 	 */
 	public void removeBulletAt(int index) throws IndexOutOfBoundsException {
 		Bullet bullet = getBulletAtIndex(index);
@@ -617,6 +638,10 @@ public class Ship extends Entity{
 	 * The first bullet from the bulletList is fired.
 	 * @post The amount of bullets is decremented by one.
 	 * 	   | new getNbBullets() = old getNbBullets() - 1
+	 * @post The fired bullet is placed in the world of the ship
+	 * 	   | bullet.getWorld() == getWorld()
+	 * @post The sourceShip of the bullet is set to this ship.
+	 * 	   | bullet.getSourceShip() == this
 	 */
 	public void fireBullet() {
 		// does nothing if the ship has no bullets or is not located in a world
@@ -636,30 +661,29 @@ public class Ship extends Entity{
 		}
 		
 		// get the position offset of the fired bullet
-		double xOffset = (getRadius() + bullet.getRadius())
-							* Math.cos(getOrientation());
-		double yOffset = (getRadius() + bullet.getRadius())
-							* Math.sin(getOrientation());
+		double xOffset = (getRadius() + bullet.getRadius()) * Math.cos(getOrientation());
+		double yOffset = (getRadius() + bullet.getRadius()) * Math.sin(getOrientation());
 		
 		// get the position of the fired bullet
 		double xCoord = getXCoord() + xOffset;
 		double yCoord = getYCoord() + yOffset;
 		
-		// set the new position of the bullet
-		bullet.setPosition(new Position(xCoord, yCoord));
-		
-		// check if the bullet overlaps with any entity in the world
-		for(Entity other : getWorld().getEntityList())
-			if (bullet.overlaps(other) && this != other) {
-				bullet.terminate();
-				other.terminate();
-				return;
-			}
-		
 		// if the bullet would be placed (partially) outside the ships world, it's destroyed
 		if (! bullet.isWithinBoundariesOf(getWorld(), new Position(xCoord, yCoord))) {
 			bullet.terminate();
 			return;
+		}
+		
+		// set the new position of the bullet
+		bullet.setPosition(new Position(xCoord, yCoord));
+		
+		// check if the bullet overlaps with any entity in the world
+		for(Entity other : getWorld().getEntityList()) {
+			if (bullet.overlaps(other) && this != other) {
+				bullet.terminate();
+				other.die();
+				return;
+			}
 		}
 		
 		// add the bullet to the world
@@ -698,7 +722,6 @@ public class Ship extends Entity{
 	
 	/**
 	 * Load a program on the ship.
-	 * @return see implementation...
 	 */
 	public void setProgram(Program program){
 		this.program = program;
