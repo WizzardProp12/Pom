@@ -61,15 +61,17 @@ public class Bullet extends Entity {
 	 * 		   If the given radius is not valid
 	 * 		 | ! canHaveAsRadius(radius)
 	 * @throws IllegalArgumentException
-	 * 		   If the given bullet can't be loaded on the ship
-	 * 		 | ! ship.canHaveAsBullet(this)
+	 * 		   If the ship cannot load the given bullet.
+	 * 		 | ! canHaveAsBullet(bullet)
+	 * @throws IllegalArgumentException
+	 * 		   If the bullet cannot be loaded on the ship.
+	 * 		 | ! bullet.canHaveAsShip(this)
 	 */
 	public Bullet(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius, Ship ship) {
 		super(xCoord, yCoord, xVelocity, yVelocity, radius);
 		if (canHaveAsShip(ship) && ship != null)
 			ship.load(this);
-		
 	}
 	
 	/**
@@ -106,9 +108,10 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Return whether the prime object equals the argument.
-	 * @param other
-	 * 		  The other bullet.
-	 * @return see implementation...
+	 * @param  other
+	 * 		   The other bullet.
+	 * @return Whether this bullet is equal to the given object.
+	 * 		 | see implementation...
 	 */
 	@Override
 	public boolean equals(Object other){
@@ -131,6 +134,7 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Return the minimum radius of a bullet.
+	 * @return The minimum radius of a bullet.
 	 */
 	@Basic @Immutable @Raw
 	public static double getMinRadius() {
@@ -138,8 +142,8 @@ public class Bullet extends Entity {
 	}
 	
 	/**
-	 * The default radius for a Ship when the radius is
-	 * not specified in the constructor.
+	 * Return the default radius of a Bullet.
+	 * @return The default radius of a Bullet.
 	 */
 	@Basic @Immutable @Raw
 	public double getDefaultRadius() {
@@ -148,7 +152,12 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Returns whether the given radius suits the prime object.
+	 * @param  radius
+	 * 		   The radius to be checked
+	 * @return Whether the given radius is big enough.
+	 * 		 | getMinRadius() <= radius
 	 */
+	@Basic @Raw
 	public boolean canHaveAsRadius(double radius) {
 		return (getMinRadius() <= radius);
 	}
@@ -163,22 +172,27 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Return the density of the bullet.
+	 * @return The density of the bullet.
 	 */
+	@Basic @Raw @Immutable
 	public double getDensity() {
 		return density;
 	}
 	
 	
 	/**
-	 * The mass of the ship.
+	 * Return the mass of the bullet.
+	 * @return The mass of the bullet.
 	 */
 	private double mass = getMinimumMass();
 	
 	/**
-	 * Return the mass of the ship.
-	 * @invar The mass of the ship is always greater than or equal to the minimum mass
+	 * Return the mass of the bullet.
+	 * @invar The mass of the bullet is always greater than or equal to the minimum mass
 	 *      | getMass() >= getMinimumMass()
+	 * @return The mass of the bullet.
 	 */
+	@Basic @Raw @Immutable
 	public double getMass() {
 		return mass;
 	}
@@ -188,12 +202,12 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Set the position of the bullet.
-	 * @pre If the bullet is not loaded on a ship, the given position must be valid
-	 *    | getSourceShip() != null || isValidPosition(position)
-	 * @pre If the bullet is loaded on a ship, it must reference that ships position.
-	 *    | getSourceShip() != null && getSourceShip().getPosition() == position
-	 * @post The bullet references the given position.
-	 *     | getPosition() == position
+	 * @pre    If the bullet is not loaded on a ship, the given position must be valid
+	 *       | getSourceShip() != null || isValidPosition(position)
+	 * @pre    If the bullet is loaded on a ship, it must reference that ships position.
+	 *       | getSourceShip() != null && getSourceShip().getPosition() == position
+	 * @post   The bullet references the given position.
+	 *       | getPosition() == position
 	 * @throws IllegalArgumentException
 	 *         If bullet is not loaded on a ship and the given position is not valid.
 	 *       | ! isValidPosition(position)
@@ -216,6 +230,7 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Return the ship that carries the bullet.
+	 * @return The ship that carries the bullet.
 	 */
 	@Basic @Raw
 	public Ship getShip() {
@@ -223,11 +238,12 @@ public class Bullet extends Entity {
 	}
 	
 	/**
-	 * Return whether the bullet can belong to the ship
-	 * @see implementation...
+	 * Return whether the bullet can belong to the given ship.
+	 * @return Whether the bullet can belong to the given ship.
+	 * 		 | ship == null || ship.canHaveAsBullet(this)
 	 */
 	public boolean canHaveAsShip(Ship ship) {
-		return (ship == null || ship.canHaveAsBullet(this));
+		return ship == null || ship.canHaveAsBullet(this);
 	}
 	
 	/**
@@ -240,7 +256,7 @@ public class Bullet extends Entity {
 	 */
 	protected void setShip(Ship ship) throws IllegalArgumentException {
 		if (! canHaveAsShip(ship)) throw new IllegalArgumentException(
-				"invalid ship");
+				"invalid ship, see canHaveAsShip()");
 		if (getShip() == ship) return;
 		if (ship == null) {
 			this.ship = ship;
@@ -260,6 +276,7 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Return the ship that fired the bullet.
+	 * @return The ship that fired the bullet.
 	 */
 	@Basic @Raw
 	public Ship getSourceShip() {
@@ -268,6 +285,8 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Set the ship that fired the bullet.
+	 * @param ship
+	 * 		  The source ship to set.
 	 */
 	protected void setSourceShip(Ship ship) {
 		sourceShip = ship;
@@ -283,12 +302,12 @@ public class Bullet extends Entity {
 	
 	/**
 	 * A static getter for the fire speed of a bullet.
+	 * @return The fire speed of a bullet.
 	 */
 	@Basic @Immutable @Raw
 	public static double getFireSpeed() {
 		return Bullet.FIRE_SPEED;
 	}
-	
 	
 	
 	// BOUNCES ()
@@ -300,6 +319,7 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Return the maximum amount of bounces a bullet can make.
+	 * @return The maximum amount of bounces a bullet can make.
 	 */
 	@Basic @Immutable @Raw
 	public int getMaxNbBounces() {
@@ -315,6 +335,7 @@ public class Bullet extends Entity {
 	 * Get how much times the bullet has bounced of a wall.
 	 * @invar The amount of times a bullet has bounced is smaller than the maximum amount.
 	 *      | getNbBounces() < getMaxNbBounces()
+	 * @return How much times the bullet has bounced of a wall.
 	 */
 	public int getNbBounces() {
 		return this.nbBounces;
@@ -322,22 +343,23 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Count a bounce of the bullet.
+	 * @post The nbBounces is incremented by 1
+	 * 	   | new getNbBounces() == old getNbBounces() + 1
 	 */
 	public void countBounce() {
 		nbBounces++;
 	}
 	
 	/**
-	 * Bounce the bullet of a wall.
-	 * @effect The amount of times a bullet has bounced is icreased by 1
-	 *       | countBounce
-	 * post The amount of times a bullet has bounced is still smaller than the maximum amount.
-	 *      | new getNbBounces() < getMaxNbBounces()
+	 * Bounce the bullet of a wall or destroy it if it has reached its
+	 * maximum amount of bounces.
+	 * @post The bullet is terminated or has not reached its maximum amount of bounces.
+	 *     | isTerminated() || new getNbBounces() < getMaxNbBounces()
 	 */
 	@Override
 	public void bounce(CollisionType type) {
 		if (getNbBounces() == getMaxNbBounces())
-			terminate();
+			die();
 		else {
 			super.bounce(type);
 			countBounce();
@@ -346,6 +368,12 @@ public class Bullet extends Entity {
 	
 	// TERMINATE
 	
+	/**
+	 * Terminate the bullet
+	 * @effect Terminate the bullet and if it is loaded on a
+	 *         ship, remove it from the ship.
+	 *       | see implementation...
+	 */
 	public void terminate() {
 		if (getShip() != null) {
 			getShip().removeBullet(this);
