@@ -703,6 +703,9 @@ public class Ship extends Entity{
 			bullet.terminate();
 		super.terminate();
 	}
+	
+	// PROGRAM
+	
 	/**
 	 * The program loaded on the ship, if any.
 	 */
@@ -718,10 +721,16 @@ public class Ship extends Entity{
 	
 	/**
 	 * Load a program on the ship.
+	 * @return see implementation...
 	 */
 	public void setProgram(Program program){
+		System.out.println("program to set is null " +  (program == null));
 		this.program = program;
+
+		program.setShip(this);
+		
 	}
 	
 	
 }
+

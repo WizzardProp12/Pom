@@ -11,6 +11,13 @@ public class SkipStatement extends ActionStatement {
 
 	@Override
 	public void execute() {
-		return;
+		if (getProgram().getTimeLeft() >= 0.2){
+			getProgram().decreaseTime(getDuration());
+			System.out.println("skip for 0.2s");
+			return;
+		}
+			getProgram().setTimeIsUp(true);
+			return;
+		
 	}
 }

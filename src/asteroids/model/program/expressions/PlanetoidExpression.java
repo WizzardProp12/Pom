@@ -7,7 +7,6 @@ public class PlanetoidExpression extends Expression<Planetoid> {
 	
 	private SourceLocation sourceLocation;
 	private Planetoid closestPlanetoid;
-	private Ship thisShip = getProgram().getShip();
 	private double closestDistanceSoFar = Double.POSITIVE_INFINITY;
 	
 	public PlanetoidExpression(SourceLocation sourceLocation){
@@ -15,8 +14,8 @@ public class PlanetoidExpression extends Expression<Planetoid> {
 	}
 	public Planetoid evaluate(){
 		
-		for (Planetoid Planetoid: getProgram().getShip().getWorld().getPlanetoidSet()){//Method getPlanetoidSet to be added		
-			if (thisShip.getDistanceBetweenCentres(Planetoid) <  closestDistanceSoFar || closestPlanetoid == null){
+		for (Planetoid Planetoid: getProgram().getShip().getWorld().getSomeEntitySet(Planetoid.class)){
+			if (getProgram().getShip().getDistanceBetweenCentres(Planetoid) <  closestDistanceSoFar || closestPlanetoid == null){
 				closestPlanetoid = Planetoid;
 				
 			}

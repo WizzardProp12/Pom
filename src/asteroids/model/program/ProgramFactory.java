@@ -110,7 +110,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 	@Override
 	public Expression createChangeSignExpression(Expression e, SourceLocation location) {
 		return new ChangeSignExpression(e, location);
-;	}
+	}
 
 	@Override
 	public Expression createNotExpression(Expression e, SourceLocation location) {
@@ -123,7 +123,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 	}
 
 	@Override
-	public E createNullExpression(SourceLocation location) {
+	public Expression createNullExpression(SourceLocation location) {
 		return new NullExpression(location);
 	}
 
@@ -242,62 +242,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 		return new SkipStatement(location);
 	}
 
-	@Override
-	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public Expression createNullExpression(SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public Statement createTurnStatement(Expression angle, SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createNullExpression(SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createNullExpression(SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createNullExpression(SourceLocation location) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

@@ -15,6 +15,14 @@ public class TurnStatement extends ActionStatement {
 	
 	@Override
 	public void execute() {
-		getProgram().getShip().turn(getAngle());
+		if (getProgram().getTimeLeft() >= 0.2){
+			getProgram().decreaseTime(getDuration());
+			getProgram().getShip().turn(getAngle());
+			System.out.println("turn for 0.2s");
+			return;
+		}
+			getProgram().setTimeIsUp(true);
+			return;
+		
 	}
 }

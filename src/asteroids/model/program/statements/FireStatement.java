@@ -11,6 +11,15 @@ public class FireStatement extends ActionStatement{
 
 	@Override
 	public void execute() {
-		getProgram().getShip().fireBullet();
+		if (getProgram().getTimeLeft() >= 0.2){
+			getProgram().decreaseTime(getDuration());
+			getProgram().getShip().fireBullet();
+			System.out.println("firebullet for 0.2s");
+			return;
+		}
+			getProgram().setTimeIsUp(true);
+			return;
+		
 	}
+	
 }

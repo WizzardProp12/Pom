@@ -13,7 +13,10 @@ public class ReadVariableExpression extends Expression<Object>{
 
 	@Override
 	public Object evaluate() {
-		return getProgram().getVariableMap().get(variableName);
+		System.out.println("getprogram is null" + (getProgram() == null));
+		return getProgram().getVariable(variableName);
 	}
+	
+	
 
 }

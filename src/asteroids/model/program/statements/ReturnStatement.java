@@ -13,8 +13,8 @@ public class ReturnStatement extends Statement {
 	private Expression<? extends Object> value;
 	
 	//Immediately stops execution of the function
-	public void execute() throws RuntimeException{
-		throw new RuntimeException((String) value.evaluate());
+	public void execute() throws StopFunctionException{
+		throw new StopFunctionException((Object) value.evaluate());
 	}
 	
 	

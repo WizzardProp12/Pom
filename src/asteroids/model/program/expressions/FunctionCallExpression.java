@@ -8,9 +8,9 @@ import asteroids.part3.programs.SourceLocation;
 public class FunctionCallExpression extends Expression<Object>{
 	
 	private String functionName;
-	private ArrayList<Expression> actualArgs;
+	private ArrayList<Object> actualArgs =  new ArrayList<Object>();
 
-	public FunctionCallExpression(String functionName, List<Expression> actualArgs, SourceLocation sourceLocation) {
+	public FunctionCallExpression(String functionName, ArrayList<Object> actualArgs, SourceLocation sourceLocation) {
 		super(sourceLocation);
 		this.actualArgs = actualArgs;
 		this.functionName = functionName;
@@ -26,3 +26,4 @@ public class FunctionCallExpression extends Expression<Object>{
 	}
 
 }
+

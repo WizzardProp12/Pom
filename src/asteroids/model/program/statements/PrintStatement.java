@@ -1,5 +1,6 @@
 package asteroids.model.program.statements;
 
+import asteroids.model.program.Program;
 import asteroids.model.program.expressions.Expression;
 import asteroids.part3.programs.SourceLocation;
 
@@ -14,6 +15,15 @@ public class PrintStatement extends Statement{
 	
 	@Override
 	public void execute() {
-		getProgram().addNewOutputLine(e.toString());
+		System.out.println("printing, program is null is" + (getProgram() == null) );
+		getProgram().addNewOutputLine(e.evaluate());
 	}
+	
+	@Override
+	public void setProgram(Program program){
+		super.setProgram(program);
+		e.setProgram(program);
+		System.out.println("var assigned");
+	}
+	
 }

@@ -7,6 +7,7 @@ import java.util.Set;
 import asteroids.model.*;
 import asteroids.model.program.Program;
 import asteroids.model.program.ProgramFactory;
+import asteroids.model.program.statements.StopFunctionException;
 import asteroids.part2.CollisionListener;
 import asteroids.part3.programs.IProgramFactory;
 import asteroids.util.ModelException;
@@ -103,7 +104,7 @@ public class Facade implements asteroids.part3.facade.IFacade{
 			double mass) throws ModelException {
 		try {
 			return new Ship(x, y, xVelocity, yVelocity, radius, direction, mass);
-		} catch (IllegalArgumentException | AssertionError e) {
+		} catch (IllegalArgumentException e) {
 			throw new ModelException(e.getMessage());
 		}
 	}
@@ -314,7 +315,7 @@ public class Facade implements asteroids.part3.facade.IFacade{
 	public double getTimeCollisionBoundary(Object object) throws ModelException {
 		try {
 			if (object instanceof Entity)
-				return ((Entity) object).getTimeToBorderCollision();
+				return ((Entity) object).getTimeToCollision(((Entity) object).getWorld());
 			else
 				throw new ModelException("argument must be an Entity subclass");
 		} catch (NullPointerException e) {
@@ -326,11 +327,10 @@ public class Facade implements asteroids.part3.facade.IFacade{
 	public double[] getPositionCollisionBoundary(Object object) throws ModelException {
 		try {
 			if (object instanceof Entity)
-				return ((Entity) object).getBorderCollisionPositionArray(((Entity) object).getWorld());
+				return ((Entity) object).getCollisionPosition(((Entity) object).getWorld()).toArray();
 			else
 				throw new ModelException("argument must be an Entity subclass");
 		} catch (NullPointerException e) {
-			System.out.println(e.getMessage());
 			throw new ModelException(e.getMessage()); 
 		}
 	}
@@ -551,7 +551,11 @@ public class Facade implements asteroids.part3.facade.IFacade{
 
 	@Override
 	public List<Object> executeProgram(Ship ship, double dt) throws ModelException {
+		try{
 		return ship.getProgram().execute(dt);
+	} catch (StopFunctionException e) {
+		throw new ModelException(e.getMessage());
+	}
 	}
 
 	@Override

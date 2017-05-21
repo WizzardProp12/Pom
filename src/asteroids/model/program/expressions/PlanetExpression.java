@@ -1,5 +1,4 @@
 package asteroids.model.program.expressions;
-import java.util.HashSet;
 
 import asteroids.model.MinorPlanet;
 import asteroids.model.Ship;
@@ -13,12 +12,10 @@ public class PlanetExpression extends Expression<MinorPlanet> {
 	}
 	
 	public MinorPlanet evaluate(){
-		Ship thisShip = getProgram().getShip();
-		MinorPlanet closestMinorPlanet == null = null;
+		MinorPlanet closestMinorPlanet = null;
 		double closestDistanceSoFar = Double.POSITIVE_INFINITY;
-		HashSet minorPlanetSet = getProgram().getShip().getWorld().getMinorPlanetSet();
-		for (MinorPlanet MinorPlanet: minorPlanetSet){//Method getMinorPlanetSet to be added		
-			if (thisShip.getDistanceBetweenCentres(MinorPlanet) <  closestDistanceSoFar 
+		for (MinorPlanet MinorPlanet: getProgram().getShip().getWorld().getSomeEntitySet(MinorPlanet.class)){
+			if (getProgram().getShip().getDistanceBetweenCentres(MinorPlanet) <  closestDistanceSoFar 
 					|| closestMinorPlanet == null) {
 				closestMinorPlanet = MinorPlanet;
 			}

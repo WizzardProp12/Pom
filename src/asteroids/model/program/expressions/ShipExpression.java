@@ -5,7 +5,6 @@ import asteroids.part3.programs.SourceLocation;
 public class ShipExpression extends Expression<Ship> {
 	
 	private Ship closestShip;
-	private Ship thisShip = getProgram().getShip();
 	private double closestDistanceSoFar = Double.POSITIVE_INFINITY;
 	
 	public ShipExpression(SourceLocation sourceLocation){
@@ -13,9 +12,9 @@ public class ShipExpression extends Expression<Ship> {
 	}
 	public Ship evaluate(){
 		
-		for (Ship ship: getProgram().getShip().getWorld().getShipSet()){
+		for (Ship ship: getProgram().getShip().getWorld().getSomeEntitySet(Ship.class)){
 			if (ship != getProgram().getShip()){
-				if (thisShip.getDistanceBetweenCentres(ship) <  closestDistanceSoFar || closestShip == null){
+				if (getProgram().getShip().getDistanceBetweenCentres(ship) <  closestDistanceSoFar || closestShip == null){
 					closestShip = ship;
 				}
 			}

@@ -16,7 +16,7 @@ public abstract class Statement {
 	
 	// PROGRAM
 
-	private Program program;
+	protected Program program;
 	
 	public Program getProgram(){ return this.program; }
 	
@@ -25,5 +25,15 @@ public abstract class Statement {
 	// EXECUTE
 	
 	public abstract void execute();
+	
+	private boolean statementExecuted = true;
+
+	public boolean getStatementExecuted() {
+		return statementExecuted;
+	}
+
+	public void setStatementExecuted(boolean isExecuted) {
+		this.statementExecuted = isExecuted;
+	}
 	
 }

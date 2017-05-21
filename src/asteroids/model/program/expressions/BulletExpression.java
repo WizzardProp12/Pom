@@ -11,7 +11,7 @@ public class BulletExpression extends Expression<Bullet> {
 	
 	public Bullet evaluate(){
 		Ship thisShip = getProgram().getShip();
-		for (Bullet bullet: getProgram().getShip().getWorld().getBulletSet()) {
+		for (Bullet bullet: getProgram().getShip().getWorld().getSomeEntitySet(Bullet.class)) {
 			if (bullet.getSourceShip() == thisShip) 
 				return bullet;
 		}

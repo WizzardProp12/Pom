@@ -1,5 +1,6 @@
 package asteroids.model.program;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,6 +16,8 @@ public class Program {
 		
 		this.main = main;
 		this.timeLeft = time;
+		
+		main.setProgram(this);
 	}
 	
 	public Program(List<Function> functions, Statement main) {
@@ -25,6 +28,14 @@ public class Program {
 	// FUNCTIONS
 	
 	private List<Function> functions;
+	
+	public Function getFunction(String functionName){
+		for (Function function : functions){
+			if (function.getFunctionName() == functionName)
+				return function;
+		}
+		return null;
+	}
 	
 	/*
 	protected HashMap<String, Object> parameterMap = new HashMap<String, Object>();
@@ -44,13 +55,23 @@ public class Program {
 	
 	// MAIN
 	
-	private List<Statement> main;
+	private Statement main;
 	
+	public Statement getMain() {
+		return main;
+	}
+
+	public void setMain(Statement main) {
+		this.main = main;
+	}
+
+
 	private int index = 0;
 	
-	public Statement getCurrentStatement() {
+	/*public Statement getCurrentStatement() {
 		return this.main.get(index);
 	}
+	*/
 	
 	// SHIP
 	
@@ -90,7 +111,7 @@ public class Program {
 	
 	// PRINT OUTPUT
 
-	private List<Object> printOutput;
+	private List<Object> printOutput = new ArrayList<Object>();
 	
 	public List<Object> getPrintOutput() { return this.printOutput; }
 	
@@ -102,11 +123,42 @@ public class Program {
 		
 	}
 	
-	public void execute(double time){
+	public List<Object> execute(double time){
+		addTime(time);
+		if (timeLeft >= 0.2) {setTimeIsUp(false);}
+		System.out.println("time " + timeLeft + " " +  time);
+		if (timeIsUp){
+			System.out.println("timeup");
+			return null;
+		}
+		if (timeLeft >= 0.2){
+			System.out.println("start executing main");
 		main.execute();
+		System.out.println(printOutput + "mainexecuted " + main.getStatementExecuted());
+		if (main.getStatementExecuted()){
+			System.out.println("statement is executed");
+		return printOutput;
+		}
+		}
+		return null;
+	}
+	
+	// flag for when there is not enough time to execute
+	
+	protected boolean timeIsUp = false;
+
+	public boolean isTimeIsUp() {
+		return timeIsUp;
+	}
+
+	public void setTimeIsUp(boolean timeIsUp) {
+		this.timeIsUp = timeIsUp;
 	}
 	
 	// HOLD
+	
+	
+	
 	
 	
 	

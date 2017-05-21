@@ -11,6 +11,14 @@ public class ThrustOffStatement extends ActionStatement {
 
 	@Override
 	public void execute() {
-		getProgram().getShip().thrustOff();
+		if (getProgram().getTimeLeft() >= 0.2){
+			getProgram().decreaseTime(getDuration());
+			System.out.println("thrustoff for 0.2s");
+			getProgram().getShip().thrustOff();
+			return;
+		}
+			getProgram().setTimeIsUp(true);
+			return;
+		
 	}
 }
