@@ -1,13 +1,9 @@
 package asteroids.model;
 
 import static org.junit.Assert.*;
-
 import java.util.HashSet;
-
-import org.junit.Before;
 import org.junit.Test;
 
-import asteroids.model.*;
 
 
 
@@ -213,7 +209,7 @@ public class testSuite {
 	}
 	
 	@Test
-	public void testLimitSpeedKeepsOrientation() throws IllegalArgumentException {
+	public void testLimitSpeedKeepsMovementDirection() throws IllegalArgumentException {
 		double[] result = new Ship().limitSpeed(10E10, 20E10);
 		assertEquals(20E10 / 10E10, result[1] / result[0], EPSILON);
 	}
@@ -532,42 +528,85 @@ public class testSuite {
 		assertFalse(bullet.isTerminated());
 	}
 	
+	@Test
+	public void testPlanetoidShrinkDissolve() {
+		Planetoid planetoid = new Planetoid(0,0,0,0,50,0);
+		planetoid.increaseTravelledDistance(100);
+		planetoid.updateCurrentRadius();
+		assertEquals(planetoid.getRadius(), 50 - 100 * Planetoid.getShrinkingPercentage() * 0.01, EPSILON);
+		planetoid.increaseTravelledDistance(10E10);
+		assertFalse(planetoid.isTerminated());
+		planetoid.updateCurrentRadius();
+		assertTrue(planetoid.isTerminated());
+	}
 	
+	@Test
+	public void testPlanetoidDieSpawnAsteroids() {
+		World world = new World(1000,1000);
+		Planetoid planetoid = new Planetoid(500,500,0,0,50,0,world);
+		assertEquals(world.getSomeEntitySet(Planetoid.class).size(),1);
+		assertEquals(world.getSomeEntitySet(Asteroid.class).size(),0);
+		planetoid.die();
+		assertEquals(world.getSomeEntitySet(Planetoid.class).size(),0);
+		assertEquals(world.getSomeEntitySet(Asteroid.class).size(),2);
+	}
 	
+	@Test
+	public void testPlanetoidDieSpawnAsteroidsOverlappingWorldBorders() {
+		World world = new World(100,100);
+		Planetoid planetoid = new Planetoid(50,50,0,0,50,0,world);
+		assertEquals(world.getSomeEntitySet(Planetoid.class).size(),1);
+		assertEquals(world.getSomeEntitySet(Asteroid.class).size(),0);
+		planetoid.die();
+		assertEquals(world.getSomeEntitySet(Planetoid.class).size(),0);
+		assertEquals(world.getSomeEntitySet(Asteroid.class).size(),0);
+	}
 	
+	@Test
+	public void testResolveCollisionShipBullet() {
+		World world = new World(1000,1000);
+		Ship ship = new Ship(50,50,10,0);
+		Bullet bullet = new Bullet(250,50,-10,0);
+		world.add(ship);
+		world.add(bullet);
+		Collision firstCollision = world.getFirstCollision();
+		assertEquals(firstCollision.getCollisionType(), CollisionType.entity);
+		world.advanceTime(firstCollision.getTime()-0.1);
+		assertEquals(world.getEntityList().size(),2);
+		world.advanceTime(0.1);
+		assertEquals(world.getEntityList().size(),0);
+	}
 	
+	@Test
+	public void testResolveCollisionShipFiredBullet() {
+		World world = new World(1000,1000);
+		Ship ship = new Ship(50,50,10,0);
+		Bullet bullet = new Bullet(250,50,-10,0);
+		world.add(ship);
+		world.add(bullet);
+		bullet.setSourceShip(ship);
+		Collision firstCollision = world.getFirstCollision();
+		assertEquals(firstCollision.getCollisionType(), CollisionType.entity);
+		world.advanceTime(firstCollision.getTime()-0.1);
+		assertEquals(world.getEntityList().size(),2);
+		world.advanceTime(0.1);
+		assertEquals(world.getEntityList().size(),1);
+		assertTrue(world.getEntityList().contains(ship));
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	@Test
+	public void testResolveCollisionShipAsteroid() {
+		World world = new World(1000,1000);
+		Ship ship = new Ship(50,50,10,0);
+		Asteroid asteroid = new Asteroid(250,50,-10,0,10);
+		world.add(ship);
+		world.add(asteroid);
+		Collision firstCollision = world.getFirstCollision();
+		assertEquals(firstCollision.getCollisionType(), CollisionType.entity);
+		world.advanceTime(firstCollision.getTime()-0.1);
+		assertEquals(world.getEntityList().size(),2);
+		world.advanceTime(0.1);
+		assertEquals(world.getEntityList().size(),1);
+		assertTrue(world.getEntityList().contains(asteroid));
+	}
 }
