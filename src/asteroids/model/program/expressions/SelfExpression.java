@@ -8,6 +8,7 @@ public class SelfExpression extends Expression<Ship> {
 		super(sourceLocation);
 	}
 	public Ship evaluate(){
+		System.out.println("selexpr program is null " + (program == null));
 		return getProgram().getShip();
 
 		

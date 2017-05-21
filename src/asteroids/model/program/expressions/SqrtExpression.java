@@ -1,5 +1,6 @@
 package asteroids.model.program.expressions;
 
+import asteroids.model.program.Program;
 import asteroids.part3.programs.SourceLocation;
 
 public class SqrtExpression extends Expression<Double>{
@@ -15,6 +16,13 @@ public class SqrtExpression extends Expression<Double>{
 	@Override
 	public Double evaluate() {
 		return Math.sqrt(e.evaluate());
+		
+	}
+	
+	@Override
+	public void setProgram(Program program){
+		super.setProgram(program);
+		e.setProgram(program);
 		
 	}
 

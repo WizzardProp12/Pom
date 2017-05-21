@@ -726,9 +726,8 @@ public class Ship extends Entity{
 	public void setProgram(Program program){
 		System.out.println("program to set is null " +  (program == null));
 		this.program = program;
-
 		program.setShip(this);
-		
+	
 	}
 	
 	

@@ -1,6 +1,7 @@
 package asteroids.model.program.expressions;
 
 import asteroids.model.Entity;
+import asteroids.model.program.Program;
 import asteroids.part3.programs.SourceLocation;
 
 public class GetVxExpression extends Expression<Double>{
@@ -16,5 +17,13 @@ public class GetVxExpression extends Expression<Double>{
 	public Double evaluate() {
 		return e.evaluate().getXVelocity();
 	}
+	
+	@Override
+	public void setProgram(Program program){
+		super.setProgram(program);
+		e.setProgram(program);
+		
+	}
+
 
 }

@@ -1,5 +1,6 @@
 package asteroids.model.program.expressions;
 
+import asteroids.model.program.Program;
 import asteroids.part3.programs.SourceLocation;
 
 public class EqualityExpression extends Expression<Boolean>{
@@ -18,5 +19,14 @@ public class EqualityExpression extends Expression<Boolean>{
 		return e1.evaluate().equals(e2.evaluate());
 		
 	}
+	
+	@Override
+	public void setProgram(Program program){
+		super.setProgram(program);
+		e1.setProgram(program);
+		e2.setProgram(program);
+
+	}
+
 
 }

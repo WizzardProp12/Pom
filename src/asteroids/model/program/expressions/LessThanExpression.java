@@ -1,5 +1,6 @@
 package asteroids.model.program.expressions;
 
+import asteroids.model.program.Program;
 import asteroids.part3.programs.SourceLocation;
 
 public class LessThanExpression extends Expression<Boolean> {
@@ -19,5 +20,16 @@ public class LessThanExpression extends Expression<Boolean> {
 		return e1.evaluate() < e2.evaluate();
 		
 	}
+	
+	@Override
+	public void setProgram(Program program){
+		super.setProgram(program);
+		e1.setProgram(program);
+		e2.setProgram(program);
+
+	}
+
+	
+	
 
 }
