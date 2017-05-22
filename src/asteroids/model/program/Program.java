@@ -119,10 +119,6 @@ public class Program {
 	
 	// EXECUTE
 	
-	public void executeOneCommand() {
-		
-	}
-	
 	public List<Object> execute(double time){
 		addTime(time);
 		if (timeLeft >= 0.2) {setTimeIsUp(false);}
