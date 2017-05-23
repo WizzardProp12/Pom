@@ -49,19 +49,25 @@ public class SequenceStatement extends Statement{
 
 		for (Statement statement : statements){
 			statement.setProgram(program);
-			if (!getProgram().isTimeIsUp()){
+			if (! getProgram().isTimeIsUp()) {
 				System.out.println("start to execute statement " + index + " with time left: " + getProgram().getTimeLeft() );
-			
-			if (index < statements.size() ) {
-				getCurrentStatement().setProgram(program);
-				getCurrentStatement().execute();
-				if (index == statements.size()-1 ){getProgram().getMain().setStatementExecuted(true);}
-			System.out.println("executed statement " + index + " printop so far " + getProgram().getPrintOutput());}
-			else if (index == statements.size()){ getProgram().getMain().setStatementExecuted(true); System.out.println("stm done"); return;}
-			if(!getProgram().isTimeIsUp()){
-				System.out.println("go to next statement " + (index+1));
-			gotoNextStatement();
-			}
+				
+				if (index < statements.size() ) {
+					getCurrentStatement().setProgram(program);
+					getCurrentStatement().execute();
+					if (index == statements.size()-1 )
+						getProgram().getMain().setStatementExecuted(true);
+					System.out.println("executed statement " + index + " printop so far " + getProgram().getPrintOutput());
+					
+				} else if (index == statements.size()) {
+					getProgram().getMain().setStatementExecuted(true);
+					System.out.println("stm done");
+					return;
+				}
+				if(!getProgram().isTimeIsUp()){
+					System.out.println("go to next statement " + (index+1));
+					gotoNextStatement();
+				}
 			}
 			else{
 				return;
