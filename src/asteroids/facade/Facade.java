@@ -557,9 +557,8 @@ public class Facade implements asteroids.part3.facade.IFacade{
 		throw new ModelException(e.getMessage());
 	}catch (StopFunctionException e) {
 		throw new ModelException(e.getMessage());
-	}catch (NullPointerException e) {
-		throw new ModelException(e.getMessage());
-	
+	//}catch (NullPointerException e) {
+	//	throw new ModelException(e.getMessage());
 	}
 	}
 

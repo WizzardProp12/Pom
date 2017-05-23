@@ -19,11 +19,12 @@ public class WhileStatement extends Statement{
 
 
 
-	//Execution needs to stop if (currentStatement instanceof BreakStatement)
 	@Override
 	public void execute(){
 		try{
 		while (condition.evaluate() == true){
+			if (getProgram().getMain().getStatementExecuted()) {System.out.println("while is done so return"); return;}
+			System.out.println("execute while, condition is true");
 			body.execute();
 		}
 		} catch (BreakException e){
