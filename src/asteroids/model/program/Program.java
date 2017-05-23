@@ -121,20 +121,21 @@ public class Program {
 	
 	public List<Object> execute(double time){
 		addTime(time);
-		if (timeLeft >= 0.2) {setTimeIsUp(false);}
+		if (timeLeft >= 0.2)
+			setTimeIsUp(false);
 		System.out.println("time " + timeLeft + " " +  time);
 		if (timeIsUp){
 			System.out.println("timeup");
 			return null;
 		}
-		if (timeLeft >= 0.2){
+		if (timeLeft >= 0.2) {
 			System.out.println("start executing main");
-		main.execute();
-		System.out.println(printOutput + "mainexecuted " + main.getStatementExecuted());
-		if (main.getStatementExecuted()){
-			System.out.println("statement is executed");
-		return printOutput;
-		}
+			main.execute();
+			System.out.println(printOutput + "mainexecuted " + main.getStatementExecuted());
+			if (main.getStatementExecuted()){
+				System.out.println("statement is executed");
+				return printOutput;
+			}
 		}
 		return null;
 	}
