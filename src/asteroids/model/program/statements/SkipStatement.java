@@ -17,6 +17,7 @@ public class SkipStatement extends ActionStatement {
 			return;
 		}
 			getProgram().setTimeIsUp(true);
+			System.out.println("time is up after skip");
 			return;
 		
 	}
