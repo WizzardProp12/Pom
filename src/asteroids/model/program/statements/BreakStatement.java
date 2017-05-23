@@ -9,7 +9,6 @@ public class BreakStatement extends Statement {
 	}
 
 	public void execute(){
-		// TODO
-		return;
+		throw new BreakException(this);
 	}
 }

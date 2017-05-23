@@ -1,5 +1,6 @@
 package asteroids.model.program.statements;
 
+import asteroids.model.program.Program;
 import asteroids.model.program.expressions.Expression;
 import asteroids.part3.programs.SourceLocation;
 
@@ -18,10 +19,28 @@ public class IfStatement extends Statement{
 	private Statement elseStatement;
 	
 	public void execute(){
-		if (condition.evaluate() == true)
+		if (condition.evaluate() == true){
+			System.out.println("start executing if");
 			ifStatement.execute();
+			
+			if (ifStatement.getProgram().isTimeIsUp()) {System.out.println("time of if is up"); return;}
+		}
 		else if (elseStatement != null)
 			elseStatement.execute();
+			if (ifStatement.getProgram().isTimeIsUp()) {return;}
+
 		return;
+	}
+	
+	@Override
+	public void setProgram(Program program){
+		super.setProgram(program);
+		condition.setProgram(program);
+		ifStatement.setProgram(program);
+		//Elsebody is optional!!!!!!
+		
+		if (elseStatement != null) {elseStatement.setProgram(program);}
+
+
 	}
 }

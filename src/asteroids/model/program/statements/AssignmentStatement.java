@@ -20,14 +20,14 @@ public class AssignmentStatement<T> extends Statement{
 
 	@Override
 	public void execute() {
-		getProgram().setVariable(variableName, value);
+		getProgram().setVariable(variableName, value.evaluate());
 	}
 	
 	@Override
 	public void setProgram(Program program){
 		super.setProgram(program);
 		value.setProgram(program);
-		System.out.println("assigned program to var");
+		System.out.println("assigned program to var, variablemap is" + getProgram().getGlobalVariables());
 		
 	}
 }

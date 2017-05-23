@@ -1,5 +1,6 @@
 package asteroids.model.program.statements;
 
+import asteroids.model.program.Program;
 import asteroids.model.program.expressions.Expression;
 import asteroids.part3.programs.SourceLocation;
 
@@ -18,12 +19,27 @@ public class WhileStatement extends Statement{
 
 
 
-	//Execution needs to stop if (currentStatement instanceof BreakStatement)
+	@Override
 	public void execute(){
+		try{
 		while (condition.evaluate() == true){
+			if (getProgram().getMain().getStatementExecuted()) {System.out.println("while is done so return"); return;}
+			System.out.println("execute while, condition is true");
 			body.execute();
 		}
+		} catch (BreakException e){
+			
+		}
 	}
+	
+	@Override
+	public void setProgram(Program program){
+		super.setProgram(program);
+		condition.setProgram(program);
+		body.setProgram(program);
+	}
+	
 
 
 }
+

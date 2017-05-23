@@ -315,7 +315,7 @@ public class Facade implements asteroids.part3.facade.IFacade{
 	public double getTimeCollisionBoundary(Object object) throws ModelException {
 		try {
 			if (object instanceof Entity)
-				return ((Entity) object).getTimeToCollision(((Entity) object).getWorld());
+				return ((Entity) object).getTimeToBorderCollision();
 			else
 				throw new ModelException("argument must be an Entity subclass");
 		} catch (NullPointerException e) {
@@ -327,7 +327,7 @@ public class Facade implements asteroids.part3.facade.IFacade{
 	public double[] getPositionCollisionBoundary(Object object) throws ModelException {
 		try {
 			if (object instanceof Entity)
-				return ((Entity) object).getCollisionPosition(((Entity) object).getWorld()).toArray();
+				return ((Entity) object).getBorderCollisionPositionArray(((Entity) object).getWorld());
 			else
 				throw new ModelException("argument must be an Entity subclass");
 		} catch (NullPointerException e) {
@@ -557,9 +557,8 @@ public class Facade implements asteroids.part3.facade.IFacade{
 		throw new ModelException(e.getMessage());
 	}catch (StopFunctionException e) {
 		throw new ModelException(e.getMessage());
-	}catch (NullPointerException e) {
-		throw new ModelException(e.getMessage());
-	
+	//}catch (NullPointerException e) {
+	//	throw new ModelException(e.getMessage());
 	}
 	}
 
