@@ -67,6 +67,8 @@ public class World {
 	
 	/**
 	 * Initialise a new world with default height and default width.
+	 * @effect ...
+	 * 		 | World(World.getDefaultWidth(), World.getDefaultHeight())
 	 * @post The width is the default value
 	 * 	   | new getWidth() == World.getDefaultWidth()
 	 * @post The height is the default value

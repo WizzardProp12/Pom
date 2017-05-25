@@ -118,6 +118,8 @@ public abstract class Entity {
 	
 	/**
 	 * Initialise a new entity with given coordinates, velocity, radius and no world.
+	 * @effect ...
+	 * 		 | Entity(xCoord, yCoord, xVelocity, yVelocity, radius, null)
 	 */
 	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity,
 			double radius) {
@@ -127,6 +129,8 @@ public abstract class Entity {
 	/**
 	 * Initialise a new entity with given coordinates, velocity, default
 	 * radius and no world.
+	 * @effect ...
+	 * 		 | Entity(xCoord, yCoord, xVelocity, yVelocity, 0, null)
 	 */
 	public Entity(double xCoord, double yCoord, double xVelocity, double yVelocity) {
 		this(xCoord, yCoord, xVelocity, yVelocity, 0);
@@ -135,6 +139,8 @@ public abstract class Entity {
 	/**
 	 * Initialise a new entity with given coordinates, no velocity, default
 	 * radius and no world.
+	 * @effect ...
+	 * 		 | Entity(xCoord, yCoord, 0, 0, 0, null)
 	 */
 	public Entity(double xCoord, double yCoord) {
 		this(xCoord, yCoord, 0, 0);
@@ -143,6 +149,8 @@ public abstract class Entity {
 	/**
 	 * Initialise a new entity with  coordinates (0, 0) , no velocity, default
 	 * radius and no world.
+	 * @effect ...
+	 * 		 | Entity(0, 0, 0, 0, 0, null)
 	 */
 	public Entity() {
 		this(0, 0);

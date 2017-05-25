@@ -31,6 +31,8 @@ public class Position {
 	
 	/**
 	 * Initialise a new Position with x and y coordinates 0.
+	 * @effect ...
+	 * 		 | Position(0, 0)
 	 */
 	public Position() {
 		this(0, 0);

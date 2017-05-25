@@ -76,6 +76,8 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Initialise a new bullet with given coordinates, velocities, radius and no ship.
+	 * @effect ...
+	 * 		 | Bullet(xCoord, yCoord, xVelocity, yVelocity, radius, null)
 	 */
 	public Bullet(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius) {
@@ -84,6 +86,8 @@ public class Bullet extends Entity {
 
 	/**
 	 * Initialise a new bullet with given coordinates, velocities, default radius and no ship.
+	 * @effect ...
+	 * 		 | Bullet(xCoord, yCoord, xVelocity, yVelocity, MIN_RADIUS, null)
 	 */
 	public Bullet(double xCoord, double yCoord, double xVelocity, double yVelocity) {
 		this(xCoord, yCoord, xVelocity, yVelocity, MIN_RADIUS);
@@ -91,6 +95,8 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Initialise a new bullet with given coordinates, no velocities, default radius and no ship.
+	 * @effect ...
+	 * 		 | Bullet(xCoord, yCoord, 0, 0, MIN_RADIUS, null)
 	 */
 	public Bullet(double xCoord, double yCoord) {
 		this(xCoord, yCoord, 0, 0);
@@ -98,6 +104,8 @@ public class Bullet extends Entity {
 	
 	/**
 	 * Initialise a new bullet with coordinates (0,0), no velocities, default radius and no ship.
+	 * @effect ...
+	 * 		 | Bullet(0, 0, 0, 0, MIN_RADIUS, null)
 	 */
 	public Bullet() {
 		this(0, 0);

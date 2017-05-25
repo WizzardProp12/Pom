@@ -61,22 +61,8 @@ public class Collision {
 	
 	/**
 	 * Initialise a new Collision with the given type, time and entity.
-	 * @param type
-	 * 		  The type of collision.
-	 * @param time
-	 * 		  The amount of time before the collision will occur.
-	 * @param entity
-	 * 		  The entity that collides with the other entity or wall.
-	 * @pre   The given time must be valid.
-	 * 		| isValidTime(time)
-	 * @post  ...
-	 * 		| new getCollisionType() == type
-	 * @post  ...
-	 * 		| new getTime() == time
-	 * @post  ...
-	 * 		| new getEntity() == entity
-	 * @post  ...
-	 * 		| new getOtherEntity() == null
+	 * @effect ...
+	 * 		 | Collision(type, time, entity, null)
 	 */
 	public Collision(CollisionType type, double time, Entity entity) {
 		this(type, time, entity, null);

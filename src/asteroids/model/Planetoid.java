@@ -68,6 +68,8 @@ public class Planetoid extends MinorPlanet {
 	/**
 	 * Initialise a new planetoid with given coordinates, velocity, radius
 	 * and travelled distance.
+	 * @effect ...
+	 * 		 | Planetoid(xCoord, yCoord, xVelocity, yVelocity, radius, travelledDistance, null)
 	 */
 	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius, double travelledDistance) {
@@ -76,6 +78,8 @@ public class Planetoid extends MinorPlanet {
 	
 	/**
 	 * Initialise a new planetoid with given coordinates, velocity and radius.
+	 * @effect ...
+	 * 		 | Planetoid(xCoord, yCoord, xVelocity, yVelocity, radius, 0, null)
 	 */
 	public Planetoid(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius) {

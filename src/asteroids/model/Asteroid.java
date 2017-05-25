@@ -80,6 +80,8 @@ public class Asteroid extends MinorPlanet {
 	
 	/**
 	 * Initialise a new asteroid with given coordinates, velocity, radius and world.
+	 * @effect ...
+	 * 		 | Asteroid(xCoord, yCoord, xVelocity, yVelocity, radius, null)
 	 */
 	public Asteroid(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius) throws IllegalArgumentException {

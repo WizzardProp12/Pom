@@ -79,6 +79,8 @@ public abstract class MinorPlanet extends Entity {
 	/**
 	 * Initialise a new minor planet with given coordinates, velocities
 	 * and radius.
+	 * @effect ...
+	 * 		 | MinorPlanet(xCoord, yCoord, xVelocity, yVelocity, radius, null)
 	 */
 	public MinorPlanet(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius) throws IllegalArgumentException {

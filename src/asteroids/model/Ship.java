@@ -93,6 +93,8 @@ public class Ship extends Entity{
 	/**
 	 * Initialise a new ship with given coordinates, velocities,
 	 * radius, orientation, mass and no world.
+	 * @effect ...
+	 * 		 | Ship(xCoord, yCoord, xVelocity, yVelocity, radius, orientation, mass, null)
 	 */
 	public Ship(double xCoord, double yCoord, double xVelocity, double yVelocity, 
 			double radius, double orientation, double mass) {
@@ -102,6 +104,8 @@ public class Ship extends Entity{
 	/**
 	 * Initialise a new ship with given coordinates, velocities,
 	 * radius, orientation, default mass and no world.
+	 * @effect ...
+	 * 		 | Ship(xCoord, yCoord, xVelocity, yVelocity, radius, orientation, 0, null)
 	 */
 	public Ship(double xCoord, double yCoord, double xVelocity, double yVelocity,
 			double radius, double orientation) {
@@ -111,6 +115,8 @@ public class Ship extends Entity{
 	/**
 	 * Initialise a new ship with given coordinates, velocities,
 	 * radius, default orientation, default mass and no world.
+	 * @effect ...
+	 * 		 | Ship(xCoord, yCoord, xVelocity, yVelocity, radius, 0, 0, null)
 	 */
 	public Ship(double xCoord, double yCoord, double xVelocity, double yVelocity,
 			double radius) {
@@ -120,6 +126,8 @@ public class Ship extends Entity{
 	/**
 	 * Initialise a new ship with given coordinates, velocities,
 	 * minimum radius, default orientation, default mass and no world.
+	 * @effect ...
+	 * 		 | Ship(xCoord, yCoord, xVelocity, yVelocity, MIN_RADIUS, 0, 0, null)
 	 */
 	public Ship(double xCoord, double yCoord, double xVelocity, double yVelocity) {
 		this(xCoord, yCoord, xVelocity, yVelocity, MIN_RADIUS);
@@ -128,6 +136,8 @@ public class Ship extends Entity{
 	/**
 	 * Initialise a new ship with given coordinates, no velocities,
 	 * minimum radius, default orientation, default mass and no world.
+	 * @effect ...
+	 * 		 | Ship(xCoord, yCoord, 0, 0, MIN_RADIUS, 0, 0, null)
 	 */
 	public Ship(double xCoord, double yCoord) {
 		this(xCoord, yCoord, 0, 0);
@@ -136,6 +146,8 @@ public class Ship extends Entity{
 	/**
 	 * Initialise a new ship with coordinates (0,0), no velocities,
 	 * minimum radius, default orientation, default mass and no world.
+	 * @effect ...
+	 * 		 | Ship(0, 0, 0, 0, MIN_RADIUS, 0, 0, null)
 	 */
 	public Ship() {
 		this(0, 0);
