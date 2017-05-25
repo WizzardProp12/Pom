@@ -37,21 +37,14 @@ public class Program {
 		return null;
 	}
 	
-	/*
+	
 	protected HashMap<String, Object> parameterMap = new HashMap<String, Object>();
 		
 	public HashMap<String,Object> getParameterMap(){
 		return parameterMap;
 	}
+
 	
-	public Function getFunction(String functionName){
-		for (F function : functions){
-			if (function.getFunctionName() == functionName)
-				return function;
-		}
-		return null;
-	}
-	*/
 	
 	// MAIN
 	

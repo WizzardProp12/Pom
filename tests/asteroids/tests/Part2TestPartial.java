@@ -1,14 +1,14 @@
 package asteroids.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals; 
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import asteroids.model.World;
-import asteroids.model.entities.Bullet;
-import asteroids.model.entities.Ship;
+import asteroids.model.Bullet;
+import asteroids.model.Ship;
 import asteroids.facade.Facade;
 import asteroids.part2.facade.IFacade;
 import asteroids.util.ModelException;

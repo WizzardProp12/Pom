@@ -1,5 +1,8 @@
 package asteroids.model.program.statements;
+import java.util.ArrayList;
+
 import asteroids.model.program.Program;
+import asteroids.model.program.expressions.Expression;
 import asteroids.part3.programs.SourceLocation;
 
 public abstract class Statement {
@@ -25,6 +28,10 @@ public abstract class Statement {
 	// EXECUTE
 	
 	public abstract void execute();
+	
+	public void execute(ArrayList<Expression> argumentList){
+		execute();
+	}
 	
 	private boolean statementExecuted = true;
 
