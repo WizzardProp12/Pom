@@ -10,6 +10,7 @@ import asteroids.model.program.expressions.ChangeSignExpression;
 import asteroids.model.program.expressions.DoubleLiteralExpression;
 import asteroids.model.program.expressions.EqualityExpression;
 import asteroids.model.program.expressions.Expression;
+import asteroids.model.program.expressions.FunctionCallExpression;
 import asteroids.model.program.expressions.GetDirectionExpression;
 import asteroids.model.program.expressions.GetRadiusExpression;
 import asteroids.model.program.expressions.GetVxExpression;
@@ -102,11 +103,10 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 	}
 
 	@Override
-	public Expression createFunctionCallExpression(String functionName, List<E> actualArgs, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs, SourceLocation sourceLocation) {
+		return new FunctionCallExpression(functionName, actualArgs, sourceLocation);
 	}
-
+	
 	@Override
 	public Expression createChangeSignExpression(Expression e, SourceLocation location) {
 		return new ChangeSignExpression(e, location);
@@ -233,7 +233,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 	}
 
 	@Override
-	public Statement createTurnStatement(E angle, SourceLocation location) {
+	public Statement createTurnStatement(Expression angle, SourceLocation location) {
 		return new TurnStatement(location, angle);
 	}
 

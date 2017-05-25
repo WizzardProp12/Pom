@@ -1,6 +1,6 @@
 package asteroids.model.program.expressions;
 
-import java.awt.List;
+import java.awt.List; 
 import java.util.ArrayList;
 
 import asteroids.part3.programs.SourceLocation;
@@ -8,11 +8,11 @@ import asteroids.part3.programs.SourceLocation;
 public class FunctionCallExpression extends Expression<Object>{
 	
 	private String functionName;
-	private ArrayList<Object> actualArgs =  new ArrayList<Object>();
+	private List actualArgs;
 
-	public FunctionCallExpression(String functionName, ArrayList<Object> actualArgs, SourceLocation sourceLocation) {
+	public FunctionCallExpression(String functionName, List<Expression> actualArgs2, SourceLocation sourceLocation) {
 		super(sourceLocation);
-		this.actualArgs = actualArgs;
+		this.actualArgs = actualArgs2;
 		this.functionName = functionName;
 		
 	}
