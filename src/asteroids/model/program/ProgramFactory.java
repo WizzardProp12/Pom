@@ -1,5 +1,6 @@
 package asteroids.model.program;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import asteroids.model.program.expressions.AdditionExpression;
@@ -104,7 +105,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Fu
 
 	@Override
 	public Expression createFunctionCallExpression(String functionName, List<Expression> actualArgs, SourceLocation sourceLocation) {
-		return new FunctionCallExpression(functionName, actualArgs, sourceLocation);
+		return new FunctionCallExpression(functionName, (ArrayList<Expression>) actualArgs, sourceLocation);
 	}
 	
 	@Override

@@ -1865,6 +1865,7 @@ public class Part3TestFull {
     assertArrayEquals(expecteds, results.toArray());
     score += 18;
   }
+  
 
   @Test
   public void testWhileStatement_Interruptable() throws ModelException {
@@ -1898,6 +1899,7 @@ public class Part3TestFull {
     assertArrayEquals(expecteds, results.toArray());
     score += 20;
   }
+  
 
   @Test
   public void testWhileStatement_InsideRecursiveFunction() throws ModelException {
@@ -1943,6 +1945,7 @@ public class Part3TestFull {
       score += 16;
     }
   }
+  
 
   @Test
   public void testBreakStatement_NestedCase() throws ModelException {
@@ -1958,6 +1961,7 @@ public class Part3TestFull {
       score += 21;
     }
   }
+  
 
   @Test
   public void testBreak_OutsideWhile() throws ModelException {

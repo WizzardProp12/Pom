@@ -23,7 +23,7 @@ public class WhileStatement extends Statement{
 	public void execute(){
 		try{
 		while (condition.evaluate() == true){
-			if (getProgram().getMain().getStatementExecuted()) {System.out.println("while is done so return"); return;}
+			if (this.getStatementExecuted()) {System.out.println("while is done so return"); return;}
 			System.out.println("execute while, condition is true");
 			body.execute();
 		}

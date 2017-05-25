@@ -60,7 +60,7 @@ public class SequenceStatement extends Statement{
 					System.out.println("executed statement " + index + " printop so far " + getProgram().getPrintOutput());
 					
 				} else if (index == statements.size()) {
-					getProgram().getMain().setStatementExecuted(true);
+					this.setStatementExecuted(true);
 					System.out.println("stm done");
 					return;
 				}
